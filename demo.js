@@ -31,6 +31,7 @@ document.getElementById('use-link').onclick=function(){
     clearImageInfo();
     let input = document.getElementById('link-input');
     let url=input.value;
+    if(!url) return;
     let tileSource = window.tileSource = new OpenSeadragon.GeoTIFFTileSource(url);
     tileSource.promises.setupComplete.then(()=>viewer.open(tileSource))
     tileSource.promises.imageHeaders.then(showImageInfo);
@@ -57,7 +58,7 @@ function showImageInfo(images){
         if(fd.ImageDescription){
             let info=document.createElement('div');
             d.appendChild(info);
-            let ID = fd.ImageDescription.replaceAll('|','<br>');
+            let ID = '<u>ImageDescription contents for this subimage</u><br>'+fd.ImageDescription.replaceAll('|','<br>');
             delete fd.ImageDescription;
             info.innerHTML=ID;
         }
