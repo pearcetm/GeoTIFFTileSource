@@ -1,0 +1,35 @@
+<head>
+    <title>GeoTIFFTileSource Demo</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/3.1.0/openseadragon.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/geotiff"></script>
+    <link rel="stylesheet" href="./demo.css">
+    <style>
+        #file-info img{
+            max-width:100%;
+            max-height:150px;
+        }
+    </style>
+    <!-- <script type="text/javascript" src="../js/osd-extensions/NativeLevelsTileSource.js"></script> -->
+    <script type="text/javascript" src="../js/osd-extensions/GeoTIFFTileSource.js"></script>
+    <script type="module" src="./demo.js"></script>
+ </head>
+ <body>
+     <div class="content">
+         <div class="demo">
+             <h3>GeoTIFFTileSource Demo - view local or remote TIFF images, without an image server</h3>
+             <p>Pick a file. See info about it below</p>
+            <div><input type='text' id="link-input" placeholder="Enter a link address for a TIFF file"><button id='use-link'>Load from link</button> or <input type='file' id="file-picker"></div>
+             
+             <div id="viewer" class="viewer"></div>
+             <div>
+                <div id="file-info">
+                    <h4 id="filename">Please select an image file or link</h4>
+                    <div id="associated-images" style="display:flex;flex-direction:row;"></div>
+                    <h4>Image Description</h4>
+                    <div id="image-description" class="image-details"></div>
+                </div>
+             </div>
+         </div>
+     </div>
+     
+ </body>
