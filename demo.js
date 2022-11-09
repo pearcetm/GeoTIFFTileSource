@@ -1,9 +1,7 @@
-// Must be placed inside a module: <script type="module"> for import to work
-import {RotationControlOverlay} from '../js/rotationcontrol.js'
         
 // Basic viewer setup
 let viewer =window.viewer= OpenSeadragon({
-    element:'rotating-viewer',
+    element:'viewer',
     prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
     minZoomImageRatio:0.01,
     visibilityRatio:0,
@@ -11,10 +9,6 @@ let viewer =window.viewer= OpenSeadragon({
     ajaxWithCredentials: false
 });
 
-//Add a RotationControlOverlay to the viewer
-viewer.addHandler('open',()=>{
-    new RotationControlOverlay(viewer)
-});
 
 document.getElementById('file-picker').onchange=function(ev){
     viewer.close();

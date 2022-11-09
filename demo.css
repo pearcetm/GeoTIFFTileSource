@@ -24,3 +24,7 @@ body{
 input[type="text"]{
     width:20em;
 }
+#file-info img{
+    max-width:100%;
+    max-height:150px;
+}
