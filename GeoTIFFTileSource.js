@@ -6,9 +6,13 @@
      *
      * @memberof OpenSeadragon
      * @extends OpenSeadragon.TileSource
-     * @param {File|String} input A File object or url string pointing to a tiff file
-     * @param {Object} opts Options object. set opts.logLatency to a truthy value to write tile fetching times to the console.
-     * 
+     * @param {File|String|Object} input A File object, url string, or object with fields for tiff and images already defined
+     * @param {Object} opts Options object. To do: how to document options fields?
+     *                 opts.logLatency: print latency to fetch and process each tile to console.log or the provided function
+     *                 opts.tileWidth: tileWidth to request at each level. Defaults to tileWidth specified by TIFF file or 256 if unspecified by the file
+     *                 opts.tileHeight:tileWidth to request at each level. Defaults to tileWidth specified by TIFF file or 256 if unspecified by the file
+     *                 
+     *  //To do: update this documentation to reflect actual class behavior
      * @property {Number} dimensions
      * @property {Number} tileSize
      * @property {Array}  levels
@@ -19,38 +23,85 @@
         monkeypatch($);
         this._pool = new GeoTIFF.Pool();
         this.setupComplete = false;
-        this.promises={
-            tiff: input instanceof File ? GeoTIFF.fromBlob(input) : GeoTIFF.fromUrl(input),
-            imageCount:DeferredPromise(),
-            imageHeaders:DeferredPromise(),
-            setupComplete:DeferredPromise(),
+        if(input.tiff && input.images){
+            this.promises={
+                tiff: Promise.resolve(input.tiff),
+                imageCount:Promise.resolve(input.images.length),
+                imageHeaders:Promise.resolve(input.images),
+                setupComplete:DeferredPromise(),
+            }
         }
-        this.promises.tiff.then(tiff=>{
-            console.log('Tiff Info',tiff)
-            self.tiff = tiff;
-            return tiff.getImageCount();
-        }).then(count=>{
-            self.imageCount = count;
-            let promises=[...Array(count).keys()].map(index=>self.tiff.getImage(index));
-            self.promises.imageCount.resolve(count);
-            return Promise.all(promises);
-        }).then(images=>{
-            self.imageHeaders = images;
-            self.promises.imageHeaders.resolve(images);
+        else{
+            this.promises={
+                tiff: input instanceof File ? GeoTIFF.fromBlob(input) : GeoTIFF.fromUrl(input),
+                imageCount:DeferredPromise(),
+                imageHeaders:DeferredPromise(),
+                setupComplete:DeferredPromise(),
+            }
+        }
+        
+        if(!input.tiff){
+            this.promises.tiff.then(tiff=>{
+                self.tiff = tiff;
+                return tiff.getImageCount();
+            }).then(count=>{
+                self.imageCount = count;
+                let promises=[...Array(count).keys()].map(index=>self.tiff.getImage(index));
+                self.promises.imageCount.resolve(count);
+                return Promise.all(promises);
+            }).then(images=>{
+                self.imageHeaders = images;
+                self.promises.imageHeaders.resolve(images);
+                
+                setupLevels.call(self);
 
-            let tiledimages = images.filter(image=>image.isTiled);
-            let nontiledimages = images.filter(image=>!image.isTiled);
-            let options = tiledimages.length > 0 ?  tiledImageOptions(tiledimages) : nonTiledImageOptions(nontiledimages);
+                self.setupComplete = true;
+                self.promises.setupComplete.resolve();
+            }).catch(error=>{
+                console.log('Error with GeoTIFF:',error)
+            });
 
-            this.levels = options.levels;
-            $.TileSource.apply( this, [ options ] );
+            return;
+        }
+        this.tiff = input.tiff;
+        this.imageCount = input.images.length;
+        this.imageHeaders=input.images;
 
-            this.setupComplete = true;
-            this.promises.setupComplete.resolve();
-        }).catch(error=>{
-            console.log('Error with GeoTIFF:',error)
-        })
+        setupLevels.call(this);
+
+        this.setupComplete = true;
+        this.promises.setupComplete.resolve();
     }
+
+    //Static functions
+
+    //To do: add documentation about what this does (i.e. separates likely subimages into separate GeoTIFFTileSource objects)
+    $.GeoTIFFTileSource.getAllTileSources=function(input,opts){
+        let tiff= input instanceof File ? GeoTIFF.fromBlob(input) : GeoTIFF.fromUrl(input);
+        return tiff.then(t=>{tiff=t; return t.getImageCount()})
+                   .then(c=>Promise.all([...Array(c).keys()].map(index=>tiff.getImage(index))))
+                   .then(images=>{
+                        //Separate out by aspect ratio
+                        let aspectRatioSets=[...new Set(images.map(i=>(i.getWidth()/i.getHeight()).toFixed(2)))]
+                                .map(ar=>images.filter(i=>(i.getWidth()/i.getHeight()).toFixed(2) == ar));
+                        //For each aspect ratio, extract sets of decreasing width images as pyramids
+                        let imagesets = aspectRatioSets.map(images=>{
+                            let sortedByWidth=[...new Set(images.map(im=>im.getWidth()))]
+                                .map(w=>images.filter(im=>im.getWidth()==w));
+                            let arr=[]
+                            sortedByWidth.forEach((s)=>{
+                                s.forEach((im,index)=>{
+                                    arr[index] = (arr[index]||[]).concat(im);
+                                })
+                            })
+                            return arr;//arr = array of arrays of images; each array of images makes up a tilesource set
+                        }).flat();//flatten into an array of tileSource-defining image arrays
+                        return imagesets.map(images=> new $.GeoTIFFTileSource({tiff:tiff, images:images},opts));
+                    })
+    }
+
+    // Extend OpenSeadragon.TileSource, and override/add prototype functions
+
     $.extend( $.GeoTIFFTileSource.prototype, $.TileSource.prototype, /** @lends OpenSeadragon.GeoTIFFTileSource.prototype */{
         /**
          * Return the tileWidth for a given level.
@@ -88,41 +139,28 @@
             }
             return levelScale;
         },
-    
-        makeOptionsObject: function(images){
-            
-            return options;
-        },
         
         /**
          * Implement function here instead of as custom tile source in client code
          * @function
-         * @param {Number} level
+         * @param {Number} levelnum
          * @param {Number} x
          * @param {Number} y
-         * @throws {Error}
          */
-        getTileUrl: function ( level, x, y ) {
+        getTileUrl: function ( levelnum, x, y ) {
             // return dataURL from reading tile data from the GeoTIFF object as String object (for cache key) with attached promise 
-            level = this.levels[level];
-            let url = new String(`${level.level}/${x}_${y}`);
-            let startTime = this.options.logLatency ? Date.now() : null;
+            level = this.levels[levelnum];
+            let url = new String(`${levelnum}/${x}_${y}`);
             let abortController = new AbortController();
-            if(level._tiffPage){
-                //direct tile access
-                url.promise = level._tiffPage.getTileOrStrip(x,y,0,this._pool,abortController.signal)
-                    .then(d=>RGBToDataUrl(d.data, level.tileWidth, level.tileHeight,startTime))
-            }
-            else{
-                //let GeoTIFF.js do the reading
-                let bbox = [x*level.tileWidth, y*level.tileHeight, x*level.tileWidth+level.tileWidth, y*level.tileHeight+level.tileHeight]
-                url.promise = regionToDataUrl(this.tiff, bbox, this.options.tileWidth, this.options.tileHeight, this._pool, abortController.signal, startTime);
-            }
+            let abortSignal = abortController.signal;
+            url.promise = regionToDataUrl.call(this,level, x, y, abortSignal);
             url.abortController = abortController;
+
             return url;
         },
 
-        downloadTileStart(context){
+        //To do: documentation necessary? Kind of an internal function...
+        downloadTileStart:function(context){
             context.src.promise.then(dataURL=>{
                 let image = new Image();
                 let request=''+context.src;
@@ -135,64 +173,131 @@
                 image.src = dataURL;
             })
         },
-        downloadTileAbort(context){
+        downloadTileAbort:function(context){
             context.src.abortController.abort();
-        }
+        },
+        
     })
 
-    function tiledImageOptions(tiledimages){
-        //use the tiled images natively, and 
-        let options = {}
-        options.levels = tiledimages.map((image,level)=>{
-            return {
-                width:image.getWidth(),
-                height:image.getHeight(),
-                tileWidth:image.getTileWidth(),
-                tileHeight:image.getTileHeight(),
-                level:level,
-                _tiffPage:image,
-            }
-            
-        }).sort((a,b)=>a.width - b.width)
+    //private functions
+
+    function regionToDataUrl(level, x, y, abortSignal){
+
+        let startTime = this.options.logLatency && Date.now();
         
-        options.width = options.levels[options.levels.length-1].width;
-        options.height = options.levels[options.levels.length-1].height;
-        $.extend( true, options, {
-            width: options.width,
-            height: options.height,
-            tileOverlap: 0,//To do: is this always zero? If not, what field in the fileDirectory holds it?
-            minLevel: 0,
-            maxLevel: options.levels.length > 0 ? options.levels.length - 1 : 0
-        } );
-        return options;
+        let w = level.tileWidth;
+        let h = level.tileHeight;
+        let window = [x*w, y*h, (x+1)*w, (y+1)*h].map(v=>v * level.scalefactor);//scale the requested tile to layer image coordinates
+        
+        return level.image.readRGB({
+            interleave:true,
+            window:window,
+            pool:this._pool,
+            width:level.tileWidth,
+            height:level.tileHeight,
+            signal:abortSignal
+        }).then(data=>{
+            
+            // let dataURL = tileToDataUrl(data, level.tileWidth, level.tileHeight, startTime);
+            let canvas = document.createElement('canvas');
+            canvas.width = level.tileWidth;
+            canvas.height = level.tileHeight;
+            let ctx = canvas.getContext('2d');
+
+            let arr = new Uint8ClampedArray(4*canvas.width*canvas.height);
+            let rgb = new Uint8ClampedArray(data);
+            let i, a;
+            for(i=0, a=0;i<rgb.length; i+=3, a+=4){
+                arr[a]=rgb[i];
+                arr[a+1]=rgb[i+1];
+                arr[a+2]=rgb[i+2];
+                arr[a+3]=255;
+            }
+            ctx.putImageData(new ImageData(arr,canvas.width,canvas.height), 0, 0);
+
+            this.options.logLatency && (typeof this.options.logLatency=='function' ? this.logLatency : console.log)('Tile latency (ms):', Date.now() - startTime)
+            return canvas.toDataURL('image/jpeg',0.8);
+            // return dataURL;
+        })
     }
-    function nonTiledImageOptions(nontiledimages){
-        //default to 256x256 tiles
-        let tileWidth=256, tileHeight=256;
-        let fullWidth =nontiledimages[0].getWidth();
-        let fullHeight=nontiledimages[0].getHeight();
-        let numLevels = Math.floor(Math.log2(Math.max(fullWidth/tileWidth, fullHeight/tileHeight)));
-        //assume the first image is the full-resolution view
-        let options={
-            width:fullWidth,
-            height:fullHeight,
-            tileWidth:tileWidth,
-            tileHeight:tileHeight,
-            tileOverlap: 0,
-            minLevel: 0,
-            maxLevel: numLevels-1,
-            levels: [...Array(numLevels).keys()].map(levelnum=>{
-                let scale = Math.pow(2,levelnum)
-                return {
-                    //width:fullWidth/scale,
-                    //height:fullHeight/scale,
-                    tileWidth:tileWidth*scale,
-                    tileHeight:tileHeight*scale,
-                    level:levelnum,
-                }
-            })
+
+    function setupLevels(){
+        let images = this.imageHeaders.sort((a,b)=>b.getWidth() - a.getWidth());
+        let tiledimages = images.filter(i=>i.isTiled);
+        
+
+        //default to 256x256 tiles, but defer to options passed in
+        let defaultTileWidth=defaultTileHeight=256;
+
+        //the first image is the highest-resolution view (at least, with the largest width)
+        let fullWidth =images[0].getWidth();
+        let fullHeight=images[0].getHeight();
+
+        let options;
+
+        //a valid tiled pyramid has strictly monotonic size for levels; all levels must be tiled
+        let pyramid=tiledimages.reduce((acc,im)=>{
+            if(acc.width!==-1){
+                acc.valid = acc.valid && im.getWidth()<acc.width;//ensure width monotonically decreases
+            }
+            acc.width=im.getWidth();
+            return acc;
+        },{valid:tiledimages.length>0 && tiledimages.length==images.length, width:-1});
+
+        if(pyramid.valid){
+            let levelsToUse = images;
+            options={
+                width:fullWidth,
+                height:fullHeight,
+                tileOverlap: 0,
+                minLevel: 0,
+                maxLevel: levelsToUse.length-1,
+                levels:images.map((image)=>{
+                    let w = image.getWidth();
+                    let h = image.getHeight();
+                    return {
+                        width:w,
+                        height:h,
+                        tileWidth:this.options.tileWidth || image.getTileWidth() || defaultTileWidth,
+                        tileHeight:this.options.tileHeight || image.getTileHeight() || defaultTileHeight,
+                        image:image,
+                        scalefactor:1,
+                    }
+                })
+            }
         }
-        return options;
+        else{
+            let numPowersOfTwo= Math.ceil(Math.log2(Math.max(fullWidth/defaultTileWidth, fullHeight/defaultTileHeight)));
+            let levelsToUse = [...Array(numPowersOfTwo).keys()].filter(v=>v%2==0);//use every other power of two for scales in the "pyramid" 
+
+            options={
+                width:fullWidth,
+                height:fullHeight,
+                tileOverlap: 0,
+                minLevel: 0,
+                maxLevel: levelsToUse.length-1,
+                levels: levelsToUse.map(levelnum=>{
+                    let scale = Math.pow(2,levelnum)
+                    let image = images.filter(im=>im.getWidth()*scale >= fullWidth).slice(-1)[0];//smallest image with sufficient resolution
+                    return {
+                        width:fullWidth/scale,
+                        height:fullHeight/scale,
+                        tileWidth:this.options.tileWidth || image.getTileWidth() || defaultTileWidth,
+                        tileHeight:this.options.tileHeight || image.getTileHeight() || defaultTileHeight,
+                        image:image,
+                        scalefactor:scale*image.getWidth()/fullWidth,
+                    }
+                })
+            }
+        }
+        options.levels = options.levels.sort((a,b)=>a.width - b.width);        
+
+        this.levels = options.levels;
+        
+        $.TileSource.apply( this, [ options ] );
+
+        this.setupComplete = true;
+        this.promises.setupComplete.resolve();
     }
 
     function DeferredPromise(){
@@ -206,47 +311,27 @@
         return promise;
     }
     
-    function regionToDataUrl(tiff,bbox, width, height, decoderPool, abortSignal, startTime){
-        let canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        let ctx = canvas.getContext('2d');
-        return tiff.readRasters({window:bbox, pool:decoderPool, width:width, height:height, signal:abortSignal}).then(data=>{
-            let arr = new Uint8ClampedArray(4*data[0].length);
-            let i, a;
-            for(i=0, a=0;i<data[0].length; i++, a+=4){
-                arr[a]=data[0][i];
-                arr[a+1]=data[1][i];
-                arr[a+2]=data[2][i];
-                arr[a+3]=255;
-            }
-            ctx.putImageData(new ImageData(arr,data.width,data.height), 0, 0);
-            // console.log('Decoded tile',bbox)
-            startTime && console.log('Resolved in (ms):', Date.now() - startTime)
-        
-            return canvas.toDataURL('image/jpeg',0.7);
-        })
-    }
-    function RGBToDataUrl(rgb, width, height,startTime){
-        let canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        let ctx = canvas.getContext('2d');
+    
+    // function tileToDataUrl(data,width,height,startTime){
+    //     let canvas = document.createElement('canvas');
+    //     canvas.width = width;
+    //     canvas.height = height;
+    //     let ctx = canvas.getContext('2d');
 
-        let arr = new Uint8ClampedArray(4*width*height);
-        let data = new Uint8ClampedArray(rgb);
-        let i, a;
-        for(i=0, a=0;i<data.length; i+=3, a+=4){
-            arr[a]=data[i];
-            arr[a+1]=data[i+1];
-            arr[a+2]=data[i+2];
-            arr[a+3]=255;
-        }
-        ctx.putImageData(new ImageData(arr,width,height), 0, 0);
+    //     let arr = new Uint8ClampedArray(4*width*height);
+    //     let rgb = new Uint8ClampedArray(data);
+    //     let i, a;
+    //     for(i=0, a=0;i<rgb.length; i+=3, a+=4){
+    //         arr[a]=rgb[i];
+    //         arr[a+1]=rgb[i+1];
+    //         arr[a+2]=rgb[i+2];
+    //         arr[a+3]=255;
+    //     }
+    //     ctx.putImageData(new ImageData(arr,width,height), 0, 0);
 
-        startTime && console.log('Resolved in (ms):', Date.now() - startTime)
-        return canvas.toDataURL('image/jpeg',0.7);
-    }
+    //     this.logLatency && (typeof this.logLatency=='function' ? this.logLatency : console.log)('Tile latency (ms):', Date.now() - startTime)
+    //     return canvas.toDataURL('image/jpeg',0.8);
+    // }
 
     function monkeypatch($){
         if(!$.version || $.version.major<2 || ($.version.major==2 && $.version.minor<3) ){

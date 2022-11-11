@@ -10,18 +10,24 @@
  <body>
      <div class="content">
          <div class="demo">
-             <h3>GeoTIFFTileSource Demo - view local or remote TIFF images, without an image server</h3>
-             <p>Source code can be found at the project <a href="https://github.com/pearcetm/GeoTIFFTileSource">GitHub Repository</a>.</p>
-             <p>Demo files (whole slide histology images) can be downloaded from the
-                <a href="https://openslide.cs.cmu.edu/download/openslide-testdata/">openslide test data</a> directory. Recommendation: try Aperio .svs files.
-             </p>
+            <h3>GeoTIFFTileSource Demo - view local or remote TIFF images, without an image server</h3>
+            <p>
+                Source code can be found at the project <a href="https://github.com/pearcetm/GeoTIFFTileSource">GitHub Repository</a>.
+                The GeoTIFFTileSource for <a href="https://openseadragon.github.io">OpenSeadragon</a> depends on <a href="https://geotiffjs.github.io/">GeoTIFF.js</a>.
+            </p>
+            <p>Demo files (whole slide histology images - WSIs) can be downloaded from the <a href="https://openslide.cs.cmu.edu/">OpenSlide</a> project.
+                 Recommendation: download <a href="https://openslide.cs.cmu.edu/download/openslide-testdata/Aperio/CMU-1.svs">CMU-1.svs</a> as a demonstration. 
+            </p>
+            <p>There are many TIFF formats, not all of which are GeoTIFF compatible. This applies to WSIs as well. For example, .ndpi files are not internally
+                organized in a way that GeoTIFF.js can query efficiently, so slide viewing is very slow at best.
+            </p>
              <p>Pick a file. View the image using OpenSeadragon, and see detailed info about it below.</p>
             <div><input type='text' id="link-input" placeholder="Enter a link address for a TIFF file"><button id='use-link'>Load from link</button> or <input type='file' id="file-picker"></div>
              
              <div id="viewer" class="viewer"></div>
              <div>
                 <div id="file-info">
-                    <h4 id="filename">Please select an image file or link</h4>
+                    <h2 id="filename">Please select an image file or link</h4>
                     <div id="associated-images" style="display:flex;flex-direction:row;"></div>
                     <h4>Image Description</h4>
                     <div id="image-description" class="image-details"></div>
