@@ -34,13 +34,15 @@ function setupImage(tileSourceInput,tilesourceName=''){
     clearImageInfo();
     document.getElementById('filename').textContent=tilesourceName;
 
-    OpenSeadragon.GeoTIFFTileSource.getAllTileSources(tileSourceInput,{logLatency:true,}).then(tileSources=>{
+    let tiffTileSources = OpenSeadragon.GeoTIFFTileSource.getAllTileSources(tileSourceInput);
+    tiffTileSources.then(ts=>viewer.open(ts));
+
+    tiffTileSources.then(tileSources=>{
         document.getElementById('filename').textContent += ' -- '+tileSources.length+' image'+(tileSources.length!=1?'s':'')+' found'
-        Promise.all(tileSources.map(t=>t.promises.imageHeaders)).then(showTileSourcesInfo);
-        Promise.all(tileSources.map(t=>t.promises.setupComplete)).then(()=>{
-            window.tilesources = tileSources;
-            viewer.open(tileSources)
-        });
+        Promise.all(tileSources.map(t=>t.promises.ready)).then(()=>showTileSourcesInfo(tileSources));
+    }).catch(error=>{
+        document.getElementById('filename').textContent += ': Error opening file. Is this a valid tiff? See console for details.';
+        console.error(error);
     });
 
 }
@@ -52,14 +54,15 @@ function clearImageInfo(){
 function showTileSourcesInfo(tileSources){
     clearImageInfo();
     let desc = document.getElementById('image-description');
-    window.tileSourceImages = tileSources.map((images,index)=>{
+    tileSources.map((ts,index)=>{
+        let images = ts.GeoTIFFImages;
         let h = document.createElement('h3');
         h.textContent='TileSource #'+index;
         desc.appendChild(h);
         showImageInfo(images);
         desc.appendChild(document.createElement('hr'));
         return images;
-    })
+    });
 }
 
 function showImageInfo(images){
