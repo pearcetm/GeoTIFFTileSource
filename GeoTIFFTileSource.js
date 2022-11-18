@@ -83,9 +83,9 @@
         return tiff.then(t=>{tiff=t; return t.getImageCount()})
                    .then(c=>Promise.all([...Array(c).keys()].map(index=>tiff.getImage(index))))
                    .then(images=>{
-                        //Separate out by aspect ratio
-                        let aspectRatioSets=[...new Set(images.map(i=>(i.getWidth()/i.getHeight()).toFixed(2)))]
-                                .map(ar=>images.filter(i=>(i.getWidth()/i.getHeight()).toFixed(2) == ar));
+                        //Separate out by aspect ratio and tiled status
+                        let aspectRatioSets=[...new Set(images.map(i=>(i.getWidth()/i.getHeight()).toFixed(2)+'-'+i.isTiled))]
+                                .map(ar=>images.filter(i=>(i.getWidth()/i.getHeight()).toFixed(2)+'-'+i.isTiled == ar));
                         //For each aspect ratio, extract sets of decreasing width images as pyramids
                         let imagesets = aspectRatioSets.map(images=>{
                             let sortedByWidth=[...new Set(images.map(im=>im.getWidth()))]

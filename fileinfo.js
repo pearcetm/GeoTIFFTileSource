@@ -43,7 +43,7 @@ function showTileSourcesInfo(tileSources){
     tileSources.map((ts,index)=>{
         let images = ts.GeoTIFFImages;
         let h = document.createElement('h3');
-        h.textContent='TileSource #'+index;
+        h.textContent='File info';
         desc.appendChild(h);
         showImageInfo(images);
         desc.appendChild(document.createElement('hr'));
