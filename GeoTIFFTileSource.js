@@ -196,7 +196,7 @@
         
         let w = level.tileWidth;
         let h = level.tileHeight;
-        let window = [x*w, y*h, (x+1)*w, (y+1)*h].map(v=>v * level.scalefactor);//scale the requested tile to layer image coordinates
+        let window = [x*w, y*h, (x+1)*w, (y+1)*h].map(v=>Math.round(v * level.scalefactor));//scale the requested tile to layer image coordinates
         let abortController = src.abortController = new AbortController();
         let abortSignal = abortController.signal;
 
