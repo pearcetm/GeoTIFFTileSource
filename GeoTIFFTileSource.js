@@ -159,7 +159,7 @@
          */
         getTileUrl: function ( levelnum, x, y ) {
             // return dataURL from reading tile data from the GeoTIFF object as String object (for cache key) with attached promise 
-            level = this.levels[levelnum];
+            let level = this.levels[levelnum];
             let url = new String(`${levelnum}/${x}_${y}`);
 
             url.fetch = ( (ts,level,x,y,src)=> ()=>regionToDataUrl.call(ts, level, x, y, src))(this, level, x, y, url);

@@ -1,6 +1,6 @@
-//! openseadragon 3.1.0
-//! Built on 2022-11-16
-//! Git commit: --2f174ad-dirty
+//! openseadragon 4.0.0
+//! Built on 2022-12-16
+//! Git commit: v4.0.0-0-8e6196a
 //! http://openseadragon.github.io
 //! License: http://openseadragon.github.io/license/
 
@@ -90,7 +90,7 @@
 
 /**
  * @namespace OpenSeadragon
- * @version openseadragon 3.1.0
+ * @version openseadragon 4.0.0
  * @classdesc The root namespace for OpenSeadragon.  All utility methods
  * and classes are defined on or below this namespace.
  *
@@ -347,6 +347,9 @@
   * @property {Boolean} [gestureSettingsMouse.clickToZoom=true] - Zoom on click gesture
   * @property {Boolean} [gestureSettingsMouse.dblClickToZoom=false] - Zoom on double-click gesture. Note: If set to true
   *     then clickToZoom should be set to false to prevent multiple zooms.
+  * @property {Boolean} [gestureSettingsMouse.dblClickDragToZoom=false] - Zoom on dragging through
+  * double-click gesture ( single click and next click to drag).  Note: If set to true
+  *     then clickToZoom should be set to false to prevent multiple zooms.
   * @property {Boolean} [gestureSettingsMouse.pinchToZoom=false] - Zoom on pinch gesture
   * @property {Boolean} [gestureSettingsMouse.zoomToRefPoint=true] - If zoomToRefPoint is true, the zoom is centered at the pointer position. Otherwise,
   *     the zoom is centered at the canvas center.
@@ -362,6 +365,10 @@
   * @property {Boolean} [gestureSettingsTouch.clickToZoom=false] - Zoom on click gesture
   * @property {Boolean} [gestureSettingsTouch.dblClickToZoom=true] - Zoom on double-click gesture. Note: If set to true
   *     then clickToZoom should be set to false to prevent multiple zooms.
+    * @property {Boolean} [gestureSettingsTouch.dblClickDragToZoom=true] - Zoom on dragging through
+  * double-click gesture ( single click and next click to drag).  Note: If set to true
+  *     then clickToZoom should be set to false to prevent multiple zooms.
+
   * @property {Boolean} [gestureSettingsTouch.pinchToZoom=true] - Zoom on pinch gesture
   * @property {Boolean} [gestureSettingsTouch.zoomToRefPoint=true] - If zoomToRefPoint is true, the zoom is centered at the pointer position. Otherwise,
   *     the zoom is centered at the canvas center.
@@ -392,6 +399,9 @@
   * @property {Boolean} [gestureSettingsUnknown.clickToZoom=false] - Zoom on click gesture
   * @property {Boolean} [gestureSettingsUnknown.dblClickToZoom=true] - Zoom on double-click gesture. Note: If set to true
   *     then clickToZoom should be set to false to prevent multiple zooms.
+  * @property {Boolean} [gestureSettingsUnknown.dblClickDragToZoom=false] - Zoom on dragging through
+  * double-click gesture ( single click and next click to drag).  Note: If set to true
+  *     then clickToZoom should be set to false to prevent multiple zooms.
   * @property {Boolean} [gestureSettingsUnknown.pinchToZoom=true] - Zoom on pinch gesture
   * @property {Boolean} [gestureSettingsUnknown.zoomToRefPoint=true] - If zoomToRefPoint is true, the zoom is centered at the pointer position. Otherwise,
   *     the zoom is centered at the canvas center.
@@ -405,6 +415,9 @@
   *
   * @property {Number} [zoomPerScroll=1.2]
   *     The "zoom distance" per mouse scroll or touch pinch. <em><strong>Note:</strong> Setting this to 1.0 effectively disables the mouse-wheel zoom feature (also see gestureSettings[Mouse|Touch|Pen].scrollToZoom}).</em>
+  *
+  * @property {Number} [zoomPerDblClickDrag=1.2]
+  *     The "zoom distance" per double-click mouse drag. <em><strong>Note:</strong> Setting this to 1.0 effectively disables the double-click-drag-to-Zoom feature (also see gestureSettings[Mouse|Touch|Pen].dblClickDragToZoom).</em>
   *
   * @property {Number} [zoomPerSecond=1.0]
   *     Sets the zoom amount per second when zoomIn/zoomOut buttons are pressed and held.
@@ -806,9 +819,9 @@ function OpenSeadragon( options ){
      * @since 1.0.0
      */
     $.version = {
-        versionStr: '3.1.0',
-        major: parseInt('3', 10),
-        minor: parseInt('1', 10),
+        versionStr: '4.0.0',
+        major: parseInt('4', 10),
+        minor: parseInt('0', 10),
         revision: parseInt('0', 10)
     };
 
@@ -1209,6 +1222,7 @@ function OpenSeadragon( options ){
                 scrollToZoom: true,
                 clickToZoom: true,
                 dblClickToZoom: false,
+                dblClickDragToZoom: false,
                 pinchToZoom: false,
                 zoomToRefPoint: true,
                 flickEnabled: false,
@@ -1221,6 +1235,7 @@ function OpenSeadragon( options ){
                 scrollToZoom: false,
                 clickToZoom: false,
                 dblClickToZoom: true,
+                dblClickDragToZoom: true,
                 pinchToZoom: true,
                 zoomToRefPoint: true,
                 flickEnabled: true,
@@ -1233,6 +1248,7 @@ function OpenSeadragon( options ){
                 scrollToZoom: false,
                 clickToZoom: true,
                 dblClickToZoom: false,
+                dblClickDragToZoom: false,
                 pinchToZoom: false,
                 zoomToRefPoint: true,
                 flickEnabled: false,
@@ -1245,6 +1261,7 @@ function OpenSeadragon( options ){
                 scrollToZoom: false,
                 clickToZoom: false,
                 dblClickToZoom: true,
+                dblClickDragToZoom: false,
                 pinchToZoom: true,
                 zoomToRefPoint: true,
                 flickEnabled: true,
@@ -1254,6 +1271,7 @@ function OpenSeadragon( options ){
             },
             zoomPerClick:           2,
             zoomPerScroll:          1.2,
+            zoomPerDblClickDrag:    1.2,
             zoomPerSecond:          1.0,
             blendTime:              0,
             alwaysBlend:            false,
@@ -7085,6 +7103,7 @@ $.ControlAnchor = {
  * @param {Element} container - the element to control will be anchored too.
  */
 $.Control = function ( element, options, container ) {
+
     var parent = element.parentNode;
     if (typeof options === 'number')
     {
@@ -7161,6 +7180,7 @@ $.Control = function ( element, options, container ) {
     } else {
         parent.appendChild( this.wrapper );
     }
+
 };
 
 /** @lends OpenSeadragon.Control.prototype */
@@ -7788,6 +7808,8 @@ $.Viewer = function( options ) {
         prevContainerSize: null,
         animating:         false,
         forceRedraw:       false,
+        needsResize:       false,
+        forceResize:       false,
         mouseInside:       false,
         group:             null,
         // whether we should be continuously zooming
@@ -7796,7 +7818,9 @@ $.Viewer = function( options ) {
         zoomFactor:        null,
         lastZoomTime:      null,
         fullPage:          false,
-        onfullscreenchange: null
+        onfullscreenchange: null,
+        lastClickTime: null,
+        draggingToZoom: false,
     };
 
     this._sequenceIndex = 0;
@@ -7909,6 +7933,17 @@ $.Viewer = function( options ) {
     this.bindStandardControls();
 
     THIS[ this.hash ].prevContainerSize = _getSafeElemSize( this.container );
+
+    if(window.ResizeObserver){
+        this._autoResizePolling = false;
+        this._resizeObserver = new ResizeObserver(function(){
+            THIS[_this.hash].needsResize = true;
+        });
+
+        this._resizeObserver.observe(this.container, {});
+    } else {
+        this._autoResizePolling = true;
+    }
 
     // Create the world
     this.world = new $.World({
@@ -8338,12 +8373,25 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
      * viewer = null; //important
      *
      * @function
+     * @fires OpenSeadragon.Viewer.event:before-destroy
+     * @fires OpenSeadragon.Viewer.event:destroy
      */
     destroy: function( ) {
         if ( !THIS[ this.hash ] ) {
             //this viewer has already been destroyed: returning immediately
             return;
         }
+
+        /**
+         * Raised when the viewer is about to be destroyed (see {@link OpenSeadragon.Viewer#before-destroy}).
+         *
+         * @event before-destroy
+         * @memberof OpenSeadragon.Viewer
+         * @type {object}
+         * @property {OpenSeadragon.Viewer} eventSource - A reference to the Viewer which raised the event.
+         * @property {?Object} userData - Arbitrary subscriber-defined object.
+         */
+        this.raiseEvent( 'before-destroy' );
 
         this._removeUpdatePixelDensityRatioEvent();
 
@@ -8355,6 +8403,9 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
         //TODO: implement this...
         //this.unbindSequenceControls()
         //this.unbindStandardControls()
+        if (this._resizeObserver){
+            this._resizeObserver.disconnect();
+        }
 
         if (this.referenceStrip) {
             this.referenceStrip.destroy();
@@ -8377,7 +8428,6 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
             this.navigator = null;
         }
 
-        this.removeAllHandlers();
 
         if (this.buttonGroup) {
             this.buttonGroup.destroy();
@@ -8423,6 +8473,19 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
 
         // clear our reference to the main element - they will need to pass it in again, creating a new viewer
         this.element = null;
+
+        /**
+         * Raised when the viewer is destroyed (see {@link OpenSeadragon.Viewer#destroy}).
+         *
+         * @event destroy
+         * @memberof OpenSeadragon.Viewer
+         * @type {object}
+         * @property {OpenSeadragon.Viewer} eventSource - A reference to the Viewer which raised the event.
+         * @property {?Object} userData - Arbitrary subscriber-defined object.
+         */
+        this.raiseEvent( 'destroy' );
+
+        this.removeAllHandlers();
     },
 
     /**
@@ -9235,6 +9298,14 @@ $.extend( $.Viewer.prototype, $.EventSource.prototype, $.ControlDock.prototype, 
     forceRedraw: function() {
         THIS[ this.hash ].forceRedraw = true;
         return this;
+    },
+
+    /**
+     * Force the viewer to reset its size to match its container.
+     */
+    forceResize: function() {
+        THIS[this.hash].needsResize = true;
+        THIS[this.hash].forceResize = true;
     },
 
     /**
@@ -10438,6 +10509,8 @@ function onCanvasKeyPress( event ) {
     }
 }
 
+
+
 function onCanvasClick( event ) {
     var gestureSettings;
 
@@ -10477,17 +10550,31 @@ function onCanvasClick( event ) {
      * @property {Boolean} preventDefaultAction - Set to true to prevent default click to zoom behaviour. Default: false.
      * @property {?Object} userData - Arbitrary subscriber-defined object.
      */
+
     this.raiseEvent( 'canvas-click', canvasClickEventArgs);
+
 
     if ( !canvasClickEventArgs.preventDefaultAction && this.viewport && event.quick ) {
         gestureSettings = this.gestureSettingsByDeviceType( event.pointerType );
-        if ( gestureSettings.clickToZoom ) {
+
+        if (gestureSettings.clickToZoom === true){
             this.viewport.zoomBy(
                 event.shift ? 1.0 / this.zoomPerClick : this.zoomPerClick,
                 gestureSettings.zoomToRefPoint ? this.viewport.pointFromPixel( event.position, true ) : null
             );
             this.viewport.applyConstraints();
         }
+
+        if( gestureSettings.dblClickDragToZoom){
+            if(THIS[ this.hash ].draggingToZoom === true){
+                THIS[ this.hash ].lastClickTime = null;
+                THIS[ this.hash ].draggingToZoom = false;
+            }
+            else{
+                THIS[ this.hash ].lastClickTime = $.now();
+            }
+        }
+
     }
 }
 
@@ -10567,43 +10654,51 @@ function onCanvasDrag( event ) {
 
     gestureSettings = this.gestureSettingsByDeviceType( event.pointerType );
 
-    if ( gestureSettings.dragToPan && !canvasDragEventArgs.preventDefaultAction && this.viewport ) {
-        if( !this.panHorizontal ){
-            event.delta.x = 0;
+    if(!canvasDragEventArgs.preventDefaultAction && this.viewport){
+
+        if (gestureSettings.dblClickDragToZoom && THIS[ this.hash ].draggingToZoom){
+            var factor = Math.pow( this.zoomPerDblClickDrag, event.delta.y / 50);
+            this.viewport.zoomBy(factor);
         }
-        if( !this.panVertical ){
-            event.delta.y = 0;
-        }
-        if(this.viewport.flipped){
-            event.delta.x = -event.delta.x;
-        }
-
-        if( this.constrainDuringPan ){
-            var delta = this.viewport.deltaPointsFromPixels( event.delta.negate() );
-
-            this.viewport.centerSpringX.target.value += delta.x;
-            this.viewport.centerSpringY.target.value += delta.y;
-
-            var bounds = this.viewport.getBounds();
-            var constrainedBounds = this.viewport.getConstrainedBounds();
-
-            this.viewport.centerSpringX.target.value -= delta.x;
-            this.viewport.centerSpringY.target.value -= delta.y;
-
-            if (bounds.x !== constrainedBounds.x) {
+        else if (gestureSettings.dragToPan && !THIS[ this.hash ].draggingToZoom) {
+            if( !this.panHorizontal ){
                 event.delta.x = 0;
             }
-
-            if (bounds.y !== constrainedBounds.y) {
+            if( !this.panVertical ){
                 event.delta.y = 0;
             }
+            if(this.viewport.flipped){
+                event.delta.x = -event.delta.x;
+            }
+
+            if( this.constrainDuringPan ){
+                var delta = this.viewport.deltaPointsFromPixels( event.delta.negate() );
+
+                this.viewport.centerSpringX.target.value += delta.x;
+                this.viewport.centerSpringY.target.value += delta.y;
+
+                var constrainedBounds = this.viewport.getConstrainedBounds();
+
+                this.viewport.centerSpringX.target.value -= delta.x;
+                this.viewport.centerSpringY.target.value -= delta.y;
+
+                if (constrainedBounds.xConstrained) {
+                    event.delta.x = 0;
+                }
+
+                if (constrainedBounds.yConstrained) {
+                    event.delta.y = 0;
+                }
+            }
+            this.viewport.panBy( this.viewport.deltaPointsFromPixels( event.delta.negate() ), gestureSettings.flickEnabled && !this.constrainDuringPan);
         }
 
-        this.viewport.panBy( this.viewport.deltaPointsFromPixels( event.delta.negate() ), gestureSettings.flickEnabled && !this.constrainDuringPan);
     }
+
 }
 
 function onCanvasDragEnd( event ) {
+    var gestureSettings;
     var canvasDragEndEventArgs = {
         tracker: event.eventSource,
         pointerType: event.pointerType,
@@ -10634,9 +10729,11 @@ function onCanvasDragEnd( event ) {
      */
      this.raiseEvent('canvas-drag-end', canvasDragEndEventArgs);
 
+     gestureSettings = this.gestureSettingsByDeviceType( event.pointerType );
+
     if (!canvasDragEndEventArgs.preventDefaultAction && this.viewport) {
-        var gestureSettings = this.gestureSettingsByDeviceType(event.pointerType);
-        if (gestureSettings.flickEnabled &&
+        if ( !THIS[ this.hash ].draggingToZoom &&
+            gestureSettings.flickEnabled &&
             event.speed >= gestureSettings.flickMinSpeed) {
             var amplitudeX = 0;
             if (this.panHorizontal) {
@@ -10656,6 +10753,13 @@ function onCanvasDragEnd( event ) {
         }
         this.viewport.applyConstraints();
     }
+
+
+    if( gestureSettings.dblClickDragToZoom && THIS[ this.hash ].draggingToZoom === true ){
+        THIS[ this.hash ].draggingToZoom = false;
+    }
+
+
 }
 
 function onCanvasEnter( event ) {
@@ -10719,6 +10823,8 @@ function onCanvasLeave( event ) {
 }
 
 function onCanvasPress( event ) {
+    var gestureSettings;
+
     /**
      * Raised when the primary mouse button is pressed or touch starts on the {@link OpenSeadragon.Viewer#canvas} element.
      *
@@ -10742,6 +10848,24 @@ function onCanvasPress( event ) {
         insideElementReleased: event.insideElementReleased,
         originalEvent: event.originalEvent
     });
+
+
+    gestureSettings = this.gestureSettingsByDeviceType( event.pointerType );
+    if ( gestureSettings.dblClickDragToZoom ){
+        var lastClickTime = THIS[ this.hash ].lastClickTime;
+        var currClickTime = $.now();
+
+        if ( lastClickTime === null) {
+            return;
+        }
+
+        if ((currClickTime - lastClickTime) < this.dblClickTimeThreshold) {
+            THIS[ this.hash ].draggingToZoom = true;
+        }
+
+        THIS[ this.hash ].lastClickTime = null;
+    }
+
 }
 
 function onCanvasRelease( event ) {
@@ -11051,6 +11175,27 @@ function updateMulti( viewer ) {
     }
 }
 
+function doViewerResize(viewer, containerSize){
+    var viewport = viewer.viewport;
+    var zoom = viewport.getZoom();
+    var center = viewport.getCenter();
+    viewport.resize(containerSize, viewer.preserveImageSizeOnResize);
+    viewport.panTo(center, true);
+    var resizeRatio;
+    if (viewer.preserveImageSizeOnResize) {
+        resizeRatio = THIS[viewer.hash].prevContainerSize.x / containerSize.x;
+    } else {
+        var origin = new $.Point(0, 0);
+        var prevDiag = new $.Point(THIS[viewer.hash].prevContainerSize.x, THIS[viewer.hash].prevContainerSize.y).distanceTo(origin);
+        var newDiag = new $.Point(containerSize.x, containerSize.y).distanceTo(origin);
+        resizeRatio = newDiag / prevDiag * THIS[viewer.hash].prevContainerSize.x / containerSize.x;
+    }
+    viewport.zoomTo(zoom * resizeRatio, null, true);
+    THIS[viewer.hash].prevContainerSize = containerSize;
+    THIS[viewer.hash].forceRedraw = true;
+    THIS[viewer.hash].needsResize = false;
+    THIS[viewer.hash].forceResize = false;
+}
 function updateOnce( viewer ) {
 
     //viewer.profiler.beginUpdate();
@@ -11058,29 +11203,22 @@ function updateOnce( viewer ) {
     if (viewer._opening || !THIS[viewer.hash]) {
         return;
     }
-
-    if (viewer.autoResize) {
-        var containerSize = _getSafeElemSize(viewer.container);
-        var prevContainerSize = THIS[viewer.hash].prevContainerSize;
-        if (!containerSize.equals(prevContainerSize)) {
-            var viewport = viewer.viewport;
-            if (viewer.preserveImageSizeOnResize) {
-                var resizeRatio = prevContainerSize.x / containerSize.x;
-                var zoom = viewport.getZoom() * resizeRatio;
-                var center = viewport.getCenter();
-                viewport.resize(containerSize, false);
-                viewport.zoomTo(zoom, null, true);
-                viewport.panTo(center, true);
-            } else {
-                // maintain image position
-                var oldBounds = viewport.getBounds();
-                viewport.resize(containerSize, true);
-                viewport.fitBoundsWithConstraints(oldBounds, true);
+    if (viewer.autoResize || THIS[viewer.hash].forceResize){
+        var containerSize;
+        if(viewer._autoResizePolling){
+            containerSize = _getSafeElemSize(viewer.container);
+            var prevContainerSize = THIS[viewer.hash].prevContainerSize;
+            if (!containerSize.equals(prevContainerSize)) {
+                THIS[viewer.hash].needsResize = true;
             }
-            THIS[viewer.hash].prevContainerSize = containerSize;
-            THIS[viewer.hash].forceRedraw = true;
         }
+        if(THIS[viewer.hash].needsResize){
+            doViewerResize(viewer, containerSize || _getSafeElemSize(viewer.container));
+        }
+
     }
+
+
 
     var viewportChange = viewer.viewport.update();
     var animated = viewer.world.update() || viewportChange;
@@ -11456,7 +11594,8 @@ $.Navigator = function( options ){
         immediateRender:        true,
         blendTime:              0,
         animationTime:          options.animationTime,
-        autoResize:             options.autoResize,
+        // disable autoResize since resize behavior is implemented differently by the navigator
+        autoResize:             false,
         // prevent resizing the navigator from adding unwanted space around the image
         minZoomImageRatio:      1.0,
         background:             options.background,
@@ -12981,6 +13120,7 @@ $.TileSource.prototype = {
      * @param {Number} level
      * @param {Number} x
      * @param {Number} y
+     * @returns {String|Function} url - A string for the url or a function that returns a url string.
      * @throws {Error}
      */
     getTileUrl: function( level, x, y ) {
@@ -13860,7 +14000,7 @@ $.IIIFTileSource = function( options ){
 
     if (!options.maxLevel && !this.emulateLegacyImagePyramid) {
         if (!this.scale_factors) {
-            options.maxLevel = Number(Math.ceil(Math.log(Math.max(this.width, this.height), 2)));
+            options.maxLevel = Number(Math.round(Math.log(Math.max(this.width, this.height), 2)));
         } else {
             var maxScaleFactor = Math.max.apply(null, this.scale_factors);
             options.maxLevel = Math.round(Math.log(maxScaleFactor) * Math.LOG2E);
@@ -14103,8 +14243,8 @@ $.extend( $.IIIFTileSource.prototype, $.TileSource.prototype, /** @lends OpenSea
             scale = Math.pow( 0.5, this.maxLevel - level ),
 
             //# image dimensions at this level
-            levelWidth = Math.ceil( this.width * scale ),
-            levelHeight = Math.ceil( this.height * scale ),
+            levelWidth = Math.round( this.width * scale ),
+            levelHeight = Math.round( this.height * scale ),
 
             //## iiif region
             tileWidth,
@@ -14124,8 +14264,8 @@ $.extend( $.IIIFTileSource.prototype, $.TileSource.prototype, /** @lends OpenSea
 
         tileWidth = this.getTileWidth(level);
         tileHeight = this.getTileHeight(level);
-        iiifTileSizeWidth = Math.ceil( tileWidth / scale );
-        iiifTileSizeHeight = Math.ceil( tileHeight / scale );
+        iiifTileSizeWidth = Math.round( tileWidth / scale );
+        iiifTileSizeHeight = Math.round( tileHeight / scale );
         if (this.version === 1) {
             iiifQuality = "native." + this.tileFormat;
         } else {
@@ -14152,8 +14292,8 @@ $.extend( $.IIIFTileSource.prototype, $.TileSource.prototype, /** @lends OpenSea
             } else {
                 iiifRegion = [ iiifTileX, iiifTileY, iiifTileW, iiifTileH ].join( ',' );
             }
-            iiifSizeW = Math.ceil( iiifTileW * scale );
-            iiifSizeH = Math.ceil( iiifTileH * scale );
+            iiifSizeW = Math.round( iiifTileW * scale );
+            iiifSizeH = Math.round( iiifTileH * scale );
             if ( this.version === 2 && iiifSizeW === this.width ) {
                 iiifSize = "full";
             } else if ( this.version === 3 && iiifSizeW === this.width && iiifSizeH === this.height ) {
@@ -17828,7 +17968,7 @@ function completeJob(loader, job, callback) {
  *      coordinates.
  * @param {Boolean} exists Is this tile a part of a sparse image? ( Also has
  *      this tile failed to load? )
- * @param {String} url The URL of this tile's image.
+ * @param {String|Function} url The URL of this tile's image or a function that returns a url.
  * @param {CanvasRenderingContext2D} context2D The context2D of this tile if it
  *      is provided directly by the tile source.
  * @param {Boolean} loadWithAjax Whether this tile image should be loaded with an AJAX request .
@@ -17879,11 +18019,13 @@ $.Tile = function(level, x, y, bounds, exists, url, context2D, loadWithAjax, aja
      */
     this.exists  = exists;
     /**
-     * The URL of this tile's image.
-     * @member {String} url
+     * Private property to hold string url or url retriever function.
+     * Consumers should access via Tile.getUrl()
+     * @private
+     * @member {String|Function} url
      * @memberof OpenSeadragon.Tile#
      */
-    this.url     = url;
+    this._url     = url;
     /**
      * Post parameters for this tile. For example, it can be an URL-encoded string
      * in k1=v1&k2=v2... format, or a JSON, or a FormData instance... or null if no POST request used
@@ -18053,7 +18195,7 @@ $.Tile.prototype = {
     _hasTransparencyChannel: function() {
         console.warn("Tile.prototype._hasTransparencyChannel() has been " +
             "deprecated and will be removed in the future. Use TileSource.prototype.hasTransparency() instead.");
-        return !!this.context2D || this.url.match('.png');
+        return !!this.context2D || this.getUrl().match('.png');
     },
 
     /**
@@ -18127,11 +18269,35 @@ $.Tile.prototype = {
     },
 
     /**
+     * The URL of this tile's image.
+     * @member {String} url
+     * @memberof OpenSeadragon.Tile#
+     * @deprecated
+     * @returns {String}
+     */
+    get url() {
+        $.console.error("[Tile.url] property has been deprecated. Use [Tile.prototype.getUrl] instead.");
+        return this.getUrl();
+    },
+
+    /**
      * Get the Image object for this tile.
      * @returns {Image}
      */
     getImage: function() {
         return this.cacheImageRecord.getImage();
+    },
+
+    /**
+     * Get the url string for this tile.
+     * @returns {String}
+     */
+    getUrl: function() {
+        if (typeof this._url === 'function') {
+            return this._url();
+        }
+
+        return this._url;
     },
 
     /**
@@ -20044,7 +20210,7 @@ $.Viewport.prototype = {
         );
 
         newZoomPixel = this._pixelFromPoint(this.zoomPoint, bounds);
-        deltaZoomPixels = newZoomPixel.minus( oldZoomPixel );
+        deltaZoomPixels = newZoomPixel.minus( oldZoomPixel ).rotate(-this.getRotation(true));
         deltaZoomPoints = deltaZoomPixels.divide( this._containerInnerSize.x * zoom );
 
         return centerTarget.plus( deltaZoomPoints );
@@ -20076,75 +20242,75 @@ $.Viewport.prototype = {
      * @returns {OpenSeadragon.Rect} constrained bounds.
      */
     _applyBoundaryConstraints: function(bounds) {
-        var newBounds = new $.Rect(
-                bounds.x,
-                bounds.y,
-                bounds.width,
-                bounds.height);
+        var newBounds = this.viewportToViewerElementRectangle(bounds).getBoundingBox();
+        var cb = this.viewportToViewerElementRectangle(this._contentBoundsNoRotate).getBoundingBox();
+
+        var xConstrained = false;
+        var yConstrained = false;
 
         if (this.wrapHorizontal) {
             //do nothing
         } else {
             var boundsRight = newBounds.x + newBounds.width;
-            var contentRight = this._contentBoundsNoRotate.x + this._contentBoundsNoRotate.width;
+            var contentRight = cb.x + cb.width;
 
             var horizontalThreshold, leftDx, rightDx;
-            if (newBounds.width > this._contentBoundsNoRotate.width) {
-                horizontalThreshold = this.visibilityRatio * this._contentBoundsNoRotate.width;
-                leftDx = this._contentBoundsNoRotate.x - newBounds.x + horizontalThreshold;
-                rightDx = contentRight - boundsRight - horizontalThreshold;
-
-                if (rightDx > 0) {
-                    newBounds.x += rightDx;
-                } else if (leftDx < 0) {
-                    newBounds.x += leftDx;
-                }
+            if (newBounds.width > cb.width) {
+                horizontalThreshold = this.visibilityRatio * cb.width;
             } else {
                 horizontalThreshold = this.visibilityRatio * newBounds.width;
-                leftDx = this._contentBoundsNoRotate.x - boundsRight + horizontalThreshold;
-                rightDx = contentRight - newBounds.x - horizontalThreshold;
-                if (horizontalThreshold > this._contentBoundsNoRotate.width) {
-                    newBounds.x += (leftDx + rightDx) / 2;
-                } else if (rightDx < 0) {
-                    newBounds.x += rightDx;
-                } else if (leftDx > 0) {
-                    newBounds.x += leftDx;
-                }
             }
+
+            leftDx = cb.x - boundsRight + horizontalThreshold;
+            rightDx = contentRight - newBounds.x - horizontalThreshold;
+            if (horizontalThreshold > cb.width) {
+                newBounds.x += (leftDx + rightDx) / 2;
+                xConstrained = true;
+            } else if (rightDx < 0) {
+                newBounds.x += rightDx;
+                xConstrained = true;
+            } else if (leftDx > 0) {
+                newBounds.x += leftDx;
+                xConstrained = true;
+            }
+
         }
 
         if (this.wrapVertical) {
             //do nothing
         } else {
             var boundsBottom = newBounds.y + newBounds.height;
-            var contentBottom = this._contentBoundsNoRotate.y + this._contentBoundsNoRotate.height;
+            var contentBottom = cb.y + cb.height;
 
             var verticalThreshold, topDy, bottomDy;
-            if (newBounds.height > this._contentBoundsNoRotate.height) {
-                verticalThreshold = this.visibilityRatio * this._contentBoundsNoRotate.height;
-                topDy = this._contentBoundsNoRotate.y - newBounds.y + verticalThreshold;
-                bottomDy = contentBottom - boundsBottom - verticalThreshold;
-
-                if (bottomDy > 0) {
-                    newBounds.y += bottomDy;
-                } else if (topDy < 0) {
-                    newBounds.y += topDy;
-                }
-            } else {
+            if (newBounds.height > cb.height) {
+                verticalThreshold = this.visibilityRatio * cb.height;
+            } else{
                 verticalThreshold = this.visibilityRatio * newBounds.height;
-                topDy = this._contentBoundsNoRotate.y - boundsBottom + verticalThreshold;
-                bottomDy = contentBottom - newBounds.y - verticalThreshold;
-                if (verticalThreshold > this._contentBoundsNoRotate.height) {
-                    newBounds.y += (topDy + bottomDy) / 2;
-                } else if (bottomDy < 0) {
-                    newBounds.y += bottomDy;
-                } else if (topDy > 0) {
-                    newBounds.y += topDy;
-                }
             }
+
+            topDy = cb.y - boundsBottom + verticalThreshold;
+            bottomDy = contentBottom - newBounds.y - verticalThreshold;
+            if (verticalThreshold > cb.height) {
+                newBounds.y += (topDy + bottomDy) / 2;
+                yConstrained = true;
+            } else if (bottomDy < 0) {
+                newBounds.y += bottomDy;
+                yConstrained = true;
+            } else if (topDy > 0) {
+                newBounds.y += topDy;
+                yConstrained = true;
+            }
+
         }
 
-        return newBounds;
+        var constraintApplied = xConstrained || yConstrained;
+        var newViewportBounds = constraintApplied ? this.viewerElementToViewportRectangle(newBounds) : bounds.clone();
+        newViewportBounds.xConstrained = xConstrained;
+        newViewportBounds.yConstrained = yConstrained;
+        newViewportBounds.constraintApplied = constraintApplied;
+
+        return newViewportBounds;
     },
 
     /**
@@ -20178,7 +20344,7 @@ $.Viewport.prototype = {
      * @function
      * @param {Boolean} [immediately=false]
      * @returns {OpenSeadragon.Viewport} Chainable.
-     * @fires OpenSeadragon.Viewer.event:constrain
+     * @fires OpenSeadragon.Viewer.event:constrain if constraints were applied
      */
     applyConstraints: function(immediately) {
         var actualZoom = this.getZoom();
@@ -20188,17 +20354,13 @@ $.Viewport.prototype = {
             this.zoomTo(constrainedZoom, this.zoomPoint, immediately);
         }
 
-        var bounds = this.getBoundsNoRotate();
-        var constrainedBounds = this._applyBoundaryConstraints(bounds);
-        this._raiseConstraintsEvent(immediately);
+        var constrainedBounds = this.getConstrainedBounds(false);
 
-        if (bounds.x !== constrainedBounds.x ||
-            bounds.y !== constrainedBounds.y ||
-            immediately) {
-            this.fitBounds(
-                constrainedBounds.rotate(-this.getRotation(true)),
-                immediately);
+        if(constrainedBounds.constraintApplied){
+            this.fitBounds(constrainedBounds, immediately);
+            this._raiseConstraintsEvent(immediately);
         }
+
         return this;
     },
 
@@ -20248,45 +20410,51 @@ $.Viewport.prototype = {
         newBounds.y = center.y - newBounds.height / 2;
         var newZoom = 1.0 / newBounds.width;
 
-        if (constraints) {
-            var newBoundsAspectRatio = newBounds.getAspectRatio();
-            var newConstrainedZoom = this._applyZoomConstraints(newZoom);
-
-            if (newZoom !== newConstrainedZoom) {
-                newZoom = newConstrainedZoom;
-                newBounds.width = 1.0 / newZoom;
-                newBounds.x = center.x - newBounds.width / 2;
-                newBounds.height = newBounds.width / newBoundsAspectRatio;
-                newBounds.y = center.y - newBounds.height / 2;
-            }
-
-            newBounds = this._applyBoundaryConstraints(newBounds);
-            center = newBounds.getCenter();
-            this._raiseConstraintsEvent(immediately);
-        }
-
         if (immediately) {
             this.panTo(center, true);
-            return this.zoomTo(newZoom, null, true);
+            this.zoomTo(newZoom, null, true);
+            if(constraints){
+                this.applyConstraints(true);
+            }
+            return this;
         }
 
-        this.panTo(this.getCenter(true), true);
-        this.zoomTo(this.getZoom(true), null, true);
+        var currentCenter = this.getCenter(true);
+        var currentZoom = this.getZoom(true);
+        this.panTo(currentCenter, true);
+        this.zoomTo(currentZoom, null, true);
 
         var oldBounds = this.getBounds();
         var oldZoom   = this.getZoom();
 
         if (oldZoom === 0 || Math.abs(newZoom / oldZoom - 1) < 0.00000001) {
-            this.zoomTo(newZoom, true);
-            return this.panTo(center, immediately);
+            this.zoomTo(newZoom, null, true);
+            this.panTo(center, immediately);
+            if(constraints){
+                this.applyConstraints(false);
+            }
+            return this;
         }
 
-        newBounds = newBounds.rotate(-this.getRotation());
-        var referencePoint = newBounds.getTopLeft().times(newZoom)
-            .minus(oldBounds.getTopLeft().times(oldZoom))
-            .divide(newZoom - oldZoom);
+        if(constraints){
+            this.panTo(center, false);
+            this.zoomTo(newZoom, null, false);
 
-        return this.zoomTo(newZoom, referencePoint, immediately);
+            var constrainedBounds = this.getConstrainedBounds();
+
+            this.panTo(currentCenter, true);
+            this.zoomTo(currentZoom, null, true);
+
+            this.fitBounds(constrainedBounds);
+        } else {
+            var rotatedNewBounds = newBounds.rotate(-this.getRotation());
+            var referencePoint = rotatedNewBounds.getTopLeft().times(newZoom)
+                .minus(oldBounds.getTopLeft().times(oldZoom))
+                .divide(newZoom - oldZoom);
+
+            this.zoomTo(newZoom, referencePoint, immediately);
+        }
+        return this;
     },
 
     /**
@@ -20360,7 +20528,10 @@ $.Viewport.prototype = {
      * Returns bounds taking constraints into account
      * Added to improve constrained panning
      * @param {Boolean} current - Pass true for the current location; defaults to false (target location).
-     * @returns {OpenSeadragon.Viewport} Chainable.
+     * @returns {OpenSeadragon.Rect} The bounds in viewport coordinates after applying constraints. The returned $.Rect
+     *                               contains additional properties constraintsApplied, xConstrained and yConstrained.
+     *                               These flags indicate whether the viewport bounds were modified by the constraints
+     *                               of the viewer rectangle, and in which dimension(s).
      */
     getConstrainedBounds: function(current) {
         var bounds,
@@ -20486,17 +20657,15 @@ $.Viewport.prototype = {
     },
 
     /**
-     * Rotates this viewport to the angle specified. Alias for rotateTo.
+     * Rotates this viewport to the angle specified.
      * @function
      * @param {Number} degrees The degrees to set the rotation to.
-     * @param {OpenSeadragon.Point} [pivot] (Optional) point in viewport coordinates
-     * around which the rotation should be performed. Defaults to the center of the viewport.
      * @param {Boolean} [immediately=false] Whether to animate to the new angle
      * or rotate immediately.
      * * @returns {OpenSeadragon.Viewport} Chainable.
      */
-    setRotation: function(degrees, pivot, immediately) {
-        return this.rotateTo(degrees, pivot, immediately);
+    setRotation: function(degrees, immediately) {
+        return this.rotateTo(degrees, null, immediately);
     },
 
     /**
@@ -20509,6 +20678,20 @@ $.Viewport.prototype = {
         return current ?
             this.degreesSpring.current.value :
             this.degreesSpring.target.value;
+    },
+
+    /**
+     * Rotates this viewport to the angle specified around a pivot point. Alias for rotateTo.
+     * @function
+     * @param {Number} degrees The degrees to set the rotation to.
+     * @param {OpenSeadragon.Point} [pivot] (Optional) point in viewport coordinates
+     * around which the rotation should be performed. Defaults to the center of the viewport.
+     * @param {Boolean} [immediately=false] Whether to animate to the new angle
+     * or rotate immediately.
+     * * @returns {OpenSeadragon.Viewport} Chainable.
+     */
+    setRotationWithPivot: function(degrees, pivot, immediately) {
+        return this.rotateTo(degrees, pivot, immediately);
     },
 
     /**
@@ -22788,7 +22971,7 @@ $.extend($.TiledImage.prototype, $.EventSource.prototype, /** @lends OpenSeadrag
             bounds,
             sourceBounds,
             exists,
-            url,
+            urlOrGetter,
             post,
             ajaxHeaders,
             context2D,
@@ -22809,7 +22992,7 @@ $.extend($.TiledImage.prototype, $.EventSource.prototype, /** @lends OpenSeadrag
             bounds  = this.getTileBounds( level, x, y );
             sourceBounds = tileSource.getTileBounds( level, xMod, yMod, true );
             exists  = tileSource.tileExists( level, xMod, yMod );
-            url     = tileSource.getTileUrl( level, xMod, yMod );
+            urlOrGetter     = tileSource.getTileUrl( level, xMod, yMod );
             post    = tileSource.getTilePostData( level, xMod, yMod );
 
             // Headers are only applicable if loadTilesWithAjax is set
@@ -22832,13 +23015,13 @@ $.extend($.TiledImage.prototype, $.EventSource.prototype, /** @lends OpenSeadrag
                 y,
                 bounds,
                 exists,
-                url,
+                urlOrGetter,
                 context2D,
                 this.loadTilesWithAjax,
                 ajaxHeaders,
                 sourceBounds,
                 post,
-                tileSource.getTileHashKey(level, xMod, yMod, url, ajaxHeaders, post)
+                tileSource.getTileHashKey(level, xMod, yMod, urlOrGetter, ajaxHeaders, post)
             );
 
             if (this.getFlip()) {
@@ -22877,7 +23060,7 @@ $.extend($.TiledImage.prototype, $.EventSource.prototype, /** @lends OpenSeadrag
         var _this = this;
         tile.loading = true;
         this._imageLoader.addJob({
-            src: tile.url,
+            src: tile.getUrl(),
             tile: tile,
             source: this.source,
             postData: tile.postData,
@@ -22906,7 +23089,7 @@ $.extend($.TiledImage.prototype, $.EventSource.prototype, /** @lends OpenSeadrag
      */
     _onTileLoad: function( tile, time, data, errorMsg, tileRequest ) {
         if ( !data ) {
-            $.console.error( "Tile %s failed to load: %s - error: %s", tile, tile.url, errorMsg );
+            $.console.error( "Tile %s failed to load: %s - error: %s", tile, tile.getUrl(), errorMsg );
             /**
              * Triggered when a tile fails to load.
              *
@@ -22932,7 +23115,7 @@ $.extend($.TiledImage.prototype, $.EventSource.prototype, /** @lends OpenSeadrag
         }
 
         if ( time < this.lastResetTime ) {
-            $.console.warn( "Ignoring tile %s loaded before reset: %s", tile, tile.url );
+            $.console.warn( "Ignoring tile %s loaded before reset: %s", tile, tile.getUrl() );
             tile.loading = false;
             return;
         }
@@ -22977,7 +23160,7 @@ $.extend($.TiledImage.prototype, $.EventSource.prototype, /** @lends OpenSeadrag
                 tile.loading = false;
                 tile.loaded = true;
                 tile.hasTransparency = _this.source.hasTransparency(
-                    tile.context2D, tile.url, tile.ajaxHeaders, tile.postData
+                    tile.context2D, tile.getUrl(), tile.ajaxHeaders, tile.postData
                 );
                 if (!tile.context2D) {
                     _this._tileCache.cacheTile({
@@ -22998,7 +23181,7 @@ $.extend($.TiledImage.prototype, $.EventSource.prototype, /** @lends OpenSeadrag
          * @event tile-loaded
          * @memberof OpenSeadragon.Viewer
          * @type {object}
-         * @property {Image || *} image - The image (data) of the tile. Deprecated.
+         * @property {Image|*} image - The image (data) of the tile. Deprecated.
          * @property {*} data image data, the data sent to ImageJob.prototype.finish(), by default an Image object
          * @property {OpenSeadragon.TiledImage} tiledImage - The tiled image of the loaded tile.
          * @property {OpenSeadragon.Tile} tile - The tile which has been loaded.
@@ -23160,7 +23343,7 @@ $.extend($.TiledImage.prototype, $.EventSource.prototype, /** @lends OpenSeadrag
             useSketch = this.opacity < 1 ||
                 (this.compositeOperation && this.compositeOperation !== 'source-over') ||
                 (!this._isBottomItem() &&
-                    this.source.hasTransparency(tile.context2D, tile.url, tile.ajaxHeaders, tile.postData));
+                    this.source.hasTransparency(tile.context2D, tile.getUrl(), tile.ajaxHeaders, tile.postData));
         }
 
         var sketchScale;
