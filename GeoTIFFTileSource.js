@@ -102,25 +102,11 @@
                             }
                             return accumulator;
                         }, []);
-                        let imagesets = aspectRatioSets.map(set=>set.images);
-                        return imagesets.map(images=> new $.GeoTIFFTileSource({GeoTIFF:tiff, GeoTIFFImages:images},opts));
 
-                        // //Separate out by aspect ratio and tiled status
-                        // let aspectRatioSets=[...new Set(images.map(i=>(i.getWidth()/i.getHeight()).toFixed(2)+'-'+i.isTiled))]
-                        //         .map(ar=>images.filter(i=>(i.getWidth()/i.getHeight()).toFixed(2)+'-'+i.isTiled == ar));
-                        // //For each aspect ratio, extract sets of decreasing width images as pyramids
-                        // let imagesets = aspectRatioSets.map(images=>{
-                        //     let sortedByWidth=[...new Set(images.map(im=>im.getWidth()))]
-                        //         .map(w=>images.filter(im=>im.getWidth()==w));
-                        //     let arr=[]
-                        //     sortedByWidth.forEach((s)=>{
-                        //         s.forEach((im,index)=>{
-                        //             arr[index] = (arr[index]||[]).concat(im);
-                        //         })
-                        //     })
-                        //     return arr;//arr = array of arrays of images; each array of images makes up a tilesource set
-                        // }).flat();//flatten into an array of tileSource-defining image arrays
-                        // return imagesets.map(images=> new $.GeoTIFFTileSource({GeoTIFF:tiff, GeoTIFFImages:images},opts));
+                        let imagesets = aspectRatioSets.map(set=>set.images);
+                        let tilesources = imagesets.map(images=> new $.GeoTIFFTileSource({GeoTIFF:tiff, GeoTIFFImages:images},opts));
+                        return tilesources;
+
                     })
     }
 
