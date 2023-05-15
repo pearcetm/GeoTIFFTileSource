@@ -243,9 +243,7 @@
         }
 
         let images = this.GeoTIFFImages.sort((a,b)=>b.getWidth() - a.getWidth());
-        let tiledimages = images.filter(i=>i.isTiled);
         
-
         //default to 256x256 tiles, but defer to options passed in
         let defaultTileWidth=defaultTileHeight=256;
 
@@ -258,7 +256,7 @@
         this.dimensions  = new $.Point( this.width, this.height );
 
         //a valid tiled pyramid has strictly monotonic size for levels
-        let pyramid=tiledimages.reduce((acc,im)=>{
+        let pyramid=images.reduce((acc,im)=>{
             if(acc.width!==-1){
                 acc.valid = acc.valid && im.getWidth()<acc.width;//ensure width monotonically decreases
             }
