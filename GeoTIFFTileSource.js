@@ -83,22 +83,44 @@
         return tiff.then(t=>{tiff=t; return t.getImageCount()})
                    .then(c=>Promise.all([...Array(c).keys()].map(index=>tiff.getImage(index))))
                    .then(images=>{
-                        //Separate out by aspect ratio and tiled status
-                        let aspectRatioSets=[...new Set(images.map(i=>(i.getWidth()/i.getHeight()).toFixed(2)+'-'+i.isTiled))]
-                                .map(ar=>images.filter(i=>(i.getWidth()/i.getHeight()).toFixed(2)+'-'+i.isTiled == ar));
-                        //For each aspect ratio, extract sets of decreasing width images as pyramids
-                        let imagesets = aspectRatioSets.map(images=>{
-                            let sortedByWidth=[...new Set(images.map(im=>im.getWidth()))]
-                                .map(w=>images.filter(im=>im.getWidth()==w));
-                            let arr=[]
-                            sortedByWidth.forEach((s)=>{
-                                s.forEach((im,index)=>{
-                                    arr[index] = (arr[index]||[]).concat(im);
-                                })
-                            })
-                            return arr;//arr = array of arrays of images; each array of images makes up a tilesource set
-                        }).flat();//flatten into an array of tileSource-defining image arrays
+
+                        // Sort by width (largest first), then detect pyramids
+                        images.sort((a,b)=>b.getWidth() - a.getWidth());
+                        // find unique aspect ratios (with tolerance to account for rounding) 
+                        const tolerance = 0.015
+                        let aspectRatioSets = images.reduce((accumulator, image)=>{
+                            let r = image.getWidth() / image.getHeight();
+                            let exists = accumulator.filter(set=>Math.abs(1-set.aspectRatio/r) < tolerance);
+                            if(exists.length == 0){
+                                let set = {
+                                    aspectRatio: r,
+                                    images: [image]
+                                };
+                                accumulator.push(set);
+                            } else {
+                                exists[0].images.push(image);
+                            }
+                            return accumulator;
+                        }, []);
+                        let imagesets = aspectRatioSets.map(set=>set.images);
                         return imagesets.map(images=> new $.GeoTIFFTileSource({GeoTIFF:tiff, GeoTIFFImages:images},opts));
+
+                        // //Separate out by aspect ratio and tiled status
+                        // let aspectRatioSets=[...new Set(images.map(i=>(i.getWidth()/i.getHeight()).toFixed(2)+'-'+i.isTiled))]
+                        //         .map(ar=>images.filter(i=>(i.getWidth()/i.getHeight()).toFixed(2)+'-'+i.isTiled == ar));
+                        // //For each aspect ratio, extract sets of decreasing width images as pyramids
+                        // let imagesets = aspectRatioSets.map(images=>{
+                        //     let sortedByWidth=[...new Set(images.map(im=>im.getWidth()))]
+                        //         .map(w=>images.filter(im=>im.getWidth()==w));
+                        //     let arr=[]
+                        //     sortedByWidth.forEach((s)=>{
+                        //         s.forEach((im,index)=>{
+                        //             arr[index] = (arr[index]||[]).concat(im);
+                        //         })
+                        //     })
+                        //     return arr;//arr = array of arrays of images; each array of images makes up a tilesource set
+                        // }).flat();//flatten into an array of tileSource-defining image arrays
+                        // return imagesets.map(images=> new $.GeoTIFFTileSource({GeoTIFF:tiff, GeoTIFFImages:images},opts));
                     })
     }
 
@@ -249,14 +271,14 @@
         this.aspectRatio = this.width/this.height;
         this.dimensions  = new $.Point( this.width, this.height );
 
-        //a valid tiled pyramid has strictly monotonic size for levels; all levels must be tiled
+        //a valid tiled pyramid has strictly monotonic size for levels
         let pyramid=tiledimages.reduce((acc,im)=>{
             if(acc.width!==-1){
                 acc.valid = acc.valid && im.getWidth()<acc.width;//ensure width monotonically decreases
             }
             acc.width=im.getWidth();
             return acc;
-        },{valid:tiledimages.length>0 && tiledimages.length==images.length, width:-1});
+        },{valid:true, width:-1});
 
         if(pyramid.valid){
             this.levels = images.map((image)=>{
