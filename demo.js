@@ -29,12 +29,20 @@ document.getElementById('use-link').onclick=function(){
     
 }
 
+document.querySelector('.demo-link').onclick=function(){
+    // console.log('demo-link clicked',this);
+    let href = this.getAttribute('data-href');
+    // console.log('clicked:',href);
+    document.querySelector('#link-input').setAttribute('value',href);
+    document.querySelector('#use-link').dispatchEvent(new Event('click'));
+}
+
 function setupImage(tileSourceInput,tilesourceName=''){
     viewer.close();
     clearImageInfo();
     document.getElementById('filename').textContent=tilesourceName;
 
-    let tiffTileSources = OpenSeadragon.GeoTIFFTileSource.getAllTileSources(tileSourceInput);
+    let tiffTileSources = OpenSeadragon.GeoTIFFTileSource.getAllTileSources(tileSourceInput, {logLatency: true});
     tiffTileSources.then(ts=>viewer.open(ts));
 
     tiffTileSources.then(tileSources=>{
