@@ -168,7 +168,7 @@
         getTileUrl: function ( levelnum, x, y ) {
             // return dataURL from reading tile data from the GeoTIFF object as String object (for cache key) with attached promise 
             let level = this.levels[levelnum];
-            let url = new String(`${levelnum}/${x}_${y}`);
+            let url = new String(`${levelnum}/${x}_${y}`); // use new String() so that custom fields can be set (see url.fetch below)
 
             url.fetch = ( (ts,level,x,y,src)=> ()=>regionToDataUrl.call(ts, level, x, y, src))(this, level, x, y, url);
 
@@ -202,40 +202,179 @@
 
         let startTime = this.options.logLatency && Date.now();
         
-        let w = level.tileWidth;
-        let h = level.tileHeight;
-        let window = [x*w, y*h, (x+1)*w, (y+1)*h].map(v=>Math.round(v * level.scalefactor));//scale the requested tile to layer image coordinates
-        let abortController = src.abortController = new AbortController();
+        let abortController = src.abortController = new AbortController(); // add abortController to the src object so OpenSeadragon can abort the request
         let abortSignal = abortController.signal;
 
-        return level.image.readRGB({
-            interleave:true,
-            window:window,
-            pool:this._pool,
-            width:level.tileWidth,
-            height:level.tileHeight,
-            signal:abortSignal
-        }).then(data=>{
-            let canvas = document.createElement('canvas');
-            canvas.width = level.tileWidth;
-            canvas.height = level.tileHeight;
-            let ctx = canvas.getContext('2d');
+        // Use getTileOrStrip followed by converters because it is noticably more efficient than readRGB
+        return level.image.getTileOrStrip(
+                x,
+                y,
+                null,
+                this._pool,
+                abortSignal
+            ).then(raster=>{
+                let data = new Uint8ClampedArray(raster.data);
+                let canvas = document.createElement('canvas');
+                canvas.width = level.tileWidth;
+                canvas.height = level.tileHeight;
+                let ctx = canvas.getContext('2d');
 
-            let arr = new Uint8ClampedArray(4*canvas.width*canvas.height);
-            let rgb = new Uint8ClampedArray(data);
-            let i, a;
-            for(i=0, a=0;i<rgb.length; i+=3, a+=4){
-                arr[a]=rgb[i];
-                arr[a+1]=rgb[i+1];
-                arr[a+2]=rgb[i+2];
-                arr[a+3]=255;
-            }
-            ctx.putImageData(new ImageData(arr,canvas.width,canvas.height), 0, 0);
+                let photometricInterpretation = level.image.fileDirectory.PhotometricInterpretation;
+                let arr;
+                switch(photometricInterpretation){
+                    case GeoTIFF.globals.photometricInterpretations.WhiteIsZero:  // grayscale, white is zero
+                        arr = Converters.RGBAfromWhiteIsZero(data, 2 ** level.image.fileDirectory.BitsPerSample[0]); break;
+                    case GeoTIFF.globals.photometricInterpretations.BlackIsZero:  // grayscale, white is zero
+                        arr = Converters.RGBAfromBlackIsZero(data, 2 ** level.image.fileDirectory.BitsPerSample[0]); break;
+                    case GeoTIFF.globals.photometricInterpretations.RGB:  // RGB
+                        arr = Converters.RGBAfromRGB(data); break;
+                    case GeoTIFF.globals.photometricInterpretations.Palette:  // colormap
+                        arr = Converters.RGBAfromPalette(data, 2 ** level.image.fileDirectory.colorMap); break;
+                    // case GeoTIFF.globals.photometricInterpretations.TransparencyMask: // Transparency Mask
+                    //     break; 
+                    case GeoTIFF.globals.photometricInterpretations.CMYK:  // CMYK
+                        arr = Converters.RGBAfromCMYK(data); break;
+                    case GeoTIFF.globals.photometricInterpretations.YCbCr:  // YCbCr
+                        arr = Converters.RGBAfromYCbCr(data); break;
+                    case GeoTIFF.globals.photometricInterpretations.CIELab: // CIELab
+                        arr = Converters.RGBAfromCIELab(data); break;
+                    
+                }
 
-            this.options.logLatency && (typeof this.options.logLatency=='function' ? this.logLatency : console.log)('Tile latency (ms):', Date.now() - startTime)
-            return canvas.toDataURL('image/jpeg',0.8);
-        })
+                ctx.putImageData(new ImageData(arr,canvas.width,canvas.height), 0, 0);
+                
+                let dataURL = canvas.toDataURL('image/jpeg',0.8);
+                this.options.logLatency && (typeof this.options.logLatency=='function' ? this.logLatency : console.log)('Tile latency (ms):', Date.now() - startTime)
+                return dataURL;
+            })
     }
+
+    // Adapted from https://github.com/geotiffjs/geotiff.js
+    class Converters{
+        static RGBAfromYCbCr(input) {
+            const rgbaRaster = new Uint8ClampedArray(input.length * 4 / 3);
+            let i, j;
+            for (i = 0, j = 0; i < input.length; i += 3, j += 4) {
+                const y = input[i];
+                const cb = input[i + 1];
+                const cr = input[i + 2];
+            
+                rgbaRaster[j] = (y + (1.40200 * (cr - 0x80)));
+                rgbaRaster[j + 1] = (y - (0.34414 * (cb - 0x80)) - (0.71414 * (cr - 0x80)));
+                rgbaRaster[j + 2] = (y + (1.77200 * (cb - 0x80)));
+                rgbaRaster[j + 3] = 255;
+            }
+            return rgbaRaster;
+        }
+        static RGBAfromRGB(input) {
+            const rgbaRaster = new Uint8ClampedArray(input.length * 4 / 3);
+            let i, j;
+            for (i = 0, j = 0; i < input.length; i += 3, j += 4) {
+                rgbaRaster[j] = input[i];
+                rgbaRaster[j + 1] = input[i+1];
+                rgbaRaster[j + 2] = input[i+2];
+                rgbaRaster[j + 3] = 255;
+            }
+            return rgbaRaster;
+        }
+
+        static RGBAfromWhiteIsZero(input, max) {
+            const rgbaRaster = new Uint8Array(input.length * 4);
+            let value;
+            for (let i = 0, j = 0; i < input.length; ++i, j += 3) {
+                value = 256 - (input[i] / max * 256);
+                rgbaRaster[j] = value;
+                rgbaRaster[j + 1] = value;
+                rgbaRaster[j + 2] = value;
+                rgbaRaster[j + 3] = 255;
+            }
+            return rgbaRaster;
+        }
+          
+        static RGBAfromBlackIsZero(input, max) {
+            const rgbaRaster = new Uint8Array(input.length * 4);
+            let value;
+            for (let i = 0, j = 0; i < input.length; ++i, j += 3) {
+                value = input[i] / max * 256;
+                rgbaRaster[j] = value;
+                rgbaRaster[j + 1] = value;
+                rgbaRaster[j + 2] = value;
+                rgbaRaster[j + 3] = 255;
+            }
+            return rgbaRaster;
+        }
+          
+        static RGBAfromPalette(input, colorMap) {
+            const rgbaRaster = new Uint8Array(input.length * 4);
+            const greenOffset = colorMap.length / 3;
+            const blueOffset = colorMap.length / 3 * 2;
+            for (let i = 0, j = 0; i < input.length; ++i, j += 3) {
+                const mapIndex = input[i];
+                rgbaRaster[j] = colorMap[mapIndex] / 65536 * 256;
+                rgbaRaster[j + 1] = colorMap[mapIndex + greenOffset] / 65536 * 256;
+                rgbaRaster[j + 2] = colorMap[mapIndex + blueOffset] / 65536 * 256;
+                rgbaRaster[j + 3] = 255;
+            }
+            return rgbaRaster;
+        }
+          
+        static RGBAfromCMYK(input) {
+            const rgbaRaster = new Uint8Array(input.length);
+            for (let i = 0, j = 0; i < input.length; i += 4, j += 4) {
+                const c = input[i];
+                const m = input[i + 1];
+                const y = input[i + 2];
+                const k = input[i + 3];
+            
+                rgbaRaster[j] = 255 * ((255 - c) / 256) * ((255 - k) / 256);
+                rgbaRaster[j + 1] = 255 * ((255 - m) / 256) * ((255 - k) / 256);
+                rgbaRaster[j + 2] = 255 * ((255 - y) / 256) * ((255 - k) / 256);
+                rgbaRaster[j + 3] = 255;
+            }
+            return rgbaRaster;
+        }
+          
+        static RGBAfromCIELab(input) {
+            // from https://github.com/antimatter15/rgb-lab/blob/master/color.js
+            const Xn = 0.95047;
+            const Yn = 1.00000;
+            const Zn = 1.08883;
+            const rgbaRaster = new Uint8Array(input.length * 4 / 3);
+          
+            for (let i = 0, j = 0; i < input.length; i += 3, j += 4) {
+                const L = input[i + 0];
+                const a_ = input[i + 1] << 24 >> 24; // conversion from uint8 to int8
+                const b_ = input[i + 2] << 24 >> 24; // same
+            
+                let y = (L + 16) / 116;
+                let x = (a_ / 500) + y;
+                let z = y - (b_ / 200);
+                let r;
+                let g;
+                let b;
+            
+                x = Xn * ((x * x * x > 0.008856) ? x * x * x : (x - (16 / 116)) / 7.787);
+                y = Yn * ((y * y * y > 0.008856) ? y * y * y : (y - (16 / 116)) / 7.787);
+                z = Zn * ((z * z * z > 0.008856) ? z * z * z : (z - (16 / 116)) / 7.787);
+            
+                r = (x * 3.2406) + (y * -1.5372) + (z * -0.4986);
+                g = (x * -0.9689) + (y * 1.8758) + (z * 0.0415);
+                b = (x * 0.0557) + (y * -0.2040) + (z * 1.0570);
+            
+                r = (r > 0.0031308) ? ((1.055 * (r ** (1 / 2.4))) - 0.055) : 12.92 * r;
+                g = (g > 0.0031308) ? ((1.055 * (g ** (1 / 2.4))) - 0.055) : 12.92 * g;
+                b = (b > 0.0031308) ? ((1.055 * (b ** (1 / 2.4))) - 0.055) : 12.92 * b;
+            
+                rgbaRaster[j] = Math.max(0, Math.min(1, r)) * 255;
+                rgbaRaster[j + 1] = Math.max(0, Math.min(1, g)) * 255;
+                rgbaRaster[j + 2] = Math.max(0, Math.min(1, b)) * 255;
+                rgbaRaster[j + 3] = 255;
+            }
+            return rgbaRaster;
+        }
+    }
+    
+
 
     function setupLevels(){
         if(this.ready){
