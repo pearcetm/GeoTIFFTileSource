@@ -83,7 +83,8 @@
         return tiff.then(t=>{tiff=t; return t.getImageCount()})
                    .then(c=>Promise.all([...Array(c).keys()].map(index=>tiff.getImage(index))))
                    .then(images=>{
-
+                        // Filter out images with photometricInterpretation.TransparencyMask
+                        images = images.filter(image=>image.fileDirectory.photometricInterpretation!==GeoTIFF.globals.photometricInterpretations.TransparencyMask)
                         // Sort by width (largest first), then detect pyramids
                         images.sort((a,b)=>b.getWidth() - a.getWidth());
                         // find unique aspect ratios (with tolerance to account for rounding) 

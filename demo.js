@@ -6,10 +6,10 @@ let viewer =window.viewer= OpenSeadragon({
     minZoomImageRatio:0.01,
     visibilityRatio:0,
     crossOriginPolicy: 'Anonymous',
-    ajaxWithCredentials: false,
+    ajaxWithCredentials: true,
     sequenceMode:true,
 });
-
+//https://modis-vi-nasa.s3-us-west-2.amazonaws.com//MOD13A1.006/2018.01.01.tif
 
 document.getElementById('file-picker').onchange=function(ev){
     viewer.close();
@@ -28,14 +28,16 @@ document.getElementById('use-link').onclick=function(){
     setupImage(url,url);
     
 }
-
-document.querySelector('.demo-link').onclick=function(){
-    // console.log('demo-link clicked',this);
-    let href = this.getAttribute('data-href');
-    // console.log('clicked:',href);
-    document.querySelector('#link-input').setAttribute('value',href);
-    document.querySelector('#use-link').dispatchEvent(new Event('click'));
-}
+let links=[...document.querySelectorAll('.demo-link')].map(el=>{
+    el.onclick=function(){
+        // console.log('demo-link clicked',this);
+        let href = this.getAttribute('data-href');
+        // console.log('clicked:',href);
+        document.querySelector('#link-input').setAttribute('value',href);
+        document.querySelector('#use-link').dispatchEvent(new Event('click'));
+    }
+    return el;
+});
 
 function setupImage(tileSourceInput,tilesourceName=''){
     viewer.close();
