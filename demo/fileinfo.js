@@ -8,7 +8,6 @@ document.getElementById('file-picker').onchange=function(ev){
 }
 
 document.getElementById('use-link').onclick=function(){
-    viewer.close();
     clearImageInfo();
     let input = document.getElementById('link-input');
     let url=input.value;
