@@ -4,7 +4,7 @@ Implementation of a [TileSource](https://openseadragon.github.io/docs/OpenSeadra
 
 
 
-See it in action at [https://pearcetm.github.io/GeoTIFFTileSource/demo.html](https://pearcetm.github.io/GeoTIFFTileSource/demo.html)
+See it in action at [https://pearcetm.github.io/GeoTIFFTileSource/demo/demo.html](https://pearcetm.github.io/GeoTIFFTileSource/demo/demo.html)
 
 ## How to create GeoTIFF files
 
