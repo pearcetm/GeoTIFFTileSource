@@ -1,10 +1,12 @@
 {
   "name": "geotiff-tilesource",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
-  "files":["dist"],
-  "main":"./dist/GeoTIFFTileSource.umd.js",
-  "module":"./dist/GeoTIFFTileSource.es.js",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/GeoTIFFTileSource.umd.js",
+  "module": "./dist/GeoTIFFTileSource.es.js",
   "exports": {
     ".": {
       "import": "./dist/GeoTIFFTileSource.es.js",
