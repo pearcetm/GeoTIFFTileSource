@@ -1,0 +1,26 @@
+{
+  "name": "geotiff-tilesource",
+  "version": "0.1.0",
+  "description": "",
+  "files":["dist"],
+  "main":"./dist/GeoTIFFTileSource.umd.js",
+  "module":"./dist/GeoTIFFTileSource.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/GeoTIFFTileSource.es.js",
+      "require": "./dist/GeoTIFFTileSource.umd.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "type": "module",
+  "devDependencies": {
+    "vite": "^5.0.8"
+  },
+  "dependencies": {
+    "geotiff": "^2.1.2"
+  }
+}
