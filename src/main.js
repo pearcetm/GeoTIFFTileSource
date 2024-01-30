@@ -32,7 +32,16 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
 	 * @property {Array}  levels
 	 */
 	class GeoTIFFTileSource extends OpenSeadragon.TileSource {
-
+		/**
+		 * Create a shared GeoTIFF Pool for all GeoTIFFTileSources to use.
+		 *
+		 * If a shared pool is not created, every page of every GeoTIFF will create its own pool,
+		 * which can quickly lead to browser crashes.
+		 *
+		 * @static sharedPool
+		 * @type {Pool}
+		 */
+		static sharedPool = new Pool();
 
 		constructor(input, opts = {logLatency: false}) {
 			super();
@@ -42,7 +51,7 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
 			this.options = opts;
 
 			this._ready = false;
-			this._pool = new Pool();
+			this._pool = GeoTIFFTileSource.sharedPool;
 
 			if (input.GeoTIFF && input.GeoTIFFImages) {
 				this.promises = {
@@ -82,12 +91,11 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
 			}
 		}
 
-		static getAllTileSources = async function (input, opts) {
+		static getAllTileSources = async (input, opts) => {
 			let tiff = input instanceof File ? fromBlob(input) : fromUrl(input);
 
 			return tiff
 				.then((t) => {
-					// @ts-ignore
 					tiff = t;
 					return t.getImageCount();
 				})
@@ -180,7 +188,6 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
 			let level = this.levels[levelnum];
 			let url = new String(`${levelnum}/${x}_${y}`); // use new String() so that custom fields can be set (see url.fetch below)
 
-			// @ts-ignore
 			url.fetch = (
 				(ts, level, x, y, src) => () =>
 					this.regionToDataUrl.call(ts, level, x, y, src)
@@ -211,7 +218,6 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
 			this._ready = true;
 			this.promises.ready.resolve();
 
-			// @ts-ignore
 			this.raiseEvent("ready", {tileSource: this});
 		};
 
