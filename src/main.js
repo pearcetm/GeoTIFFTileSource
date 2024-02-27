@@ -52,6 +52,7 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
 
 			this._ready = false;
 			this._pool = GeoTIFFTileSource.sharedPool;
+			this._tileSize = 256;
 
 			if (input.GeoTIFF && input.GeoTIFFImages) {
 				this.promises = {
@@ -233,8 +234,12 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
 			let defaultTileHeight = this._tileSize;
 
 			//the first image is the highest-resolution view (at least, with the largest width)
-			let fullWidth = (this.width = images[0].getWidth());
-			let fullHeight = (this.height = images[0].getHeight());
+			let fullWidth = images[0].getWidth();
+			this.width = fullWidth;
+
+			let fullHeight = images[0].getHeight();
+			this.height = fullHeight;
+
 			this.tileOverlap = 0;
 			this.minLevel = 0;
 			this.aspectRatio = this.width / this.height;
