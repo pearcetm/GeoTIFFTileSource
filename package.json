@@ -20,6 +20,7 @@
   },
   "type": "module",
   "devDependencies": {
+    "prettier": "3.2.5",
     "vite": "^5.0.8"
   },
   "dependencies": {
