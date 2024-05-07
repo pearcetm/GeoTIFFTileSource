@@ -1,6 +1,7 @@
 import { fromBlob, fromUrl, globals, Pool } from "geotiff";
 import { DeferredPromise } from "./DeferredPromise";
 import { Converters } from "./Converters";
+import { parsePerkinElmerChannels } from "./formats/perkinElmer.js";
 
 /**
  * Enable GeoTIFF Tile Source for OpenSeadragon.
@@ -49,6 +50,7 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
 
       this.input = input;
       this.options = opts;
+      this.channel = input?.channel ?? null;
 
       this._ready = false;
       this._pool = GeoTIFFTileSource.sharedPool;
@@ -93,6 +95,9 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
     }
 
     static getAllTileSources = async (input, opts) => {
+      const fileExtension =
+        input instanceof File ? input.name.split(".").pop() : input.split(".").pop();
+
       let tiff = input instanceof File ? fromBlob(input) : fromUrl(input);
 
       return tiff
@@ -110,13 +115,18 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
               image.fileDirectory.photometricInterpretation !==
               globals.photometricInterpretations.TransparencyMask
           );
+
           // Sort by width (largest first), then detect pyramids
           images.sort((a, b) => b.getWidth() - a.getWidth());
+
           // find unique aspect ratios (with tolerance to account for rounding)
           const tolerance = 0.015;
-          let aspectRatioSets = images.reduce((accumulator, image) => {
-            let r = image.getWidth() / image.getHeight();
-            let exists = accumulator.filter((set) => Math.abs(1 - set.aspectRatio / r) < tolerance);
+
+          const aspectRatioSets = images.reduce((accumulator, image) => {
+            const r = image.getWidth() / image.getHeight();
+            const exists = accumulator.filter(
+              (set) => Math.abs(1 - set.aspectRatio / r) < tolerance
+            );
             if (exists.length === 0) {
               let set = {
                 aspectRatio: r,
@@ -129,17 +139,47 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
             return accumulator;
           }, []);
 
-          let imageSets = aspectRatioSets.map((set) => set.images);
-          return imageSets.map(
-            (images) =>
-              new OpenSeadragon.GeoTIFFTileSource(
+          const imageSets = aspectRatioSets.map((set) => set.images);
+
+          return imageSets.map((images, index) => {
+            // Check if QPTIFF
+            if (index !== 0) {
+              return new OpenSeadragon.GeoTIFFTileSource(
                 {
                   GeoTIFF: tiff,
                   GeoTIFFImages: images,
                 },
                 opts
-              )
-          );
+              );
+            }
+
+            switch (fileExtension) {
+              case "qptiff":
+                const channels = parsePerkinElmerChannels(images);
+                return Array.from(channels.values()).map((channel, index) => {
+                  return new OpenSeadragon.GeoTIFFTileSource(
+                    {
+                      GeoTIFF: tiff,
+                      GeoTIFFImages: channel.images,
+                      channel: {
+                        name: channel.name,
+                        color: channel.color,
+                      },
+                    },
+                    opts
+                  );
+                });
+
+              default:
+                return new OpenSeadragon.GeoTIFFTileSource(
+                  {
+                    GeoTIFF: tiff,
+                    GeoTIFFImages: images,
+                  },
+                  opts
+                );
+            }
+          });
         });
     };
 
@@ -175,6 +215,13 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
         levelScale = this.levels[level].width / this.levels[this.maxLevel].width;
       }
       return levelScale;
+    };
+
+    /**
+     * Handle maintaining unique caches per channel in multi-channel images
+     */
+    getTileHashKey = (level, x, y) => {
+      return `${this?.channel?.name ?? ""}_${level}_${x}_${y}`;
     };
 
     /**
@@ -229,11 +276,11 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
 
       let images = this.GeoTIFFImages.sort((a, b) => b.getWidth() - a.getWidth());
 
-      //default to 256x256 tiles, but defer to options passed in
+      // default to 256x256 tiles, but defer to options passed in
       let defaultTileWidth = this._tileSize;
       let defaultTileHeight = this._tileSize;
 
-      //the first image is the highest-resolution view (at least, with the largest width)
+      // The first image is the highest-resolution view (at least, with the largest width)
       let fullWidth = images[0].getWidth();
       this.width = fullWidth;
 
@@ -278,18 +325,35 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
         );
         let levelsToUse = [...Array(numPowersOfTwo).keys()].filter((v) => v % 2 == 0); //use every other power of two for scales in the "pyramid"
 
-        this.levels = levelsToUse.map((levelnum) => {
-          let scale = Math.pow(2, levelnum);
-          let image = images.filter((im) => im.getWidth() * scale >= fullWidth).slice(-1)[0]; //smallest image with sufficient resolution
-          return {
-            width: fullWidth / scale,
-            height: fullHeight / scale,
-            tileWidth: this.options.tileWidth || image.getTileWidth() || defaultTileWidth,
-            tileHeight: this.options.tileHeight || image.getTileHeight() || defaultTileHeight,
-            image: image,
-            scaleFactor: (scale * image.getWidth()) / fullWidth,
-          };
-        });
+        this.levels = levelsToUse
+          .map((levelnum) => {
+            let scale = Math.pow(2, levelnum);
+
+            const levelImages = images.filter((image) => {
+              const prevScale = Math.pow(2, levelnum - 1);
+              // All images with correct resolution
+              return prevScale >= 0
+                ? image.getWidth() * prevScale < fullWidth && image.getWidth() * scale >= fullWidth
+                : image.getWidth() * scale >= fullWidth;
+            });
+
+            if (levelImages.length === 0) {
+              return null;
+            }
+
+            const image = levelImages[0];
+
+            // let image = images.filter((im) => im.getWidth() * scale >= fullWidth).slice(-1)[0]; // smallest image with sufficient resolution
+            return {
+              width: fullWidth / scale,
+              height: fullHeight / scale,
+              tileWidth: this.options.tileWidth || image.getTileWidth() || defaultTileWidth,
+              tileHeight: this.options.tileHeight || image.getTileHeight() || defaultTileHeight,
+              image: image,
+              scaleFactor: (scale * image.getWidth()) / fullWidth,
+            };
+          })
+          .filter((level) => level !== null);
         this.maxLevel = this.levels.length - 1;
       }
       this.levels = this.levels.sort((a, b) => a.width - b.width);
@@ -302,67 +366,133 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
 
     regionToDataUrl = (level, x, y, src) => {
       let startTime = this.options.logLatency && Date.now();
-
       let abortController = (src.abortController = new AbortController()); // add abortController to the src object so OpenSeadragon can abort the request
       let abortSignal = abortController.signal;
 
-      // Use getTileOrStrip followed by converters because it is noticeably more efficient than readRGB
-      return level.image.getTileOrStrip(x, y, null, this._pool, abortSignal).then((raster) => {
-        let data = new Uint8ClampedArray(raster.data);
+      const width = level.tileWidth;
+      const height = level.tileHeight;
 
-        let canvas = document.createElement("canvas");
-        canvas.width = level.tileWidth;
-        canvas.height = level.tileHeight;
-        let ctx = canvas.getContext("2d");
+      const window = [x * width, y * height, (x + 1) * width, (y + 1) * height].map(
+        (v) => v * level.scaleFactor
+      );
 
-        let photometricInterpretation = level.image.fileDirectory.PhotometricInterpretation;
-        let arr;
+      const image = level.image;
+      const isQPTIFF = image.fileDirectory?.["Software"]?.startsWith("PerkinElmer-QPI");
 
-        // If already in RGBA format, use it
-        if ((data.length / (canvas.width * canvas.height)) % 4 === 0) {
-          arr = data;
-        } else {
-          switch (photometricInterpretation) {
-            case globals.photometricInterpretations.WhiteIsZero: // grayscale, white is zero
-              arr = Converters.RGBAfromWhiteIsZero(
-                data,
-                2 ** level.image.fileDirectory.BitsPerSample[0]
-              );
-              break;
-            case globals.photometricInterpretations.BlackIsZero: // grayscale, white is zero
-              arr = Converters.RGBAfromBlackIsZero(
-                data,
-                2 ** level.image.fileDirectory.BitsPerSample[0]
-              );
-              break;
-            case globals.photometricInterpretations.RGB: // RGB
-              arr = Converters.RGBAfromRGB(data);
-              break;
-            case globals.photometricInterpretations.Palette: // colormap
-              arr = Converters.RGBAfromPalette(data, 2 ** level.image.fileDirectory.colorMap);
-              break;
-            case globals.photometricInterpretations.CMYK: // CMYK
-              arr = Converters.RGBAfromCMYK(data);
-              break;
-            case globals.photometricInterpretations.YCbCr: // YCbCr
-              arr = Converters.RGBAfromYCbCr(data);
-              break;
-            case globals.photometricInterpretations.CIELab: // CIELab
-              arr = Converters.RGBAfromCIELab(data);
-              break;
+      if (isQPTIFF) {
+        // Parse XML image description
+        const qptiffXML = new DOMParser().parseFromString(
+          image.fileDirectory?.["ImageDescription"],
+          "text/xml"
+        );
+
+        // Get Name and Color tags
+        const channelName = qptiffXML.querySelector("Name")?.textContent;
+        const channelColor = qptiffXML.querySelector("Color")?.textContent;
+
+        const channelRGB = channelColor
+          ? channelColor.split(",").map((v) => parseInt(v))
+          : [255, 255, 255];
+
+        return level.image
+          .readRGB({
+            interleave: true,
+            window: window,
+            pool: this._pool,
+            width: level.tileWidth,
+            height: level.tileHeight,
+            signal: abortSignal,
+          })
+          .then((data) => {
+            // let dataURL = tileToDataUrl(data, level.tileWidth, level.tileHeight, startTime);
+            let canvas = document.createElement("canvas");
+            canvas.width = level.tileWidth;
+            canvas.height = level.tileHeight;
+            let ctx = canvas.getContext("2d");
+
+            let arr = new Uint8ClampedArray(4 * canvas.width * canvas.height);
+            let rgb = new Uint8ClampedArray(data);
+
+            let i, a;
+            for (i = 0, a = 0; i < rgb.length; i += 3, a += 4) {
+              arr[a] = (rgb[i] * channelRGB[0]) / 255;
+              arr[a + 1] = (rgb[i + 1] * channelRGB[1]) / 255;
+              arr[a + 2] = (rgb[i + 2] * channelRGB[2]) / 255;
+              arr[a + 3] = 255;
+            }
+
+            const imageData = ctx.createImageData(canvas.width, canvas.height);
+            imageData.data.set(arr);
+            ctx.putImageData(imageData, 0, 0);
+
+            let dataURL = canvas.toDataURL("image/jpeg", 0.8);
+            this.options.logLatency &&
+              (typeof this.options.logLatency == "function"
+                ? this.options.logLatency
+                : console.log)("Tile latency (ms):", Date.now() - startTime);
+            return dataURL;
+          });
+      } else {
+        // Use getTileOrStrip followed by converters because it is noticeably more efficient than readRGB
+        return level.image.getTileOrStrip(x, y, null, this._pool, abortSignal).then((raster) => {
+          let data = new Uint8ClampedArray(raster.data);
+
+          let canvas = document.createElement("canvas");
+          canvas.width = level.tileWidth;
+          canvas.height = level.tileHeight;
+          let ctx = canvas.getContext("2d");
+
+          let photometricInterpretation = level.image.fileDirectory.PhotometricInterpretation;
+          let arr;
+
+          // If already in RGBA format, use it
+          if ((data.length / (canvas.width * canvas.height)) % 4 === 0) {
+            arr = data;
+          } else {
+            switch (photometricInterpretation) {
+              case globals.photometricInterpretations.WhiteIsZero: // grayscale, white is zero
+                arr = Converters.RGBAfromWhiteIsZero(
+                  data,
+                  2 ** level.image.fileDirectory.BitsPerSample[0]
+                );
+                break;
+              case globals.photometricInterpretations.BlackIsZero: // grayscale, white is zero
+                arr = Converters.RGBAfromBlackIsZero(
+                  data,
+                  2 ** level.image.fileDirectory.BitsPerSample[0]
+                );
+                break;
+              case globals.photometricInterpretations.RGB: // RGB
+                arr = Converters.RGBAfromRGB(data);
+                break;
+              case globals.photometricInterpretations.Palette: // colormap
+                arr = Converters.RGBAfromPalette(data, 2 ** level.image.fileDirectory.colorMap);
+                break;
+              case globals.photometricInterpretations.CMYK: // CMYK
+                arr = Converters.RGBAfromCMYK(data);
+                break;
+              case globals.photometricInterpretations.YCbCr: // YCbCr
+                arr = Converters.RGBAfromYCbCr(data);
+                break;
+              case globals.photometricInterpretations.CIELab: // CIELab
+                arr = Converters.RGBAfromCIELab(data);
+                break;
+            }
           }
-        }
 
-        ctx.putImageData(new ImageData(arr, canvas.width, canvas.height), 0, 0);
+          const imageData = ctx.createImageData(canvas.width, canvas.height);
+          imageData.data.set(arr);
+          ctx.putImageData(imageData, 0, 0);
 
-        let dataURL = canvas.toDataURL("image/jpeg", 0.8);
-        this.options.logLatency &&
-          (typeof this.options.logLatency == "function" ? this.options.logLatency : console.log)(
-            "Tile latency (ms):",
-            Date.now() - startTime
-          );
-        return dataURL;
-      });
+          let dataURL = canvas.toDataURL("image/jpeg", 0.8);
+          this.options.logLatency &&
+            (typeof this.options.logLatency == "function" ? this.options.logLatency : console.log)(
+              "Tile latency (ms):",
+              Date.now() - startTime
+            );
+          return dataURL;
+        });
+      }
     };
   }
 
