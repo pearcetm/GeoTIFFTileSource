@@ -2,7 +2,6 @@ import { fromBlob, fromUrl, globals, Pool } from "geotiff";
 import { DeferredPromise } from "./utils/DeferredPromise.js";
 import { parsePerkinElmerChannels } from "./formats/perkinElmer.js";
 import { Converters } from "./utils/Converters.js";
-import { monkeypatch } from "./utils/osdMonkeyPatch.js";
 
 /**
  * @class GeoTIFFTileSource
