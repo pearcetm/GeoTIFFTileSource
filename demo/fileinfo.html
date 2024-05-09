@@ -1,12 +1,11 @@
 <head>
     <title>GeoTIFFTileSource File Info Viewer</title>
-    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/3.1.0/openseadragon.min.js"></script> -->
-    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/geotiff"></script> -->
-    <script type="text/javascript" src="../lib/openseadragon.js"></script>
-    <script type="text/javascript" src="../lib/geotiff.js"></script> 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/3.1.0/openseadragon.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/geotiff"></script>
+
     <link rel="stylesheet" href="./demo.css">
-    
-    <script type="text/javascript" src="../GeoTIFFTileSource-old.js"></script>
+
+    <script type="text/javascript" src="../dist/GeoTIFFTileSource.umd.js"></script>
     <script type="module" src="./fileinfo.js"></script>
  </head>
  <body>
@@ -14,10 +13,10 @@
          <div class="demo">
             <h2>GeoTIFFTileSource for OpenSeadragon<h2>
             <h3>Examine file info</h3>
-            
+
              <p>Pick a file and see detailed info about it below.</p>
             <div><input type='text' id="link-input" placeholder="Enter a link address for a TIFF file"><button id='use-link'>Load from link</button> or <input type='file' id="file-picker"></div>
-             
+
              <div>
                 <div id="file-info">
                     <h2 id="filename">Please select an image file or link</h4>
@@ -28,5 +27,5 @@
              </div>
          </div>
      </div>
-     
+
  </body>

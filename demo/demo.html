@@ -1,12 +1,10 @@
 <head>
     <title>GeoTIFFTileSource Demo</title>
-    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/3.1.0/openseadragon.min.js"></script> -->
-    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/geotiff"></script> -->
-    <script type="text/javascript" src="../lib/openseadragon.js"></script>
-    <script type="text/javascript" src="../lib/geotiff.js"></script> 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/3.1.0/openseadragon.min.js"></script>
+
     <link rel="stylesheet" href="./demo.css">
-    
-    <script type="text/javascript" src="../GeoTIFFTileSource-old.js"></script>
+
+    <script type="text/javascript" src="../dist/GeoTIFFTileSource.umd.js"></script>
     <script type="module" src="./demo.js"></script>
  </head>
  <body>
@@ -18,7 +16,7 @@
                 The GeoTIFFTileSource for <a href="https://openseadragon.github.io">OpenSeadragon</a> depends on <a href="https://geotiffjs.github.io/">GeoTIFF.js</a>.
             </p>
             <h3>View local or remote TIFF images - no image server required!</h3>
-            
+
             <p>
                 TIFF files range from small to gigantic. Larger files are often broken into multi-resolution pyramids to create zoomable images. This is useful
                 for a variety of purposes, from whole-slide images (WSIs) of <a href="https://cancer.digitalslidearchive.org/#!/CDSA/acc/TCGA-OR-A5J1">digitized pathology slides</a>
@@ -26,7 +24,7 @@
             </p>
             <p>
                 There are many TIFF formats, not all of which are GeoTIFF compatible. This applies to WSIs as well. For example, .svs files (from Leica Aperio)
-                are fundamentally pyramidal GeoTIFFTileSource and can thus be viewed directly with low latency. However, .ndpi files (from Hamamatsu) are not 
+                are fundamentally pyramidal GeoTIFFTileSource and can thus be viewed directly with low latency. However, .ndpi files (from Hamamatsu) are not
                 internally organized in a way that geotiff.js can query efficiently, making slide viewing very slow at best.
             </p>
             <h3>Examples</h3>
@@ -48,14 +46,14 @@
                             <p><button class="demo-link" data-href="https://oin-hotosm.s3.amazonaws.com/5a13582931eff4000c38060d/0/9c75cb72-e13a-4862-abe4-62058d5e108c.tif">Drone photos</button> from <a href="https://map.openaerialmap.org/#/-122.39500164985655,47.66504775985181,16/square/021230021/5a135953bac48e5b1c24c537">OpenAerialMap</a></p>
                         </li>
                     </ul>
-                    
+
                 </li>
             </ul>
-            
+
             <h3>Demo:</h3>
              <p>Pick a file. View the image using OpenSeadragon, and see detailed info about it below.</p>
             <div><input type='text' id="link-input" placeholder="Enter a link address for a TIFF file"><button id='use-link'>Load from link</button> or <input type='file' id="file-picker"></div>
-             
+
              <div id="viewer" class="viewer"></div>
              <div>
                 <div id="file-info">
@@ -67,5 +65,5 @@
              </div>
          </div>
      </div>
-     
+
  </body>
