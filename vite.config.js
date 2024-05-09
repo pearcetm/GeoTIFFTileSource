@@ -6,15 +6,7 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "src/main.js"),
       name: "GeoTIFFTileSource",
-      formats: ["es", "umd"],
-      fileName: (format) => {
-        switch (format) {
-          case "es":
-            return `GeoTIFFTileSource.mjs`;
-          case "umd":
-            return "GeoTIFFTileSource.js";
-        }
-      },
+      fileName: (format) => `GeoTIFFTileSource.${format}.js`,
     },
   },
 });
