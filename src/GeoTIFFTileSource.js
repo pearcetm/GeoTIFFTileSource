@@ -2,6 +2,7 @@ import { fromBlob, fromUrl, globals, Pool } from "geotiff";
 import { DeferredPromise } from "./utils/DeferredPromise.js";
 import { parsePerkinElmerChannels } from "./formats/perkinElmer.js";
 import { Converters } from "./utils/Converters.js";
+import { patchOSDImageJob } from "./utils/osdMonkeyPatch.js";
 
 /**
  * @class GeoTIFFTileSource
@@ -34,9 +35,14 @@ export class GeoTIFFTileSource extends OpenSeadragon.TileSource {
    * @type {Pool}
    */
   static sharedPool = new Pool();
+  static _osdReady = false;
 
   constructor(input, opts = { logLatency: false }) {
     super();
+
+    if (!GeoTIFFTileSource._osdReady) {
+      GeoTIFFTileSource.applyOSDPatch(OpenSeadragon);
+    }
 
     let self = this;
 
@@ -85,6 +91,14 @@ export class GeoTIFFTileSource extends OpenSeadragon.TileSource {
         });
     }
   }
+
+  // Apply ImageJob patch to OpenSeadragon. Can be extended for modular patches.
+  static applyOSDPatch = (OpenSeadragon) => {
+    patchOSDImageJob(OpenSeadragon);
+
+    // Set flag to prevent re-applying the patch
+    GeoTIFFTileSource._osdReady = true;
+  };
 
   static getAllTileSources = async (input, opts) => {
     const fileExtension =
