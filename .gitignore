@@ -8,8 +8,11 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
-dist-ssr
+
+# Maintain umd.js output
+dist/
+!dist/*.umd.js
+
 *.local
 
 # Editor directories and files
