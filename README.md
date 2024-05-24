@@ -45,7 +45,7 @@ Standalone scripts for the plugin are available as both UMD and ES module script
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
 
 <!-- Using UMD script -->
-<script type="text/javascript" src="geotiff-tilesource.umd.js"></script>
+<script type="text/javascript" src="geotiff-tilesource.js"></script>
 <!-- Using ES module script -->
 <script type="module" src="geotiff-tilesource.mjs"></script>
 ```

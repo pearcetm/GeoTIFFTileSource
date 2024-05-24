@@ -8,11 +8,11 @@ export default defineConfig({
       name: "GeoTIFFTileSource",
       formats: ["es", "umd"],
       fileName: (format) => {
-        // Use .mjs for identifying ES modules, and umd.js for UMD modules
+        // Use .mjs for identifying ES modules, and .js for UMD modules
         if (format === "es") {
           return "geotiff-tilesource.mjs";
         } else {
-          return "geotiff-tilesource.umd.js";
+          return "geotiff-tilesource.js";
         }
       },
     },
