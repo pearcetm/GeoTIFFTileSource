@@ -6,7 +6,15 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "src/main.js"),
       name: "GeoTIFFTileSource",
-      fileName: (format) => `GeoTIFFTileSource.${format}.js`,
+      formats: ["es", "umd"],
+      fileName: (format) => {
+        // Use .mjs for identifying ES modules, and umd.js for UMD modules
+        if (format === "es") {
+          return "geotiff-tilesource.mjs";
+        } else {
+          return "geotiff-tilesource.umd.js";
+        }
+      },
     },
   },
 });

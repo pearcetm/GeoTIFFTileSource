@@ -45,9 +45,9 @@ Standalone scripts for the plugin are available as both UMD and ES module script
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
 
 <!-- Using UMD script -->
-<script type="text/javascript" src="GeoTIFFTileSource.umd.js"></script>
+<script type="text/javascript" src="geotiff-tilesource.umd.js"></script>
 <!-- Using ES module script -->
-<script type="module" src="GeoTIFFTileSource.es.js"></script>
+<script type="module" src="geotiff-tilesource.mjs"></script>
 ```
 
 ### Extending OpenSeadragon
@@ -68,7 +68,7 @@ enableGeoTIFFTileSource(OpenSeadragon);
 GeoTIFFTileSource.enableGeoTIFFTileSource(OpenSeadragon);
 
 // Using ES module script
-import { enableGeoTIFFTileSource } from './GeoTIFFTileSource.es.js';
+import { enableGeoTIFFTileSource } from './geotiff-tilesource.mjs';
 
 enableGeoTIFFTileSource(OpenSeadragon);
 ```

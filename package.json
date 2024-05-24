@@ -5,12 +5,12 @@
     "files": [
       "dist"
     ],
-    "main": "./dist/GeoTIFFTileSource.umd.js",
-    "module": "./dist/GeoTIFFTileSource.es.js",
+    "main": "./dist/geotiff-tilesource.umd.js",
+    "module": "./dist/geotiff-tilesource.mjs",
     "exports": {
       ".": {
-        "import": "./dist/GeoTIFFTileSource.es.js",
-        "require": "./dist/GeoTIFFTileSource.umd.js"
+        "import": "./dist/geotiff-tilesource.mjs",
+        "require": "./dist/geotiff-tilesource.umd.js"
       }
     },
     "scripts": {
