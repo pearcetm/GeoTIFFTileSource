@@ -10,7 +10,7 @@ lerna-debug.log*
 node_modules
 
 # Maintain UMD output
-dist/
+dist/*
 !dist/geotiff-tilesource.js
 
 *.local
