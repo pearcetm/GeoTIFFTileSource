@@ -1,4 +1,25 @@
-// Adapted from https://github.com/geotiffjs/geotiff.js
+// The Converters class is adapted from https://github.com/geotiffjs/geotiff.js/blob/master/src/rgb.js
+// The MIT License (MIT)
+
+// Copyright (c) 2015 EOX IT Services GmbH
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 export class Converters {
   static RGBAfromYCbCr(input) {
     const rgbaRaster = new Uint8ClampedArray((input.length * 4) / 3);
@@ -29,9 +50,9 @@ export class Converters {
   }
 
   static RGBAfromWhiteIsZero(input, max) {
-    const rgbaRaster = new Uint8Array(input.length * 4);
+    const rgbaRaster = new Uint8ClampedArray(input.length * 4);
     let value;
-    for (let i = 0, j = 0; i < input.length; ++i, j += 3) {
+    for (let i = 0, j = 0; i < input.length; ++i, j += 4) {
       value = 256 - (input[i] / max) * 256;
       rgbaRaster[j] = value;
       rgbaRaster[j + 1] = value;
@@ -42,9 +63,9 @@ export class Converters {
   }
 
   static RGBAfromBlackIsZero(input, max) {
-    const rgbaRaster = new Uint8Array(input.length * 4);
+    const rgbaRaster = new Uint8ClampedArray(input.length * 4);
     let value;
-    for (let i = 0, j = 0; i < input.length; ++i, j += 3) {
+    for (let i = 0, j = 0; i < input.length; ++i, j += 4) {
       value = (input[i] / max) * 256;
       rgbaRaster[j] = value;
       rgbaRaster[j + 1] = value;
@@ -55,10 +76,10 @@ export class Converters {
   }
 
   static RGBAfromPalette(input, colorMap) {
-    const rgbaRaster = new Uint8Array(input.length * 4);
+    const rgbaRaster = new Uint8ClampedArray(input.length * 4);
     const greenOffset = colorMap.length / 3;
     const blueOffset = (colorMap.length / 3) * 2;
-    for (let i = 0, j = 0; i < input.length; ++i, j += 3) {
+    for (let i = 0, j = 0; i < input.length; ++i, j += 4) {
       const mapIndex = input[i];
       rgbaRaster[j] = (colorMap[mapIndex] / 65536) * 256;
       rgbaRaster[j + 1] = (colorMap[mapIndex + greenOffset] / 65536) * 256;
@@ -69,7 +90,7 @@ export class Converters {
   }
 
   static RGBAfromCMYK(input) {
-    const rgbaRaster = new Uint8Array(input.length);
+    const rgbaRaster = new Uint8ClampedArray(input.length);
     for (let i = 0, j = 0; i < input.length; i += 4, j += 4) {
       const c = input[i];
       const m = input[i + 1];
@@ -89,7 +110,7 @@ export class Converters {
     const Xn = 0.95047;
     const Yn = 1.0;
     const Zn = 1.08883;
-    const rgbaRaster = new Uint8Array((input.length * 4) / 3);
+    const rgbaRaster = new Uint8ClampedArray((input.length * 4) / 3);
 
     for (let i = 0, j = 0; i < input.length; i += 3, j += 4) {
       const L = input[i + 0];
