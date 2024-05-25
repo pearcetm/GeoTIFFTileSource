@@ -9,10 +9,6 @@ lerna-debug.log*
 
 node_modules
 
-# Maintain UMD output
-dist/*
-!dist/geotiff-tilesource.js
-
 *.local
 
 # Editor directories and files
