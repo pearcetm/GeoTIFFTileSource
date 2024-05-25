@@ -3,6 +3,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   build: {
+    sourcemap: true,
     lib: {
       entry: path.resolve(__dirname, "src/main.js"),
       name: "GeoTIFFTileSource",
@@ -12,7 +13,7 @@ export default defineConfig({
         if (format === "es") {
           return "geotiff-tilesource.mjs";
         } else {
-          return "geotiff-tilesource.js";
+          return "geotiff-tilesource.min.js";
         }
       },
     },

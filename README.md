@@ -46,7 +46,7 @@ Note that the OpenSeadragon library must be loaded before the plugin script. The
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
 
 <!-- Using UMD script -->
-<script type="text/javascript" src="geotiff-tilesource.js"></script>
+<script type="text/javascript" src="geotiff-tilesource.min.js"></script>
 <!-- Using ES module script -->
 <script type="module" src="geotiff-tilesource.mjs"></script>
 ```
