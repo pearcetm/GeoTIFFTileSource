@@ -17,3 +17,4 @@ class s extends r {
 export {
   s as default
 };
+//# sourceMappingURL=webimage-Hf-HYtMO.js.map

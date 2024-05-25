@@ -22,3 +22,4 @@ class l extends c {
 export {
   l as default
 };
+//# sourceMappingURL=packbits-QLsyzNt2.js.map
