@@ -1,5 +1,3 @@
-GeoTIFFTileSource.enableGeoTIFFTileSource(OpenSeadragon);
-
 document.getElementById("file-picker").onchange = function (ev) {
   clearImageInfo();
 

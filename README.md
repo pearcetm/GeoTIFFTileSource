@@ -64,11 +64,12 @@ enableGeoTIFFTileSource(OpenSeadragon);
 ```
 
 #### Using standalone scripts
-```javascript
-// Using UMD script
-GeoTIFFTileSource.enableGeoTIFFTileSource(OpenSeadragon);
 
-// Using ES module script
+##### Using UMD script
+The UMD script will automatically extend the `OpenSeadragon` global object with the `GeoTIFFTileSource` class.
+
+##### Using ES module script
+```javascript
 import { enableGeoTIFFTileSource } from './geotiff-tilesource.mjs';
 
 enableGeoTIFFTileSource(OpenSeadragon);

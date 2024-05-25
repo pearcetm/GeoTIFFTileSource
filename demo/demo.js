@@ -1,5 +1,3 @@
-GeoTIFFTileSource.enableGeoTIFFTileSource(OpenSeadragon);
-
 // Basic viewer setup
 let viewer = (window.viewer = OpenSeadragon({
   element: "viewer",

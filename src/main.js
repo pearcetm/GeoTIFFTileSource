@@ -13,4 +13,19 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
   OpenSeadragon.GeoTIFFTileSource = GeoTIFFTileSource;
 };
 
+// Run an IIFE to attach the GeoTIFFTileSource to the OpenSeadragon namespace
+// IF OpenSeadragon is available in the global scope
+(function (global, factory) {
+  // Skip if currently in ESM mode
+  if (typeof exports === "undefined") {
+    return;
+  }
+
+  // Check if OpenSeadragon is available
+  if (typeof global.OpenSeadragon !== "undefined") {
+    // Attach the GeoTIFFTileSource to the OpenSeadragon namespace
+    factory(global.OpenSeadragon);
+  }
+})(typeof window !== "undefined" ? window : this, enableGeoTIFFTileSource);
+
 export { GeoTIFFTileSource };
