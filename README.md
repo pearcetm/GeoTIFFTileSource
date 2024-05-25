@@ -40,6 +40,7 @@ npm i geotiff-tilesource
 
 #### Using standalone scripts
 Standalone scripts for the plugin are available as both UMD and ES module scripts. The UMD script is compatible with the `OpenSeadragon` global object, while the ES module script can be imported as a module.
+Note that the OpenSeadragon library must be loaded before the plugin script. The geotiff.js library comes bundled with the plugin, and does not need to be loaded separately.
 
 ```html
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.0/openseadragon.min.js"></script>
