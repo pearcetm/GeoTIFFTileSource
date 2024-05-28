@@ -1,5 +1,6 @@
 import path from "path";
 import { defineConfig } from "vite";
+import license from "rollup-plugin-license";
 
 export default defineConfig({
   build: {
@@ -18,4 +19,20 @@ export default defineConfig({
       },
     },
   },
+  plugins: [
+    // Base example config from https://github.com/mjeanroy/rollup-plugin-license
+    license({
+      sourcemap: true,
+      banner: {
+        content: {
+          file: path.join(__dirname, "LICENSE.txt"),
+          encoding: "utf-8",
+        },
+      },
+      thirdParty: {
+        output: path.join(__dirname, "dist", "dependencies.txt"),
+        includePrivate: false,
+      },
+    }),
+  ],
 });
