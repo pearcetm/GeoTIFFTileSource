@@ -1,7 +1,7 @@
 {
   "name": "geotiff-tilesource",
   "version": "0.2.0",
-  "description": "",
+  "description": "A plugin tilesource for OpenSeadragon that uses geotiff.js to provide serverless access to view compatible local or remote TIFF files",
   "files": [
     "dist"
   ],
