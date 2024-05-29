@@ -23,15 +23,10 @@ export default defineConfig({
     // Base example config from https://github.com/mjeanroy/rollup-plugin-license
     license({
       sourcemap: true,
-      banner: {
-        content: {
-          file: path.join(__dirname, "LICENSE.txt"),
-          encoding: "utf-8",
-        },
-      },
       thirdParty: {
-        output: path.join(__dirname, "dist", "dependencies.txt"),
+        output: path.join(__dirname, "dist", "bundled-licenses.txt"),
         includePrivate: false,
+        includeSelf:true,
       },
     }),
   ],
