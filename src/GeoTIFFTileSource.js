@@ -24,7 +24,7 @@ import { patchOSDImageJob } from "./utils/osdMonkeyPatch.js";
  * @property {Number} tileSize
  * @property {Array}  levels
  */
-export class GeoTIFFTileSource extends OpenSeadragon.TileSource {
+export class GeoTIFFTileSource{
   /**
    * Create a shared GeoTIFF Pool for all GeoTIFFTileSources to use.
    *
@@ -38,8 +38,7 @@ export class GeoTIFFTileSource extends OpenSeadragon.TileSource {
   static _osdReady = false;
 
   constructor(input, opts = { logLatency: false }) {
-    super();
-
+    
     if (!GeoTIFFTileSource._osdReady) {
       GeoTIFFTileSource.applyOSDPatch(OpenSeadragon);
     }

@@ -10,6 +10,7 @@ import { GeoTIFFTileSource } from "./GeoTIFFTileSource.js";
  */
 export const enableGeoTIFFTileSource = (OpenSeadragon) => {
   // Attach the class to the OpenSeadragon namespace
+  Object.assign(GeoTIFFTileSource.prototype, OpenSeadragon.TileSource.prototype, GeoTIFFTileSource.prototype);
   OpenSeadragon.GeoTIFFTileSource = GeoTIFFTileSource;
 };
 
