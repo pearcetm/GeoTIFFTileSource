@@ -1,11 +1,11 @@
 var gt = Object.defineProperty;
 var pt = (i, e, t) => e in i ? gt(i, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : i[e] = t;
-var E = (i, e, t) => (pt(i, typeof e != "symbol" ? e + "" : e, t), t);
-function C(i) {
+var F = (i, e, t) => (pt(i, typeof e != "symbol" ? e + "" : e, t), t);
+function E(i) {
   return (e, ...t) => yt(i, e, t);
 }
-function K(i, e) {
-  return C(
+function V(i, e) {
+  return E(
     _e(
       i,
       e
@@ -33,54 +33,54 @@ const {
   defineProperty: bt,
   freeze: ss,
   is
-} = xt, It = Array, St = It.prototype, Ue = St[J], Tt = C(Ue), Le = ArrayBuffer, At = Le.prototype;
-K(At, "byteLength");
+} = xt, It = Array, St = It.prototype, Ue = St[J], Tt = E(Ue), Le = ArrayBuffer, At = Le.prototype;
+V(At, "byteLength");
 const Re = typeof SharedArrayBuffer < "u" ? SharedArrayBuffer : null;
-Re && K(Re.prototype, "byteLength");
-const Ne = ge(Uint8Array);
-Ne.from;
-const P = Ne.prototype;
-P[J];
-C(P.keys);
-C(
-  P.values
+Re && V(Re.prototype, "byteLength");
+const je = ge(Uint8Array);
+je.from;
+const k = je.prototype;
+k[J];
+E(k.keys);
+E(
+  k.values
 );
-C(
-  P.entries
+E(
+  k.entries
 );
-C(P.set);
-C(
-  P.reverse
+E(k.set);
+E(
+  k.reverse
 );
-C(P.fill);
-C(
-  P.copyWithin
+E(k.fill);
+E(
+  k.copyWithin
 );
-C(P.sort);
-C(P.slice);
-C(
-  P.subarray
+E(k.sort);
+E(k.slice);
+E(
+  k.subarray
 );
-K(
-  P,
+V(
+  k,
   "buffer"
 );
-K(
-  P,
+V(
+  k,
   "byteOffset"
 );
-K(
-  P,
+V(
+  k,
   "length"
 );
-K(
-  P,
+V(
+  k,
   wt
 );
-const Dt = Uint8Array, je = Uint16Array, ye = Uint32Array, Ft = Float32Array, Z = ge([][J]()), ze = C(Z.next), Ct = C(function* () {
-}().next), Et = ge(Z), Pt = DataView.prototype, kt = C(
+const Dt = Uint8Array, Ne = Uint16Array, ye = Uint32Array, Ct = Float32Array, Z = ge([][J]()), ze = E(Z.next), Et = E(function* () {
+}().next), Ft = ge(Z), Pt = DataView.prototype, kt = E(
   Pt.getUint16
-), me = WeakMap, Ke = me.prototype, Ve = C(Ke.get), Rt = C(Ke.set), qe = new me(), Mt = pe(null, {
+), me = WeakMap, Ke = me.prototype, Ve = E(Ke.get), Rt = E(Ke.set), qe = new me(), Mt = pe(null, {
   next: {
     value: function() {
       const e = Ve(qe, this);
@@ -93,17 +93,17 @@ const Dt = Uint8Array, je = Uint16Array, ye = Uint32Array, Ft = Float32Array, Z 
     }
   }
 });
-function Ot(i) {
+function Bt(i) {
   if (i[J] === Ue && Z.next === ze)
     return i;
   const e = pe(Mt);
   return Rt(qe, e, Tt(i)), e;
 }
-const Bt = new me(), Gt = pe(Et, {
+const Ot = new me(), Gt = pe(Ft, {
   next: {
     value: function() {
-      const e = Ve(Bt, this);
-      return Ct(e);
+      const e = Ve(Ot, this);
+      return Et(e);
     },
     writable: !0,
     configurable: !0
@@ -111,10 +111,10 @@ const Bt = new me(), Gt = pe(Et, {
 });
 for (const i of mt(Z))
   i !== "next" && bt(Gt, i, _e(Z, i));
-const He = new Le(4), vt = new Ft(He), _t = new ye(He), O = new je(512), B = new Dt(512);
+const He = new Le(4), vt = new Ct(He), _t = new ye(He), O = new Ne(512), G = new Dt(512);
 for (let i = 0; i < 256; ++i) {
   const e = i - 127;
-  e < -27 ? (O[i] = 0, O[i | 256] = 32768, B[i] = 24, B[i | 256] = 24) : e < -14 ? (O[i] = 1024 >> -e - 14, O[i | 256] = 1024 >> -e - 14 | 32768, B[i] = -e - 1, B[i | 256] = -e - 1) : e <= 15 ? (O[i] = e + 15 << 10, O[i | 256] = e + 15 << 10 | 32768, B[i] = 13, B[i | 256] = 13) : e < 128 ? (O[i] = 31744, O[i | 256] = 64512, B[i] = 24, B[i | 256] = 24) : (O[i] = 31744, O[i | 256] = 64512, B[i] = 13, B[i | 256] = 13);
+  e < -27 ? (O[i] = 0, O[i | 256] = 32768, G[i] = 24, G[i | 256] = 24) : e < -14 ? (O[i] = 1024 >> -e - 14, O[i | 256] = 1024 >> -e - 14 | 32768, G[i] = -e - 1, G[i | 256] = -e - 1) : e <= 15 ? (O[i] = e + 15 << 10, O[i | 256] = e + 15 << 10 | 32768, G[i] = 13, G[i | 256] = 13) : e < 128 ? (O[i] = 31744, O[i | 256] = 64512, G[i] = 24, G[i | 256] = 24) : (O[i] = 31744, O[i | 256] = 64512, G[i] = 13, G[i | 256] = 13);
 }
 const we = new ye(2048);
 for (let i = 1; i < 1024; ++i) {
@@ -125,24 +125,24 @@ for (let i = 1; i < 1024; ++i) {
 }
 for (let i = 1024; i < 2048; ++i)
   we[i] = 939524096 + (i - 1024 << 13);
-const V = new ye(64);
+const q = new ye(64);
 for (let i = 1; i < 31; ++i)
-  V[i] = i << 23;
-V[31] = 1199570944;
-V[32] = 2147483648;
+  q[i] = i << 23;
+q[31] = 1199570944;
+q[32] = 2147483648;
 for (let i = 33; i < 63; ++i)
-  V[i] = 2147483648 + (i - 32 << 23);
-V[63] = 3347054592;
-const Ye = new je(64);
+  q[i] = 2147483648 + (i - 32 << 23);
+q[63] = 3347054592;
+const Ye = new Ne(64);
 for (let i = 1; i < 64; ++i)
   i !== 32 && (Ye[i] = 1024);
 function Ut(i) {
   const e = i >> 10;
-  return _t[0] = we[Ye[e] + (i & 1023)] + V[e], vt[0];
+  return _t[0] = we[Ye[e] + (i & 1023)] + q[e], vt[0];
 }
 function Xe(i, e, ...t) {
   return Ut(
-    kt(i, e, ...Ot(t))
+    kt(i, e, ...Bt(t))
   );
 }
 function $e(i) {
@@ -172,14 +172,14 @@ function Ze(i, e, t) {
 }
 Se.exports = Ze;
 Se.exports.default = Ze;
-var Nt = Se.exports, Te = { exports: {} };
+var jt = Se.exports, Te = { exports: {} };
 function Je(i, e, t) {
   const s = new RegExp(e).exec(i.slice(t));
   return s ? t + s.index + s[0].length - 1 : -1;
 }
 Te.exports = Je;
 Te.exports.default = Je;
-var jt = Te.exports, Ae = { exports: {} };
+var Nt = Te.exports, Ae = { exports: {} };
 function Qe(i, e) {
   const t = new RegExp(e, "g"), r = i.match(t);
   return r ? r.length : 0;
@@ -187,7 +187,7 @@ function Qe(i, e) {
 Ae.exports = Qe;
 Ae.exports.default = Qe;
 var zt = Ae.exports;
-const Kt = Nt, ae = jt, Me = zt;
+const Kt = jt, ae = Nt, Me = zt;
 function et(i, e, t) {
   const r = t && t.debug || !1, s = !(t && typeof t.nested === !1), n = t && t.startIndex || 0;
   r && console.log("[xml-utils] starting findTagByName with", e, " and ", t);
@@ -231,7 +231,7 @@ function tt(i, e, t) {
 be.exports = tt;
 be.exports.default = tt;
 var Ht = be.exports;
-const Yt = /* @__PURE__ */ $e(Ht), $ = {
+const Yt = /* @__PURE__ */ $e(Ht), W = {
   // TIFF Baseline
   315: "Artist",
   258: "BitsPerSample",
@@ -343,19 +343,19 @@ const Yt = /* @__PURE__ */ $e(Ht), $ = {
   34737: "GeoAsciiParams",
   // LERC
   50674: "LercParameters"
-}, G = {};
-for (const i in $)
-  $.hasOwnProperty(i) && (G[$[i]] = parseInt(i, 10));
+}, v = {};
+for (const i in W)
+  W.hasOwnProperty(i) && (v[W[i]] = parseInt(i, 10));
 const Xt = [
-  G.BitsPerSample,
-  G.ExtraSamples,
-  G.SampleFormat,
-  G.StripByteCounts,
-  G.StripOffsets,
-  G.StripRowCounts,
-  G.TileByteCounts,
-  G.TileOffsets,
-  G.SubIFDs
+  v.BitsPerSample,
+  v.ExtraSamples,
+  v.SampleFormat,
+  v.StripByteCounts,
+  v.StripOffsets,
+  v.StripRowCounts,
+  v.TileByteCounts,
+  v.TileOffsets,
+  v.SubIFDs
 ], le = {
   1: "BYTE",
   2: "ASCII",
@@ -517,7 +517,7 @@ _([8, 32946], () => import("./deflate-vcCR2g03.js").then((i) => i.default));
 _(32773, () => import("./packbits-QLsyzNt2.js").then((i) => i.default));
 _(
   34887,
-  () => import("./lerc-N_DS6sot.js").then(async (i) => (await i.zstd.init(), i)).then((i) => i.default)
+  () => import("./lerc-wpYx4tID.js").then(async (i) => (await i.zstd.init(), i)).then((i) => i.default)
 );
 _(50001, () => import("./webimage-Hf-HYtMO.js").then((i) => i.default));
 function se(i, e, t, r = 1) {
@@ -537,7 +537,7 @@ function or(i, e, t, r, s) {
     return l;
   });
 }
-function j(i, e, t) {
+function z(i, e, t) {
   return (1 - t) * i + t * e;
 }
 function ar(i, e, t, r, s) {
@@ -547,9 +547,9 @@ function ar(i, e, t, r, s) {
     for (let c = 0; c < s; ++c) {
       const h = a * c, f = Math.floor(h), d = Math.min(Math.ceil(h), t - 1);
       for (let u = 0; u < r; ++u) {
-        const g = n * u, y = g % 1, p = Math.floor(g), x = Math.min(Math.ceil(g), e - 1), m = o[f * e + p], b = o[f * e + x], I = o[d * e + p], S = o[d * e + x], T = j(
-          j(m, b, y),
-          j(I, S, y),
+        const g = n * u, y = g % 1, p = Math.floor(g), x = Math.min(Math.ceil(g), e - 1), m = o[f * e + p], b = o[f * e + x], I = o[d * e + p], S = o[d * e + x], T = z(
+          z(m, b, y),
+          z(I, S, y),
           h % 1
         );
         l[c * r + u] = T;
@@ -590,12 +590,12 @@ function hr(i, e, t, r, s, n) {
     for (let u = 0; u < r; ++u) {
       const g = a * u, y = g % 1, p = Math.floor(g), x = Math.min(Math.ceil(g), e - 1);
       for (let m = 0; m < n; ++m) {
-        const b = i[f * e * n + p * n + m], I = i[f * e * n + x * n + m], S = i[d * e * n + p * n + m], T = i[d * e * n + x * n + m], F = j(
-          j(b, I, y),
-          j(S, T, y),
+        const b = i[f * e * n + p * n + m], I = i[f * e * n + x * n + m], S = i[d * e * n + p * n + m], T = i[d * e * n + x * n + m], C = z(
+          z(b, I, y),
+          z(S, T, y),
           h % 1
         );
-        l[c * r * n + u * n + m] = F;
+        l[c * r * n + u * n + m] = C;
       }
     }
   }
@@ -683,8 +683,8 @@ function gr(i, e, t, r, s, n, a) {
           else if (T + s <= 16)
             h[I] = o.getUint16(S) >> 16 - s - T & f;
           else if (T + s <= 24) {
-            const F = o.getUint16(S) << 8 | o.getUint8(S + 2);
-            h[I] = F >> 24 - s - T & f;
+            const C = o.getUint16(S) << 8 | o.getUint8(S + 2);
+            h[I] = C >> 24 - s - T & f;
           } else
             h[I] = o.getUint32(S) >> 32 - s - T & f;
         }
@@ -885,25 +885,25 @@ class pr {
     const I = [], S = [];
     for (let A = 0; A < t.length; ++A)
       this.planarConfiguration === 1 ? I.push(ur(this.fileDirectory.BitsPerSample, 0, t[A]) / 8) : I.push(0), S.push(this.getReaderForSample(t[A]));
-    const T = [], { littleEndian: F } = this;
+    const T = [], { littleEndian: C } = this;
     for (let A = p; A < x; ++A)
-      for (let k = g; k < y; ++k) {
-        let M;
-        this.planarConfiguration === 1 && (M = this.getTileOrStrip(k, A, 0, n, c));
-        for (let R = 0; R < t.length; ++R) {
-          const U = R, Q = t[R];
-          this.planarConfiguration === 2 && (b = this.getSampleByteSize(Q), M = this.getTileOrStrip(k, A, Q, n, c));
-          const nt = M.then((q) => {
-            const ot = q.data, at = new DataView(ot), ne = this.getBlockHeight(q.y), H = q.y * f, ee = q.x * h, lt = H + ne, ct = (q.x + 1) * h, ht = S[U], ft = Math.min(ne, ne - (lt - e[3]), u - H), ut = Math.min(h, h - (ct - e[2]), d - ee);
-            for (let Y = Math.max(0, e[1] - H); Y < ft; ++Y)
-              for (let X = Math.max(0, e[0] - ee); X < ut; ++X) {
-                const dt = (Y * h + X) * b, ke = ht.call(
+      for (let R = g; R < y; ++R) {
+        let B;
+        this.planarConfiguration === 1 && (B = this.getTileOrStrip(R, A, 0, n, c));
+        for (let M = 0; M < t.length; ++M) {
+          const U = M, Q = t[M];
+          this.planarConfiguration === 2 && (b = this.getSampleByteSize(Q), B = this.getTileOrStrip(R, A, Q, n, c));
+          const nt = B.then((H) => {
+            const ot = H.data, at = new DataView(ot), ne = this.getBlockHeight(H.y), Y = H.y * f, ee = H.x * h, lt = Y + ne, ct = (H.x + 1) * h, ht = S[U], ft = Math.min(ne, ne - (lt - e[3]), u - Y), ut = Math.min(h, h - (ct - e[2]), d - ee);
+            for (let X = Math.max(0, e[1] - Y); X < ft; ++X)
+              for (let $ = Math.max(0, e[0] - ee); $ < ut; ++$) {
+                const dt = (X * h + $) * b, ke = ht.call(
                   at,
                   dt + I[U],
-                  F
+                  C
                 );
                 let te;
-                s ? (te = (Y + H - e[1]) * m * t.length + (X + ee - e[0]) * t.length + U, r[te] = ke) : (te = (Y + H - e[1]) * m + X + ee - e[0], r[U][te] = ke);
+                s ? (te = (X + Y - e[1]) * m * t.length + ($ + ee - e[0]) * t.length + U, r[te] = ke) : (te = (X + Y - e[1]) * m + $ + ee - e[0], r[U][te] = ke);
               }
           });
           T.push(nt);
@@ -1475,7 +1475,7 @@ class xr {
     }), this.workers = null);
   }
 }
-const Oe = `\r
+const Be = `\r
 \r
 `;
 function it(i) {
@@ -1526,7 +1526,7 @@ function Sr(i, e) {
     const l = o.substr(n.length + 2);
     if (l.length === 0)
       break;
-    const c = l.indexOf(Oe), h = br(l.substr(0, c)), { start: f, end: d, total: u } = ue(h["content-range"]), g = t + n.length + c + Oe.length, y = parseInt(d, 10) + 1 - parseInt(f, 10);
+    const c = l.indexOf(Be), h = br(l.substr(0, c)), { start: f, end: d, total: u } = ue(h["content-range"]), g = t + n.length + c + Be.length, y = parseInt(d, 10) + 1 - parseInt(f, 10);
     s.push({
       headers: h,
       data: i.slice(g, g + y),
@@ -1709,18 +1709,18 @@ function Dr(i, e) {
   const t = Array.isArray(i) ? i : Array.from(i), r = Array.isArray(e) ? e : Array.from(e);
   return t.map((s, n) => [s, r[n]]);
 }
-class z extends Error {
+class K extends Error {
   constructor(e) {
-    super(e), Error.captureStackTrace && Error.captureStackTrace(this, z), this.name = "AbortError";
+    super(e), Error.captureStackTrace && Error.captureStackTrace(this, K), this.name = "AbortError";
   }
 }
-class Fr extends Error {
+class Cr extends Error {
   constructor(e, t) {
     super(t), this.errors = e, this.message = t, this.name = "AggregateError";
   }
 }
-const Cr = Fr;
-class Er {
+const Er = Cr;
+class Fr {
   /**
    *
    * @param {number} offset
@@ -1737,7 +1737,7 @@ class Er {
     return this.offset + this.length;
   }
 }
-class Be {
+class Oe {
   /**
    *
    * @param {number} offset
@@ -1801,10 +1801,10 @@ class Pr extends De {
       await Promise.allSettled(o);
     }
     if (t && t.aborted)
-      throw new z("Request was aborted");
+      throw new K("Request was aborted");
     const c = n.map((d) => this.blockCache.get(d) || this.evictedBlocks.get(d)), h = c.filter((d) => !d);
     if (h.length)
-      throw new Cr(h, "Request failed");
+      throw new Er(h, "Request failed");
     const f = new Map(Dr(n, c));
     return this.readSliceData(e, f);
   }
@@ -1820,7 +1820,7 @@ class Pr extends De {
         for (const a of n.blockIds)
           this.blockRequests.set(a, (async () => {
             try {
-              const o = (await r)[s], l = a * this.blockSize, c = l - o.offset, h = Math.min(c + this.blockSize, o.data.byteLength), f = o.data.slice(c, h), d = new Er(
+              const o = (await r)[s], l = a * this.blockSize, c = l - o.offset, h = Math.min(c + this.blockSize, o.data.byteLength), f = o.data.slice(c, h), d = new Fr(
                 l,
                 f.byteLength,
                 f,
@@ -1852,12 +1852,12 @@ class Pr extends De {
     let r = [], s = null;
     const n = [];
     for (const a of t)
-      s === null || s + 1 === a ? (r.push(a), s = a) : (n.push(new Be(
+      s === null || s + 1 === a ? (r.push(a), s = a) : (n.push(new Oe(
         r[0] * this.blockSize,
         r.length * this.blockSize,
         r
       )), r = [a], s = a);
-    return n.push(new Be(
+    return n.push(new Oe(
       r[0] * this.blockSize,
       r.length * this.blockSize,
       r
@@ -1884,7 +1884,7 @@ class Pr extends De {
     });
   }
 }
-class Fe {
+class Ce {
   /**
    * Returns whether the response has an ok'ish status code
    */
@@ -1912,7 +1912,7 @@ class Fe {
     throw new Error("not implemented");
   }
 }
-class Ce {
+class Ee {
   constructor(e) {
     this.url = e;
   }
@@ -1925,7 +1925,7 @@ class Ce {
     throw new Error("request is not implemented");
   }
 }
-class kr extends Fe {
+class kr extends Ce {
   /**
    * BaseResponse facade for fetch API Response
    * @param {Response} response
@@ -1943,7 +1943,7 @@ class kr extends Fe {
     return this.response.arrayBuffer ? await this.response.arrayBuffer() : (await this.response.buffer()).buffer;
   }
 }
-class Rr extends Ce {
+class Rr extends Ee {
   constructor(e, t) {
     super(e), this.credentials = t;
   }
@@ -1960,7 +1960,7 @@ class Rr extends Ce {
     return new kr(r);
   }
 }
-class Mr extends Fe {
+class Mr extends Ce {
   /**
    * BaseResponse facade for XMLHttpRequest
    * @param {XMLHttpRequest} xhr
@@ -1979,7 +1979,7 @@ class Mr extends Fe {
     return this.data;
   }
 }
-class Or extends Ce {
+class Br extends Ee {
   constructRequest(e, t) {
     return new Promise((r, s) => {
       const n = new XMLHttpRequest();
@@ -1989,7 +1989,7 @@ class Or extends Ce {
       n.onload = () => {
         const a = n.response;
         r(new Mr(n, a));
-      }, n.onerror = s, n.onabort = () => s(new z("Request aborted")), n.send(), t && (t.aborted && n.abort(), t.addEventListener("abort", () => n.abort()));
+      }, n.onerror = s, n.onabort = () => s(new K("Request aborted")), n.send(), t && (t.aborted && n.abort(), t.addEventListener("abort", () => n.abort()));
     });
   }
   async request({ headers: e, signal: t } = {}) {
@@ -1997,7 +1997,7 @@ class Or extends Ce {
   }
 }
 const ce = {};
-class Br extends Fe {
+class Or extends Ce {
   /**
    * BaseResponse facade for node HTTP/HTTPS API Response
    * @param {http.ServerResponse} response
@@ -2015,7 +2015,7 @@ class Br extends Fe {
     return await this.dataPromise;
   }
 }
-class Gr extends Ce {
+class Gr extends Ee {
   constructor(e) {
     super(e), this.parsedUrl = ce.parse(this.url), this.httpApi = (this.parsedUrl.protocol === "http:", ce);
   }
@@ -2036,17 +2036,17 @@ class Gr extends Ce {
               l(h);
             }), a.on("error", s);
           });
-          r(new Br(a, o));
+          r(new Or(a, o));
         }
       );
-      n.on("error", s), t && (t.aborted && n.destroy(new z("Request aborted")), t.addEventListener("abort", () => n.destroy(new z("Request aborted"))));
+      n.on("error", s), t && (t.aborted && n.destroy(new K("Request aborted")), t.addEventListener("abort", () => n.destroy(new K("Request aborted"))));
     });
   }
   async request({ headers: e, signal: t } = {}) {
     return await this.constructRequest(e, t);
   }
 }
-class Ee extends De {
+class Fe extends De {
   /**
    *
    * @param {BaseClient} client
@@ -2143,21 +2143,21 @@ function Pe(i, { blockSize: e, cacheSize: t }) {
   return e === null ? i : new Pr(i, { blockSize: e, cacheSize: t });
 }
 function vr(i, { headers: e = {}, credentials: t, maxRanges: r = 0, allowFullFile: s = !1, ...n } = {}) {
-  const a = new Rr(i, t), o = new Ee(a, e, r, s);
+  const a = new Rr(i, t), o = new Fe(a, e, r, s);
   return Pe(o, n);
 }
 function _r(i, { headers: e = {}, maxRanges: t = 0, allowFullFile: r = !1, ...s } = {}) {
-  const n = new Or(i), a = new Ee(n, e, t, r);
+  const n = new Br(i), a = new Fe(n, e, t, r);
   return Pe(a, s);
 }
 function Ur(i, { headers: e = {}, maxRanges: t = 0, allowFullFile: r = !1, ...s } = {}) {
-  const n = new Gr(i), a = new Ee(n, e, t, r);
+  const n = new Gr(i), a = new Fe(n, e, t, r);
   return Pe(a, s);
 }
 function Lr(i, { forceXHR: e = !1, ...t } = {}) {
   return typeof fetch == "function" && !e ? vr(i, t) : typeof XMLHttpRequest < "u" ? _r(i, t) : Ur(i, t);
 }
-class Nr extends De {
+class jr extends De {
   constructor(e) {
     super(), this.file = e;
   }
@@ -2168,8 +2168,8 @@ class Nr extends De {
     });
   }
 }
-function jr(i) {
-  return new Nr(i);
+function Nr(i) {
+  return new jr(i);
 }
 function de(i) {
   switch (i) {
@@ -2203,7 +2203,7 @@ function zr(i) {
     return null;
   const t = {};
   for (let r = 4; r <= e[3] * 4; r += 4) {
-    const s = Wt[e[r]], n = e[r + 1] ? $[e[r + 1]] : null, a = e[r + 2], o = e[r + 3];
+    const s = Wt[e[r]], n = e[r + 1] ? W[e[r + 1]] : null, a = e[r + 2], o = e[r + 3];
     let l = null;
     if (!n)
       l = o;
@@ -2216,7 +2216,7 @@ function zr(i) {
   }
   return t;
 }
-function N(i, e, t, r) {
+function j(i, e, t, r) {
   let s = null, n = null;
   const a = de(e);
   switch (e) {
@@ -2409,17 +2409,17 @@ class ie extends Vr {
       let y, p;
       const x = de(u), m = l + (this.bigTiff ? 12 : 8);
       if (x * g <= (this.bigTiff ? 8 : 4))
-        y = N(s, u, g, m);
+        y = j(s, u, g, m);
       else {
         const b = s.readOffset(m), I = de(u) * g;
         if (s.covers(b, I))
-          y = N(s, u, g, b);
+          y = j(s, u, g, b);
         else {
           const S = await this.getSlice(b, I);
-          y = N(S, u, g, b);
+          y = j(S, u, g, b);
         }
       }
-      g === 1 && Xt.indexOf(d) === -1 && !(u === w.RATIONAL || u === w.SRATIONAL) ? p = y[0] : p = y, o[$[d]] = p;
+      g === 1 && Xt.indexOf(d) === -1 && !(u === w.RATIONAL || u === w.SRATIONAL) ? p = y[0] : p = y, o[W[d]] = p;
     }
     const c = zr(o), h = s.readOffset(
       e + r + t * n
@@ -2494,11 +2494,11 @@ class ie extends Vr {
       return this.ghostValues;
     const t = "GDAL_STRUCTURAL_METADATA_SIZE=", r = t.length + 100;
     let s = await this.getSlice(e, r);
-    if (t === N(s, w.ASCII, t.length, e)) {
-      const a = N(s, w.ASCII, r, e).split(`
+    if (t === j(s, w.ASCII, t.length, e)) {
+      const a = j(s, w.ASCII, r, e).split(`
 `)[0], o = Number(a.split("=")[1].split(" ")[0]) + a.length;
       o > r && (s = await this.getSlice(e, o));
-      const l = N(s, w.ASCII, o, e);
+      const l = j(s, w.ASCII, o, e);
       this.ghostValues = {}, l.split(`
 `).filter((c) => c.length > 0).map((c) => c.split("=")).forEach(([c, h]) => {
         this.ghostValues[c] = h;
@@ -2548,7 +2548,7 @@ async function Ge(i, e = {}, t) {
   return ie.fromSource(Lr(i, e), t);
 }
 async function ve(i, e) {
-  return ie.fromSource(jr(i), e);
+  return ie.fromSource(Nr(i), e);
 }
 class he {
   constructor() {
@@ -2720,14 +2720,14 @@ function Hr(i) {
     return !1;
   };
 }
-const v = class v {
+const P = class P {
   constructor(e, t = { logLatency: !1 }) {
     /**
      * Return the tileWidth for a given level.
      * @function
      * @param {Number} level
      */
-    E(this, "getTileWidth", (e) => {
+    F(this, "getTileWidth", (e) => {
       if (this.levels.length > e)
         return this.levels[e].tileWidth;
     });
@@ -2736,7 +2736,7 @@ const v = class v {
      * @function
      * @param {Number} level
      */
-    E(this, "getTileHeight", (e) => {
+    F(this, "getTileHeight", (e) => {
       if (this.levels.length > e)
         return this.levels[e].tileHeight;
     });
@@ -2744,14 +2744,14 @@ const v = class v {
      * @function
      * @param {Number} level
      */
-    E(this, "getLevelScale", (e) => {
+    F(this, "getLevelScale", (e) => {
       let t = NaN;
       return this.levels.length > 0 && e >= this.minLevel && e <= this.maxLevel && (t = this.levels[e].width / this.levels[this.maxLevel].width), t;
     });
     /**
      * Handle maintaining unique caches per channel in multi-channel images
      */
-    E(this, "getTileHashKey", (e, t, r) => {
+    F(this, "getTileHashKey", (e, t, r) => {
       var s;
       return `${((s = this == null ? void 0 : this.channel) == null ? void 0 : s.name) ?? ""}_${e}_${t}_${r}`;
     });
@@ -2762,11 +2762,11 @@ const v = class v {
      * @param {Number} x
      * @param {Number} y
      */
-    E(this, "getTileUrl", (e, t, r) => {
+    F(this, "getTileUrl", (e, t, r) => {
       let s = this.levels[e], n = new String(`${e}/${t}_${r}`);
       return n.fetch = /* @__PURE__ */ ((a, o, l, c, h) => () => this.regionToDataUrl.call(a, o, l, c, h))(this, s, t, r, n), n;
     });
-    E(this, "downloadTileStart", (e) => {
+    F(this, "downloadTileStart", (e) => {
       e.src.fetch().then((t) => {
         let r = new Image(), s = "" + e.src;
         r.onload = function() {
@@ -2776,19 +2776,19 @@ const v = class v {
         }, r.src = t;
       });
     });
-    E(this, "downloadTileAbort", (e) => {
+    F(this, "downloadTileAbort", (e) => {
       e.src.abortController && e.src.abortController.abort();
     });
-    E(this, "setupComplete", () => {
+    F(this, "setupComplete", () => {
       this._ready = !0, this.promises.ready.resolve(), this.raiseEvent("ready", { tileSource: this });
     });
-    E(this, "setupLevels", () => {
+    F(this, "setupLevels", () => {
       if (this._ready)
         return;
       let e = this.GeoTIFFImages.sort((o, l) => l.getWidth() - o.getWidth()), t = this._tileSize, r = this._tileSize, s = e[0].getWidth();
       this.width = s;
       let n = e[0].getHeight();
-      if (this.height = n, this.tileOverlap = 0, this.minLevel = 0, this.aspectRatio = this.width / this.height, this.dimensions = new OpenSeadragon.Point(this.width, this.height), e.reduce(
+      if (this.height = n, this.tileOverlap = 0, this.minLevel = 0, this.aspectRatio = this.width / this.height, this.dimensions = new P._OpenSeadragon.Point(this.width, this.height), e.reduce(
         (o, l) => (o.width !== -1 && (o.valid = o.valid && l.getWidth() < o.width), o.width = l.getWidth(), o),
         { valid: !0, width: -1 }
       ).valid)
@@ -2828,7 +2828,7 @@ const v = class v {
       }
       this.levels = this.levels.sort((o, l) => o.width - l.width), this._tileWidth = this.levels[0].tileWidth, this._tileHeight = this.levels[0].tileHeight, this.setupComplete();
     });
-    E(this, "regionToDataUrl", (e, t, r, s) => {
+    F(this, "regionToDataUrl", (e, t, r, s) => {
       var u, g, y, p, x;
       let n = this.options.logLatency && Date.now(), o = (s.abortController = new AbortController()).signal;
       const l = e.tileWidth, c = e.tileHeight, h = [t * l, r * c, (t + 1) * l, (r + 1) * c].map(
@@ -2851,11 +2851,11 @@ const v = class v {
         }).then((S) => {
           let T = document.createElement("canvas");
           T.width = e.tileWidth, T.height = e.tileHeight;
-          let F = T.getContext("2d"), A = new Uint8ClampedArray(4 * T.width * T.height), k = new Uint8ClampedArray(S), M, R;
-          for (M = 0, R = 0; M < k.length; M += 3, R += 4)
-            A[R] = k[M] * I[0] / 255, A[R + 1] = k[M + 1] * I[1] / 255, A[R + 2] = k[M + 2] * I[2] / 255, A[R + 3] = 255;
-          const U = F.createImageData(T.width, T.height);
-          U.data.set(A), F.putImageData(U, 0, 0);
+          let C = T.getContext("2d"), A = new Uint8ClampedArray(4 * T.width * T.height), R = new Uint8ClampedArray(S), B, M;
+          for (B = 0, M = 0; B < R.length; B += 3, M += 4)
+            A[M] = R[B] * I[0] / 255, A[M + 1] = R[B + 1] * I[1] / 255, A[M + 2] = R[B + 2] * I[2] / 255, A[M + 3] = 255;
+          const U = C.createImageData(T.width, T.height);
+          U.data.set(A), C.putImageData(U, 0, 0);
           let Q = T.toDataURL("image/jpeg", 0.8);
           return this.options.logLatency && (typeof this.options.logLatency == "function" ? this.options.logLatency : console.log)(
             "Tile latency (ms):",
@@ -2866,51 +2866,51 @@ const v = class v {
         return e.image.getTileOrStrip(t, r, null, this._pool, o).then((m) => {
           let b = new Uint8ClampedArray(m.data), I = document.createElement("canvas");
           I.width = e.tileWidth, I.height = e.tileHeight;
-          let S = I.getContext("2d"), T = e.image.fileDirectory.PhotometricInterpretation, F;
+          let S = I.getContext("2d"), T = e.image.fileDirectory.PhotometricInterpretation, C;
           if (b.length / (I.width * I.height) % 4 === 0)
-            F = b;
+            C = b;
           else
             switch (T) {
               case D.WhiteIsZero:
-                F = L.RGBAfromWhiteIsZero(
+                C = L.RGBAfromWhiteIsZero(
                   b,
                   2 ** e.image.fileDirectory.BitsPerSample[0]
                 );
                 break;
               case D.BlackIsZero:
-                F = L.RGBAfromBlackIsZero(
+                C = L.RGBAfromBlackIsZero(
                   b,
                   2 ** e.image.fileDirectory.BitsPerSample[0]
                 );
                 break;
               case D.RGB:
-                F = L.RGBAfromRGB(b);
+                C = L.RGBAfromRGB(b);
                 break;
               case D.Palette:
-                F = L.RGBAfromPalette(b, 2 ** e.image.fileDirectory.colorMap);
+                C = L.RGBAfromPalette(b, 2 ** e.image.fileDirectory.colorMap);
                 break;
               case D.CMYK:
-                F = L.RGBAfromCMYK(b);
+                C = L.RGBAfromCMYK(b);
                 break;
               case D.YCbCr:
-                F = L.RGBAfromYCbCr(b);
+                C = L.RGBAfromYCbCr(b);
                 break;
               case D.CIELab:
-                F = L.RGBAfromCIELab(b);
+                C = L.RGBAfromCIELab(b);
                 break;
             }
           const A = S.createImageData(I.width, I.height);
-          A.data.set(F), S.putImageData(A, 0, 0);
-          let k = I.toDataURL("image/jpeg", 0.8);
+          A.data.set(C), S.putImageData(A, 0, 0);
+          let R = I.toDataURL("image/jpeg", 0.8);
           return this.options.logLatency && (typeof this.options.logLatency == "function" ? this.options.logLatency : console.log)(
             "Tile latency (ms):",
             Date.now() - n
-          ), k;
+          ), R;
         });
     });
-    v._osdReady || v.applyOSDPatch(OpenSeadragon);
+    P._osdReady || P.applyOSDPatch(P._OpenSeadragon);
     let r = this;
-    this.input = e, this.options = t, this.channel = (e == null ? void 0 : e.channel) ?? null, this._ready = !1, this._pool = v.sharedPool, this._tileSize = 256, e.GeoTIFF && e.GeoTIFFImages ? (this.promises = {
+    this.input = e, this.options = t, this.channel = (e == null ? void 0 : e.channel) ?? null, this._ready = !1, this._pool = P.sharedPool, this._tileSize = 256, e.GeoTIFF && e.GeoTIFFImages ? (this.promises = {
       GeoTIFF: Promise.resolve(e.GeoTIFF),
       GeoTIFFImages: Promise.resolve(e.GeoTIFFImages),
       ready: new he()
@@ -2938,10 +2938,10 @@ const v = class v {
  * @static sharedPool
  * @type {Pool}
  */
-E(v, "sharedPool", new xr()), E(v, "_osdReady", !1), // Apply ImageJob patch to OpenSeadragon. Can be extended for modular patches.
-E(v, "applyOSDPatch", (e) => {
-  Hr(e), v._osdReady = !0;
-}), E(v, "getAllTileSources", async (e, t) => {
+F(P, "sharedPool", new xr()), F(P, "_osdReady", !1), // Apply ImageJob patch to OpenSeadragon. Can be extended for modular patches.
+F(P, "applyOSDPatch", (e) => {
+  Hr(e), P._osdReady = !0;
+}), F(P, "getAllTileSources", async (e, t) => {
   const r = e instanceof File ? e.name.split(".").pop() : e.split(".").pop();
   let s = e instanceof File ? ve(e) : Ge(e);
   return s.then((n) => (s = n, n.getImageCount())).then(
@@ -2964,7 +2964,7 @@ E(v, "applyOSDPatch", (e) => {
       return c;
     }, []).map((c) => c.images).map((c, h) => {
       if (h !== 0)
-        return new OpenSeadragon.GeoTIFFTileSource(
+        return new P.GeoTIFFTileSource(
           {
             GeoTIFF: s,
             GeoTIFFImages: c
@@ -2974,7 +2974,7 @@ E(v, "applyOSDPatch", (e) => {
       switch (r) {
         case "qptiff":
           const f = qr(c);
-          return Array.from(f.values()).map((d, u) => new OpenSeadragon.GeoTIFFTileSource(
+          return Array.from(f.values()).map((d, u) => new P(
             {
               GeoTIFF: s,
               GeoTIFFImages: d.images,
@@ -2986,7 +2986,7 @@ E(v, "applyOSDPatch", (e) => {
             t
           ));
         default:
-          return new OpenSeadragon.GeoTIFFTileSource(
+          return new P(
             {
               GeoTIFF: s,
               GeoTIFFImages: c
@@ -2997,18 +2997,22 @@ E(v, "applyOSDPatch", (e) => {
     });
   });
 });
-let W = v;
+let N = P;
 const Yr = (i) => {
-  Object.assign(W.prototype, i.TileSource.prototype, W.prototype), i.GeoTIFFTileSource = W;
+  Object.assign(N.prototype, i.TileSource.prototype, N.prototype), i.GeoTIFFTileSource = N, Object.defineProperty(N, "_OpenSeadragon", {
+    get: function() {
+      return i;
+    }
+  });
 };
 (function(i, e) {
   typeof exports > "u" || typeof i.OpenSeadragon < "u" && e(i.OpenSeadragon);
 })(typeof window < "u" ? window : void 0, Yr);
 export {
-  W as G,
+  N as G,
   ns as L,
   os as a,
   Yr as e,
   $e as g
 };
-//# sourceMappingURL=main-HSZOOwEe.js.map
+//# sourceMappingURL=main-zse-_BS4.js.map

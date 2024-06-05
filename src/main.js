@@ -12,6 +12,11 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
   // Attach the class to the OpenSeadragon namespace
   Object.assign(GeoTIFFTileSource.prototype, OpenSeadragon.TileSource.prototype, GeoTIFFTileSource.prototype);
   OpenSeadragon.GeoTIFFTileSource = GeoTIFFTileSource;
+  Object.defineProperty(GeoTIFFTileSource, '_OpenSeadragon', {
+    get: function _OpenSeadragon(){
+      return OpenSeadragon;
+    }
+  });
 };
 
 // Run an IIFE to attach the GeoTIFFTileSource to the OpenSeadragon namespace

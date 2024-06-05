@@ -40,7 +40,7 @@ export class GeoTIFFTileSource{
   constructor(input, opts = { logLatency: false }) {
     
     if (!GeoTIFFTileSource._osdReady) {
-      GeoTIFFTileSource.applyOSDPatch(OpenSeadragon);
+      GeoTIFFTileSource.applyOSDPatch(GeoTIFFTileSource._OpenSeadragon);
     }
 
     let self = this;
@@ -147,7 +147,7 @@ export class GeoTIFFTileSource{
         return imageSets.map((images, index) => {
           // Check if QPTIFF
           if (index !== 0) {
-            return new OpenSeadragon.GeoTIFFTileSource(
+            return new GeoTIFFTileSource.GeoTIFFTileSource(
               {
                 GeoTIFF: tiff,
                 GeoTIFFImages: images,
@@ -160,7 +160,7 @@ export class GeoTIFFTileSource{
             case "qptiff":
               const channels = parsePerkinElmerChannels(images);
               return Array.from(channels.values()).map((channel, index) => {
-                return new OpenSeadragon.GeoTIFFTileSource(
+                return new GeoTIFFTileSource(
                   {
                     GeoTIFF: tiff,
                     GeoTIFFImages: channel.images,
@@ -174,7 +174,7 @@ export class GeoTIFFTileSource{
               });
 
             default:
-              return new OpenSeadragon.GeoTIFFTileSource(
+              return new GeoTIFFTileSource(
                 {
                   GeoTIFF: tiff,
                   GeoTIFFImages: images,
@@ -293,7 +293,7 @@ export class GeoTIFFTileSource{
     this.tileOverlap = 0;
     this.minLevel = 0;
     this.aspectRatio = this.width / this.height;
-    this.dimensions = new OpenSeadragon.Point(this.width, this.height);
+    this.dimensions = new GeoTIFFTileSource._OpenSeadragon.Point(this.width, this.height);
 
     // a valid tiled pyramid has strictly monotonic size for levels
     let pyramid = images.reduce(
