@@ -24,7 +24,7 @@ import { patchOSDImageJob } from "./utils/osdMonkeyPatch.js";
  * @property {Number} tileSize
  * @property {Array}  levels
  */
-export class GeoTIFFTileSource extends OpenSeadragon.TileSource {
+export class GeoTIFFTileSource{
   /**
    * Create a shared GeoTIFF Pool for all GeoTIFFTileSources to use.
    *
@@ -38,10 +38,9 @@ export class GeoTIFFTileSource extends OpenSeadragon.TileSource {
   static _osdReady = false;
 
   constructor(input, opts = { logLatency: false }) {
-    super();
-
+    
     if (!GeoTIFFTileSource._osdReady) {
-      GeoTIFFTileSource.applyOSDPatch(OpenSeadragon);
+      GeoTIFFTileSource.applyOSDPatch(GeoTIFFTileSource._OpenSeadragon);
     }
 
     let self = this;
@@ -148,7 +147,7 @@ export class GeoTIFFTileSource extends OpenSeadragon.TileSource {
         return imageSets.map((images, index) => {
           // Check if QPTIFF
           if (index !== 0) {
-            return new OpenSeadragon.GeoTIFFTileSource(
+            return new GeoTIFFTileSource.GeoTIFFTileSource(
               {
                 GeoTIFF: tiff,
                 GeoTIFFImages: images,
@@ -161,7 +160,7 @@ export class GeoTIFFTileSource extends OpenSeadragon.TileSource {
             case "qptiff":
               const channels = parsePerkinElmerChannels(images);
               return Array.from(channels.values()).map((channel, index) => {
-                return new OpenSeadragon.GeoTIFFTileSource(
+                return new GeoTIFFTileSource(
                   {
                     GeoTIFF: tiff,
                     GeoTIFFImages: channel.images,
@@ -175,7 +174,7 @@ export class GeoTIFFTileSource extends OpenSeadragon.TileSource {
               });
 
             default:
-              return new OpenSeadragon.GeoTIFFTileSource(
+              return new GeoTIFFTileSource(
                 {
                   GeoTIFF: tiff,
                   GeoTIFFImages: images,
@@ -294,7 +293,7 @@ export class GeoTIFFTileSource extends OpenSeadragon.TileSource {
     this.tileOverlap = 0;
     this.minLevel = 0;
     this.aspectRatio = this.width / this.height;
-    this.dimensions = new OpenSeadragon.Point(this.width, this.height);
+    this.dimensions = new GeoTIFFTileSource._OpenSeadragon.Point(this.width, this.height);
 
     // a valid tiled pyramid has strictly monotonic size for levels
     let pyramid = images.reduce(
