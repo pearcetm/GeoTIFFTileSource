@@ -1,6 +1,5 @@
-import { G as r, e as F } from "./main-pZdue58H.js";
+import { e as r } from "./main-7p-Yefg8.js";
 export {
-  r as GeoTIFFTileSource,
-  F as enableGeoTIFFTileSource
+  r as enableGeoTIFFTileSource
 };
 //# sourceMappingURL=geotiff-tilesource.mjs.map
