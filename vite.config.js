@@ -26,8 +26,11 @@ export default defineConfig({
       thirdParty: {
         output: path.join(__dirname, "dist", "bundled-licenses.txt"),
         includePrivate: false,
-        includeSelf:true,
+        includeSelf: true,
       },
     }),
   ],
+  test: {
+    environment: "jsdom",
+  },
 });

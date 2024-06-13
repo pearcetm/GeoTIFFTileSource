@@ -34,7 +34,7 @@ SOFTWARE.
 ---
 
 Name: geotiff-tilesource
-Version: 2.0.1
+Version: 2.0.2
 License: null
 Private: false
 Description: A plugin tilesource for OpenSeadragon that uses geotiff.js to provide serverless access to view compatible local or remote TIFF files

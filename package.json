@@ -1,6 +1,6 @@
 {
   "name": "geotiff-tilesource",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A plugin tilesource for OpenSeadragon that uses geotiff.js to provide serverless access to view compatible local or remote TIFF files",
   "files": [
     "dist"
@@ -16,13 +16,18 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "type": "module",
   "devDependencies": {
+    "canvas": "^2.11.2",
+    "jsdom": "^24.1.0",
+    "openseadragon": "^4.1.1",
     "prettier": "3.2.5",
     "rollup-plugin-license": "^3.4.0",
-    "vite": "^5.0.8"
+    "vite": "^5.0.8",
+    "vitest": "^1.6.0"
   },
   "dependencies": {
     "geotiff": "^2.1.2"
