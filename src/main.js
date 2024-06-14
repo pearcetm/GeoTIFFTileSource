@@ -131,6 +131,18 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
               globals.photometricInterpretations.TransparencyMask
           );
 
+          // Filter out macro thumbnails and labels
+          //   This is a modification according to the Aperio SVS format
+          //   https://web.archive.org/web/20120420105738/http://www.aperio.com/documents/api/Aperio_Digital_Slides_and_Third-party_data_interchange.pdf (pg 14)
+          //   which specifies to always strip macro and label thumbnails.
+          if (toLowerCase(fileExtension) == "svs"){
+            let labelFilter = (i) => {
+              var s = i.fileDirectory.ImageDescription.split("\n")[1];
+              return !(s.includes("macro") || s.includes("label"));
+            }
+            images = images.filter(labelFilter);
+          }
+
           // Sort by width (largest first), then detect pyramids
           images.sort((a, b) => b.getWidth() - a.getWidth());
 
