@@ -142,7 +142,14 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
           //   https://web.archive.org/web/20120420105738/http://www.aperio.com/documents/api/Aperio_Digital_Slides_and_Third-party_data_interchange.pdf (pg 14)
           const aspectRatioSets = images.reduce((accumulator, image) => {
             const r = image.getWidth() / image.getHeight();
-            const s = image.fileDirectory.ImageDescription.split("\n")[1];
+            let s = ""; // Initialize with no description
+
+            // Check whether the ImageDescription exists as a field just in case
+            if (image.fileDirectory.ImageDescription){
+              // Split out part of the description that signifies its type for identification
+              s = image.fileDirectory.ImageDescription.split("\n")[1];
+            }
+            
             const exists = accumulator.filter(
               (set) => ((Math.abs(1 - set.aspectRatio / r) < tolerance)
                 && !(s.includes("macro") || s.includes("label"))) // Separate out macro thumbnails and labels
