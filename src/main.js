@@ -137,10 +137,22 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
           // find unique aspect ratios (with tolerance to account for rounding)
           const tolerance = 0.015;
 
+          // Organize images into sets based on aspect ratio as well as
+          // macro thumbnails and labels according to the Aperio SVS format:
+          //   https://web.archive.org/web/20120420105738/http://www.aperio.com/documents/api/Aperio_Digital_Slides_and_Third-party_data_interchange.pdf (pg 14)
           const aspectRatioSets = images.reduce((accumulator, image) => {
             const r = image.getWidth() / image.getHeight();
+            let s = ""; // Initialize with no description
+
+            // Check whether the ImageDescription exists as a field just in case
+            if (image.fileDirectory.ImageDescription){
+              // Split out part of the description that signifies its type for identification
+              s = image.fileDirectory.ImageDescription.split("\n")[1];
+            }
+            
             const exists = accumulator.filter(
-              (set) => Math.abs(1 - set.aspectRatio / r) < tolerance
+              (set) => ((Math.abs(1 - set.aspectRatio / r) < tolerance)
+                && !(s.includes("macro") || s.includes("label"))) // Separate out macro thumbnails and labels
             );
             if (exists.length === 0) {
               let set = {
