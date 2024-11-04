@@ -517,7 +517,7 @@ N([8, 32946], () => import("./deflate-vcCR2g03.js").then((n) => n.default));
 N(32773, () => import("./packbits-QLsyzNt2.js").then((n) => n.default));
 N(
   34887,
-  () => import("./lerc-ynggy3CE.js").then(async (n) => (await n.zstd.init(), n)).then((n) => n.default)
+  () => import("./lerc-kGi8bXFs.js").then(async (n) => (await n.zstd.init(), n)).then((n) => n.default)
 );
 N(50001, () => import("./webimage-Hf-HYtMO.js").then((n) => n.default));
 function se(n, e, t, r = 1) {
@@ -2951,17 +2951,22 @@ const qr = (n) => {
       ), c.sort((f, d) => d.getWidth() - f.getWidth());
       const u = 0.015;
       return c.reduce((f, d) => {
-        const p = d.getWidth() / d.getHeight(), y = f.filter(
-          (w) => Math.abs(1 - w.aspectRatio / p) < u
+        const p = d.getWidth() / d.getHeight();
+        let y = "";
+        d.fileDirectory.ImageDescription && (y = d.fileDirectory.ImageDescription.split(`
+`)[1]);
+        const w = f.filter(
+          (m) => Math.abs(1 - m.aspectRatio / p) < u && !(y.includes("macro") || y.includes("label"))
+          // Separate out macro thumbnails and labels
         );
-        if (y.length === 0) {
-          let w = {
+        if (w.length === 0) {
+          let m = {
             aspectRatio: p,
             images: [d]
           };
-          f.push(w);
+          f.push(m);
         } else
-          y[0].images.push(d);
+          w[0].images.push(d);
         return f;
       }, []).map((f) => f.images).map((f, d) => {
         if (d !== 0)
@@ -3010,4 +3015,4 @@ export {
   qr as e,
   We as g
 };
-//# sourceMappingURL=main-7p-Yefg8.js.map
+//# sourceMappingURL=main-OmA_DfW8.js.map
