@@ -1,6 +1,6 @@
 var ut = Object.defineProperty;
 var dt = (n, e, t) => e in n ? ut(n, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : n[e] = t;
-var P = (n, e, t) => (dt(n, typeof e != "symbol" ? e + "" : e, t), t);
+var P = (n, e, t) => dt(n, typeof e != "symbol" ? e + "" : e, t);
 function E(n) {
   return (e, ...t) => gt(n, e, t);
 }
@@ -157,8 +157,7 @@ function Ze(n, e, t) {
     const l = o[a], c = e + "\\=" + l + "([^" + l + "]*)" + l;
     r && console.log("[xml-utils] pattern:", c);
     const h = new RegExp(c).exec(s);
-    if (r && console.log("[xml-utils] match:", h), h)
-      return h[1];
+    if (r && console.log("[xml-utils] match:", h), h) return h[1];
   }
 }
 be.exports = Ze;
@@ -193,8 +192,7 @@ function tt(n, e, t) {
   r && console.log("[xml-utils] starting findTagByName with", e, " and ", t);
   const o = jt(n, `<${e}[ 
 >/]`, s);
-  if (r && console.log("[xml-utils] start:", o), o === -1)
-    return;
+  if (r && console.log("[xml-utils] start:", o), o === -1) return;
   const a = n.slice(o + e.length);
   let l = le(a, "^[^<]*[ /]>", 0);
   const c = l !== -1 && a[l - 1] === "/";
@@ -204,15 +202,13 @@ function tt(n, e, t) {
       for (; (l = le(a, "[ /]" + e + ">", f)) !== -1; ) {
         const y = a.substring(f, l + 1);
         if (d += Be(y, "<" + e + `[ 
-	>]`), p += Be(y, "</" + e + ">"), p >= d)
-          break;
+	>]`), p += Be(y, "</" + e + ">"), p >= d) break;
         f = l;
       }
     } else
       l = le(a, "[ /]" + e + ">", 0);
   const u = o + e.length + l + 1;
-  if (r && console.log("[xml-utils] end:", u), u === -1)
-    return;
+  if (r && console.log("[xml-utils] end:", u), u === -1) return;
   const h = n.slice(o, u);
   let g;
   return c ? g = null : g = h.slice(h.indexOf(">") + 1, h.lastIndexOf("<")), { inner: g, outer: h, start: o, end: u };
@@ -507,19 +503,19 @@ async function it(n) {
   const t = await e();
   return new t(n);
 }
-N([void 0, 1], () => import("./raw-_eObXrMO.js").then((n) => n.default));
-N(5, () => import("./lzw-5BnjP5Zu.js").then((n) => n.default));
+N([void 0, 1], () => import("./raw-CMGvRjfu.js").then((n) => n.default));
+N(5, () => import("./lzw-LAGDNbSC.js").then((n) => n.default));
 N(6, () => {
   throw new Error("old style JPEG compression is not supported.");
 });
-N(7, () => import("./jpeg-cL5qbLGO.js").then((n) => n.default));
-N([8, 32946], () => import("./deflate-vcCR2g03.js").then((n) => n.default));
-N(32773, () => import("./packbits-QLsyzNt2.js").then((n) => n.default));
+N(7, () => import("./jpeg-BAgeD1d3.js").then((n) => n.default));
+N([8, 32946], () => import("./deflate-BXt-9JA_.js").then((n) => n.default));
+N(32773, () => import("./packbits-BlDR4Kj5.js").then((n) => n.default));
 N(
   34887,
-  () => import("./lerc-kGi8bXFs.js").then(async (n) => (await n.zstd.init(), n)).then((n) => n.default)
+  () => import("./lerc-CMfnZT3U.js").then(async (n) => (await n.zstd.init(), n)).then((n) => n.default)
 );
-N(50001, () => import("./webimage-Hf-HYtMO.js").then((n) => n.default));
+N(50001, () => import("./webimage-BM_pbLN3.js").then((n) => n.default));
 function se(n, e, t, r = 1) {
   return new (Object.getPrototypeOf(n)).constructor(e * t * r);
 }
@@ -1445,7 +1441,7 @@ class mr {
    */
   constructor(e = pr, t) {
     this.workers = null, this._awaitingDecoder = null, this.size = e, this.messageId = 0, e && (this._awaitingDecoder = t ? Promise.resolve(t) : new Promise((r) => {
-      import("./decoder-b0JuKe3x.js").then((i) => {
+      import("./decoder-DJlmx386.js").then((i) => {
         r(i.create);
       });
     }), this._awaitingDecoder.then((r) => {
@@ -2103,8 +2099,7 @@ class Pe extends Fe {
           length: i.byteLength
         }];
       }
-    else
-      throw new Error("Error fetching data.");
+    else throw new Error("Error fetching data.");
   }
   async fetchSlice(e, t) {
     const { offset: r, length: i } = e, s = await this.client.request({
@@ -2132,8 +2127,7 @@ class Pe extends Fe {
           length: o.byteLength
         };
       }
-    else
-      throw new Error("Error fetching data.");
+    else throw new Error("Error fetching data.");
   }
   get fileSize() {
     return this._fileSize;
@@ -3015,4 +3009,4 @@ export {
   qr as e,
   We as g
 };
-//# sourceMappingURL=main-OmA_DfW8.js.map
+//# sourceMappingURL=main-BWka5IIc.js.map

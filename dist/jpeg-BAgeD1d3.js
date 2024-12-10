@@ -1,4 +1,4 @@
-import { B as re } from "./basedecoder-PFIibI7U.js";
+import { B as re } from "./basedecoder-DHcBySSe.js";
 const O = new Int32Array([
   0,
   1,
@@ -380,11 +380,10 @@ class le {
                 }
               else
                 throw new Error("DQT: invalid table spec");
-            else
-              for (let r = 0; r < 64; r++) {
-                const b = O[r];
-                c[b] = l[o++];
-              }
+            else for (let r = 0; r < 64; r++) {
+              const b = O[r];
+              c[b] = l[o++];
+            }
             this.quantizationTables[F & 15] = c;
           }
           break;
@@ -513,4 +512,4 @@ class fe extends re {
 export {
   fe as default
 };
-//# sourceMappingURL=jpeg-cL5qbLGO.js.map
+//# sourceMappingURL=jpeg-BAgeD1d3.js.map
