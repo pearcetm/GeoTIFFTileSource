@@ -33,7 +33,7 @@
     "geotiff": "^2.1.2"
   },
   "peerDependencies": {
-    "openseadragon": "^3.0.0 || ^4.0.0"
+    "openseadragon": "^3.0.0 || ^4.0.0 || ^5.0.0"
   },
   "repository": {
     "type": "git",
