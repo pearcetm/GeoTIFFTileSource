@@ -22,6 +22,7 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
    *                 opts.logLatency: print latency to fetch and process each tile to console.log or the provided function
    *                 opts.tileWidth: tileWidth to request at each level. Defaults to tileWidth specified by TIFF file or 256 if unspecified by the file
    *                 opts.tileHeight:tileWidth to request at each level. Defaults to tileWidth specified by TIFF file or 256 if unspecified by the file
+   *                 opts.GeoTIFFOptions Options object to pass to [geotiff.js]{@link https://github.com/geotiffjs/geotiff.js}
    *
    * @property {Object} GeoTIFF The GeoTIFF.js representation of the underlying file. Undefined until the file is opened successfully
    * @property {Array}  GeoTIFFImages Array of GeoTIFFImage objects, each representing one layer. Undefined until the file is opened successfully
@@ -76,7 +77,7 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
         this.setupLevels();
       } else {
         this.promises = {
-          GeoTIFF: input instanceof File ? fromBlob(input) : fromUrl(input),
+          GeoTIFF: input instanceof File ? fromBlob(input, opts.GeoTIFFOptions) : fromUrl(input, opts.GeoTIFFOptions),
           GeoTIFFImages: new DeferredPromise(),
           ready: new DeferredPromise(),
         };
@@ -113,7 +114,7 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
       const fileExtension =
         input instanceof File ? input.name.split(".").pop() : input.split(".").pop();
 
-      let tiff = input instanceof File ? fromBlob(input) : fromUrl(input);
+      let tiff = input instanceof File ? fromBlob(input, opts.GeoTIFFOptions) : fromUrl(input, opts.GeoTIFFOptions);
 
       return tiff
         .then((t) => {
