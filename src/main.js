@@ -147,12 +147,12 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
             // Check whether the ImageDescription exists as a field just in case
             if (image.fileDirectory.ImageDescription){
               // Split out part of the description that signifies its type for identification
-              s = image.fileDirectory.ImageDescription.split("\n")[1];
+              s = image.fileDirectory.ImageDescription.split("\n")[1] ?? "";
             }
             
             const exists = accumulator.filter(
               (set) => ((Math.abs(1 - set.aspectRatio / r) < tolerance)
-                && !(s.includes("macro") || s.includes("label"))) // Separate out macro thumbnails and labels
+                && !(s?.includes("macro") || s?.includes("label"))) // Separate out macro thumbnails and labels
             );
             if (exists.length === 0) {
               let set = {
