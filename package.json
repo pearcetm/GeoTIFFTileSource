@@ -30,7 +30,7 @@
     "vitest": "^1.6.0"
   },
   "dependencies": {
-    "geotiff": "^2.1.2"
+    "geotiff": "https://github.com/Recontaminated/geotiff.js"
   },
   "peerDependencies": {
     "openseadragon": "^3.0.0 || ^4.0.0 || ^5.0.0"

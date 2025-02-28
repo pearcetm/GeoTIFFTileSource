@@ -1,10 +1,10 @@
-var ut = Object.defineProperty;
-var dt = (n, e, t) => e in n ? ut(n, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : n[e] = t;
-var P = (n, e, t) => dt(n, typeof e != "symbol" ? e + "" : e, t);
+var dt = Object.defineProperty;
+var gt = (n, e, t) => e in n ? dt(n, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : n[e] = t;
+var P = (n, e, t) => gt(n, typeof e != "symbol" ? e + "" : e, t);
 function E(n) {
-  return (e, ...t) => gt(n, e, t);
+  return (e, ...t) => yt(n, e, t);
 }
-function q(n, e) {
+function H(n, e) {
   return E(
     Ue(
       n,
@@ -13,78 +13,78 @@ function q(n, e) {
   );
 }
 const {
-  apply: gt,
-  construct: Yr,
-  defineProperty: Xr,
-  get: $r,
+  apply: yt,
+  construct: Zr,
+  defineProperty: Jr,
+  get: Qr,
   getOwnPropertyDescriptor: Ue,
   getPrototypeOf: ye,
-  has: Wr,
-  ownKeys: yt,
-  set: Zr,
-  setPrototypeOf: Jr
+  has: es,
+  ownKeys: pt,
+  set: ts,
+  setPrototypeOf: rs
 } = Reflect, {
   iterator: J,
-  species: Qr,
-  toStringTag: pt,
-  for: es
-} = Symbol, mt = Object, {
+  species: ss,
+  toStringTag: mt,
+  for: is
+} = Symbol, wt = Object, {
   create: pe,
-  defineProperty: wt,
-  freeze: ts,
-  is: rs
-} = mt, xt = Array, bt = xt.prototype, Le = bt[J], It = E(Le), Ne = ArrayBuffer, Tt = Ne.prototype;
-q(Tt, "byteLength");
+  defineProperty: xt,
+  freeze: ns,
+  is: os
+} = wt, bt = Array, It = bt.prototype, Ne = It[J], Tt = E(Ne), je = ArrayBuffer, St = je.prototype;
+H(St, "byteLength");
 const Me = typeof SharedArrayBuffer < "u" ? SharedArrayBuffer : null;
-Me && q(Me.prototype, "byteLength");
-const je = ye(Uint8Array);
-je.from;
-const k = je.prototype;
-k[J];
-E(k.keys);
+Me && H(Me.prototype, "byteLength");
+const ze = ye(Uint8Array);
+ze.from;
+const R = ze.prototype;
+R[J];
+E(R.keys);
 E(
-  k.values
+  R.values
 );
 E(
-  k.entries
+  R.entries
 );
-E(k.set);
+E(R.set);
 E(
-  k.reverse
+  R.reverse
 );
-E(k.fill);
+E(R.fill);
 E(
-  k.copyWithin
+  R.copyWithin
 );
-E(k.sort);
-E(k.slice);
+E(R.sort);
+E(R.slice);
 E(
-  k.subarray
+  R.subarray
 );
-q(
-  k,
+H(
+  R,
   "buffer"
 );
-q(
-  k,
+H(
+  R,
   "byteOffset"
 );
-q(
-  k,
+H(
+  R,
   "length"
 );
-q(
-  k,
-  pt
+H(
+  R,
+  mt
 );
-const St = Uint8Array, ze = Uint16Array, me = Uint32Array, At = Float32Array, Z = ye([][J]()), Ke = E(Z.next), Dt = E(function* () {
-}().next), Ft = ye(Z), Ct = DataView.prototype, Et = E(
-  Ct.getUint16
-), we = WeakMap, Ve = we.prototype, qe = E(Ve.get), Pt = E(Ve.set), He = new we(), kt = pe(null, {
+const At = Uint8Array, Ke = Uint16Array, me = Uint32Array, Dt = Float32Array, Z = ye([][J]()), Ve = E(Z.next), Ct = E(function* () {
+}().next), Ft = ye(Z), Et = DataView.prototype, Pt = E(
+  Et.getUint16
+), we = WeakMap, qe = we.prototype, He = E(qe.get), Rt = E(qe.set), Ye = new we(), kt = pe(null, {
   next: {
     value: function() {
-      const e = qe(He, this);
-      return Ke(e);
+      const e = He(Ye, this);
+      return Ve(e);
     }
   },
   [J]: {
@@ -93,25 +93,25 @@ const St = Uint8Array, ze = Uint16Array, me = Uint32Array, At = Float32Array, Z 
     }
   }
 });
-function Rt(n) {
-  if (n[J] === Le && Z.next === Ke)
+function Mt(n) {
+  if (n[J] === Ne && Z.next === Ve)
     return n;
   const e = pe(kt);
-  return Pt(He, e, It(n)), e;
+  return Rt(Ye, e, Tt(n)), e;
 }
-const Mt = new we(), Bt = pe(Ft, {
+const Gt = new we(), Bt = pe(Ft, {
   next: {
     value: function() {
-      const e = qe(Mt, this);
-      return Dt(e);
+      const e = He(Gt, this);
+      return Ct(e);
     },
     writable: !0,
     configurable: !0
   }
 });
-for (const n of yt(Z))
-  n !== "next" && wt(Bt, n, Ue(Z, n));
-const Ye = new Ne(4), Gt = new At(Ye), Ot = new me(Ye), O = new ze(512), v = new St(512);
+for (const n of pt(Z))
+  n !== "next" && xt(Bt, n, Ue(Z, n));
+const Xe = new je(4), Ot = new Dt(Xe), vt = new me(Xe), O = new Ke(512), v = new At(512);
 for (let n = 0; n < 256; ++n) {
   const e = n - 127;
   e < -24 ? (O[n] = 0, O[n | 256] = 32768, v[n] = 24, v[n | 256] = 24) : e < -14 ? (O[n] = 1024 >> -e - 14, O[n | 256] = 1024 >> -e - 14 | 32768, v[n] = -e - 1, v[n | 256] = -e - 1) : e <= 15 ? (O[n] = e + 15 << 10, O[n | 256] = e + 15 << 10 | 32768, v[n] = 13, v[n | 256] = 13) : e < 128 ? (O[n] = 31744, O[n | 256] = 64512, v[n] = 24, v[n | 256] = 24) : (O[n] = 31744, O[n | 256] = 64512, v[n] = 13, v[n | 256] = 13);
@@ -125,31 +125,31 @@ for (let n = 1; n < 1024; ++n) {
 }
 for (let n = 1024; n < 2048; ++n)
   xe[n] = 939524096 + (n - 1024 << 13);
-const H = new me(64);
+const Y = new me(64);
 for (let n = 1; n < 31; ++n)
-  H[n] = n << 23;
-H[31] = 1199570944;
-H[32] = 2147483648;
+  Y[n] = n << 23;
+Y[31] = 1199570944;
+Y[32] = 2147483648;
 for (let n = 33; n < 63; ++n)
-  H[n] = 2147483648 + (n - 32 << 23);
-H[63] = 3347054592;
-const Xe = new ze(64);
+  Y[n] = 2147483648 + (n - 32 << 23);
+Y[63] = 3347054592;
+const $e = new Ke(64);
 for (let n = 1; n < 64; ++n)
-  n !== 32 && (Xe[n] = 1024);
-function vt(n) {
+  n !== 32 && ($e[n] = 1024);
+function _t(n) {
   const e = n >> 10;
-  return Ot[0] = xe[Xe[e] + (n & 1023)] + H[e], Gt[0];
+  return vt[0] = xe[$e[e] + (n & 1023)] + Y[e], Ot[0];
 }
-function $e(n, e, ...t) {
-  return vt(
-    Et(n, e, ...Rt(t))
+function We(n, e, ...t) {
+  return _t(
+    Pt(n, e, ...Mt(t))
   );
 }
-function We(n) {
+function Ze(n) {
   return n && n.__esModule && Object.prototype.hasOwnProperty.call(n, "default") ? n.default : n;
 }
 var be = { exports: {} };
-function Ze(n, e, t) {
+function Je(n, e, t) {
   const r = t && t.debug || !1;
   r && console.log("[xml-utils] getting " + e + " in " + n);
   const i = typeof n == "object" ? n.outer : n, s = i.slice(0, i.indexOf(">") + 1), o = ['"', "'"];
@@ -160,37 +160,37 @@ function Ze(n, e, t) {
     if (r && console.log("[xml-utils] match:", h), h) return h[1];
   }
 }
-be.exports = Ze;
-be.exports.default = Ze;
-var _t = be.exports;
-const ae = /* @__PURE__ */ We(_t);
+be.exports = Je;
+be.exports.default = Je;
+var Lt = be.exports;
+const ae = /* @__PURE__ */ Ze(Lt);
 var Ie = { exports: {} }, Te = { exports: {} }, Se = { exports: {} };
-function Je(n, e, t) {
+function Qe(n, e, t) {
   const i = new RegExp(e).exec(n.slice(t));
   return i ? t + i.index : -1;
 }
-Se.exports = Je;
-Se.exports.default = Je;
+Se.exports = Qe;
+Se.exports.default = Qe;
 var Ut = Se.exports, Ae = { exports: {} };
-function Qe(n, e, t) {
+function et(n, e, t) {
   const i = new RegExp(e).exec(n.slice(t));
   return i ? t + i.index + i[0].length - 1 : -1;
 }
-Ae.exports = Qe;
-Ae.exports.default = Qe;
-var Lt = Ae.exports, De = { exports: {} };
-function et(n, e) {
+Ae.exports = et;
+Ae.exports.default = et;
+var Nt = Ae.exports, De = { exports: {} };
+function tt(n, e) {
   const t = new RegExp(e, "g"), r = n.match(t);
   return r ? r.length : 0;
 }
-De.exports = et;
-De.exports.default = et;
-var Nt = De.exports;
-const jt = Ut, le = Lt, Be = Nt;
-function tt(n, e, t) {
+De.exports = tt;
+De.exports.default = tt;
+var jt = De.exports;
+const zt = Ut, le = Nt, Ge = jt;
+function rt(n, e, t) {
   const r = t && t.debug || !1, i = !(t && typeof t.nested === !1), s = t && t.startIndex || 0;
   r && console.log("[xml-utils] starting findTagByName with", e, " and ", t);
-  const o = jt(n, `<${e}[ 
+  const o = zt(n, `<${e}[ 
 >/]`, s);
   if (r && console.log("[xml-utils] start:", o), o === -1) return;
   const a = n.slice(o + e.length);
@@ -198,36 +198,36 @@ function tt(n, e, t) {
   const c = l !== -1 && a[l - 1] === "/";
   if (r && console.log("[xml-utils] selfClosing:", c), c === !1)
     if (i) {
-      let f = 0, d = 1, p = 0;
+      let f = 0, u = 1, p = 0;
       for (; (l = le(a, "[ /]" + e + ">", f)) !== -1; ) {
         const y = a.substring(f, l + 1);
-        if (d += Be(y, "<" + e + `[ 
-	>]`), p += Be(y, "</" + e + ">"), p >= d) break;
+        if (u += Ge(y, "<" + e + `[ 
+	>]`), p += Ge(y, "</" + e + ">"), p >= u) break;
         f = l;
       }
     } else
       l = le(a, "[ /]" + e + ">", 0);
-  const u = o + e.length + l + 1;
-  if (r && console.log("[xml-utils] end:", u), u === -1) return;
-  const h = n.slice(o, u);
+  const d = o + e.length + l + 1;
+  if (r && console.log("[xml-utils] end:", d), d === -1) return;
+  const h = n.slice(o, d);
   let g;
-  return c ? g = null : g = h.slice(h.indexOf(">") + 1, h.lastIndexOf("<")), { inner: g, outer: h, start: o, end: u };
+  return c ? g = null : g = h.slice(h.indexOf(">") + 1, h.lastIndexOf("<")), { inner: g, outer: h, start: o, end: d };
 }
-Te.exports = tt;
-Te.exports.default = tt;
-var zt = Te.exports;
-const Kt = zt;
-function rt(n, e, t) {
+Te.exports = rt;
+Te.exports.default = rt;
+var Kt = Te.exports;
+const Vt = Kt;
+function st(n, e, t) {
   const r = [], i = t && t.debug || !1, s = t && typeof t.nested == "boolean" ? t.nested : !0;
   let o = t && t.startIndex || 0, a;
-  for (; a = Kt(n, e, { debug: i, startIndex: o }); )
+  for (; a = Vt(n, e, { debug: i, startIndex: o }); )
     s ? o = a.start + 1 + e.length : o = a.end, r.push(a);
   return i && console.log("findTagsByName found", r.length, "tags"), r;
 }
-Ie.exports = rt;
-Ie.exports.default = rt;
-var Vt = Ie.exports;
-const qt = /* @__PURE__ */ We(Vt), W = {
+Ie.exports = st;
+Ie.exports.default = st;
+var qt = Ie.exports;
+const Ht = /* @__PURE__ */ Ze(qt), K = {
   // TIFF Baseline
   315: "Artist",
   258: "BitsPerSample",
@@ -321,6 +321,8 @@ const qt = /* @__PURE__ */ We(Vt), W = {
   37510: "UserComment",
   // IPTC
   33723: "IPTC",
+  // Laser Scanning Microscopy
+  34412: "CZ_LSMINFO",
   // ICC
   34675: "ICC Profile",
   // XMP
@@ -340,9 +342,9 @@ const qt = /* @__PURE__ */ We(Vt), W = {
   // LERC
   50674: "LercParameters"
 }, _ = {};
-for (const n in W)
-  W.hasOwnProperty(n) && (_[W[n]] = parseInt(n, 10));
-const Ht = [
+for (const n in K)
+  K.hasOwnProperty(n) && (_[K[n]] = parseInt(n, 10));
+const Yt = [
   _.BitsPerSample,
   _.ExtraSamples,
   _.SampleFormat,
@@ -374,7 +376,7 @@ const Ht = [
 }, x = {};
 for (const n in ce)
   ce.hasOwnProperty(n) && (x[ce[n]] = parseInt(n, 10));
-const D = {
+const C = {
   WhiteIsZero: 0,
   BlackIsZero: 1,
   RGB: 2,
@@ -384,18 +386,18 @@ const D = {
   YCbCr: 6,
   CIELab: 8,
   ICCLab: 9
-}, Yt = {
+}, Xt = {
   Unspecified: 0,
   Assocalpha: 1,
   Unassalpha: 2
-}, ss = {
+}, as = {
   Version: 0,
   AddCompression: 1
-}, is = {
+}, ls = {
   None: 0,
   Deflate: 1,
   Zstandard: 2
-}, Xt = {
+}, $t = {
   1024: "GTModelTypeGeoKey",
   1025: "GTRasterTypeGeoKey",
   1026: "GTCitationGeoKey",
@@ -444,21 +446,21 @@ const D = {
   4098: "VerticalDatumGeoKey",
   4099: "VerticalUnitsGeoKey"
 };
-function $t(n, e) {
+function Wt(n, e) {
   const { width: t, height: r } = n, i = new Uint8Array(t * r * 3);
   let s;
   for (let o = 0, a = 0; o < n.length; ++o, a += 3)
     s = 256 - n[o] / e * 256, i[a] = s, i[a + 1] = s, i[a + 2] = s;
   return i;
 }
-function Wt(n, e) {
+function Zt(n, e) {
   const { width: t, height: r } = n, i = new Uint8Array(t * r * 3);
   let s;
   for (let o = 0, a = 0; o < n.length; ++o, a += 3)
     s = n[o] / e * 256, i[a] = s, i[a + 1] = s, i[a + 2] = s;
   return i;
 }
-function Zt(n, e) {
+function Jt(n, e) {
   const { width: t, height: r } = n, i = new Uint8Array(t * r * 3), s = e.length / 3, o = e.length / 3 * 2;
   for (let a = 0, l = 0; a < n.length; ++a, l += 3) {
     const c = n[a];
@@ -466,7 +468,7 @@ function Zt(n, e) {
   }
   return i;
 }
-function Jt(n) {
+function Qt(n) {
   const { width: e, height: t } = n, r = new Uint8Array(e * t * 3);
   for (let i = 0, s = 0; i < n.length; i += 4, s += 3) {
     const o = n[i], a = n[i + 1], l = n[i + 2], c = n[i + 3];
@@ -474,7 +476,7 @@ function Jt(n) {
   }
   return r;
 }
-function Qt(n) {
+function er(n) {
   const { width: e, height: t } = n, r = new Uint8ClampedArray(e * t * 3);
   for (let i = 0, s = 0; i < n.length; i += 3, s += 3) {
     const o = n[i], a = n[i + 1], l = n[i + 2];
@@ -482,22 +484,22 @@ function Qt(n) {
   }
   return r;
 }
-const er = 0.95047, tr = 1, rr = 1.08883;
-function sr(n) {
+const tr = 0.95047, rr = 1, sr = 1.08883;
+function ir(n) {
   const { width: e, height: t } = n, r = new Uint8Array(e * t * 3);
   for (let i = 0, s = 0; i < n.length; i += 3, s += 3) {
     const o = n[i + 0], a = n[i + 1] << 24 >> 24, l = n[i + 2] << 24 >> 24;
-    let c = (o + 16) / 116, u = a / 500 + c, h = c - l / 200, g, f, d;
-    u = er * (u * u * u > 8856e-6 ? u * u * u : (u - 16 / 116) / 7.787), c = tr * (c * c * c > 8856e-6 ? c * c * c : (c - 16 / 116) / 7.787), h = rr * (h * h * h > 8856e-6 ? h * h * h : (h - 16 / 116) / 7.787), g = u * 3.2406 + c * -1.5372 + h * -0.4986, f = u * -0.9689 + c * 1.8758 + h * 0.0415, d = u * 0.0557 + c * -0.204 + h * 1.057, g = g > 31308e-7 ? 1.055 * g ** (1 / 2.4) - 0.055 : 12.92 * g, f = f > 31308e-7 ? 1.055 * f ** (1 / 2.4) - 0.055 : 12.92 * f, d = d > 31308e-7 ? 1.055 * d ** (1 / 2.4) - 0.055 : 12.92 * d, r[s] = Math.max(0, Math.min(1, g)) * 255, r[s + 1] = Math.max(0, Math.min(1, f)) * 255, r[s + 2] = Math.max(0, Math.min(1, d)) * 255;
+    let c = (o + 16) / 116, d = a / 500 + c, h = c - l / 200, g, f, u;
+    d = tr * (d * d * d > 8856e-6 ? d * d * d : (d - 16 / 116) / 7.787), c = rr * (c * c * c > 8856e-6 ? c * c * c : (c - 16 / 116) / 7.787), h = sr * (h * h * h > 8856e-6 ? h * h * h : (h - 16 / 116) / 7.787), g = d * 3.2406 + c * -1.5372 + h * -0.4986, f = d * -0.9689 + c * 1.8758 + h * 0.0415, u = d * 0.0557 + c * -0.204 + h * 1.057, g = g > 31308e-7 ? 1.055 * g ** (1 / 2.4) - 0.055 : 12.92 * g, f = f > 31308e-7 ? 1.055 * f ** (1 / 2.4) - 0.055 : 12.92 * f, u = u > 31308e-7 ? 1.055 * u ** (1 / 2.4) - 0.055 : 12.92 * u, r[s] = Math.max(0, Math.min(1, g)) * 255, r[s + 1] = Math.max(0, Math.min(1, f)) * 255, r[s + 2] = Math.max(0, Math.min(1, u)) * 255;
   }
   return r;
 }
-const st = /* @__PURE__ */ new Map();
+const it = /* @__PURE__ */ new Map();
 function N(n, e) {
-  Array.isArray(n) || (n = [n]), n.forEach((t) => st.set(t, e));
+  Array.isArray(n) || (n = [n]), n.forEach((t) => it.set(t, e));
 }
-async function it(n) {
-  const e = st.get(n.Compression);
+async function nt(n) {
+  const e = it.get(n.Compression);
   if (!e)
     throw new Error(`Unknown compression method identifier: ${n.Compression}`);
   const t = await e();
@@ -508,99 +510,99 @@ N(5, () => import("./lzw-LAGDNbSC.js").then((n) => n.default));
 N(6, () => {
   throw new Error("old style JPEG compression is not supported.");
 });
-N(7, () => import("./jpeg-BAgeD1d3.js").then((n) => n.default));
+N(7, () => import("./jpeg-Cfiat4B_.js").then((n) => n.default));
 N([8, 32946], () => import("./deflate-BXt-9JA_.js").then((n) => n.default));
 N(32773, () => import("./packbits-BlDR4Kj5.js").then((n) => n.default));
 N(
   34887,
-  () => import("./lerc-DAaxMNPC.js").then(async (n) => (await n.zstd.init(), n)).then((n) => n.default)
+  () => import("./lerc-7N_H8xvy.js").then(async (n) => (await n.zstd.init(), n)).then((n) => n.default)
 );
 N(50001, () => import("./webimage-BM_pbLN3.js").then((n) => n.default));
 function se(n, e, t, r = 1) {
   return new (Object.getPrototypeOf(n)).constructor(e * t * r);
-}
-function ir(n, e, t, r, i) {
-  const s = e / r, o = t / i;
-  return n.map((a) => {
-    const l = se(a, r, i);
-    for (let c = 0; c < i; ++c) {
-      const u = Math.min(Math.round(o * c), t - 1);
-      for (let h = 0; h < r; ++h) {
-        const g = Math.min(Math.round(s * h), e - 1), f = a[u * e + g];
-        l[c * r + h] = f;
-      }
-    }
-    return l;
-  });
-}
-function K(n, e, t) {
-  return (1 - t) * n + t * e;
 }
 function nr(n, e, t, r, i) {
   const s = e / r, o = t / i;
   return n.map((a) => {
     const l = se(a, r, i);
     for (let c = 0; c < i; ++c) {
-      const u = o * c, h = Math.floor(u), g = Math.min(Math.ceil(u), t - 1);
-      for (let f = 0; f < r; ++f) {
-        const d = s * f, p = d % 1, y = Math.floor(d), w = Math.min(Math.ceil(d), e - 1), m = a[h * e + y], I = a[h * e + w], T = a[g * e + y], S = a[g * e + w], A = K(
-          K(m, I, p),
-          K(T, S, p),
-          u % 1
-        );
-        l[c * r + f] = A;
+      const d = Math.min(Math.round(o * c), t - 1);
+      for (let h = 0; h < r; ++h) {
+        const g = Math.min(Math.round(s * h), e - 1), f = a[d * e + g];
+        l[c * r + h] = f;
       }
     }
     return l;
   });
 }
-function or(n, e, t, r, i, s = "nearest") {
+function V(n, e, t) {
+  return (1 - t) * n + t * e;
+}
+function or(n, e, t, r, i) {
+  const s = e / r, o = t / i;
+  return n.map((a) => {
+    const l = se(a, r, i);
+    for (let c = 0; c < i; ++c) {
+      const d = o * c, h = Math.floor(d), g = Math.min(Math.ceil(d), t - 1);
+      for (let f = 0; f < r; ++f) {
+        const u = s * f, p = u % 1, y = Math.floor(u), w = Math.min(Math.ceil(u), e - 1), m = a[h * e + y], T = a[h * e + w], A = a[g * e + y], S = a[g * e + w], I = V(
+          V(m, T, p),
+          V(A, S, p),
+          d % 1
+        );
+        l[c * r + f] = I;
+      }
+    }
+    return l;
+  });
+}
+function ar(n, e, t, r, i, s = "nearest") {
   switch (s.toLowerCase()) {
     case "nearest":
-      return ir(n, e, t, r, i);
+      return nr(n, e, t, r, i);
     case "bilinear":
     case "linear":
-      return nr(n, e, t, r, i);
+      return or(n, e, t, r, i);
     default:
       throw new Error(`Unsupported resampling method: '${s}'`);
   }
 }
-function ar(n, e, t, r, i, s) {
-  const o = e / r, a = t / i, l = se(n, r, i, s);
-  for (let c = 0; c < i; ++c) {
-    const u = Math.min(Math.round(a * c), t - 1);
-    for (let h = 0; h < r; ++h) {
-      const g = Math.min(Math.round(o * h), e - 1);
-      for (let f = 0; f < s; ++f) {
-        const d = n[u * e * s + g * s + f];
-        l[c * r * s + h * s + f] = d;
-      }
-    }
-  }
-  return l;
-}
 function lr(n, e, t, r, i, s) {
   const o = e / r, a = t / i, l = se(n, r, i, s);
   for (let c = 0; c < i; ++c) {
-    const u = a * c, h = Math.floor(u), g = Math.min(Math.ceil(u), t - 1);
-    for (let f = 0; f < r; ++f) {
-      const d = o * f, p = d % 1, y = Math.floor(d), w = Math.min(Math.ceil(d), e - 1);
-      for (let m = 0; m < s; ++m) {
-        const I = n[h * e * s + y * s + m], T = n[h * e * s + w * s + m], S = n[g * e * s + y * s + m], A = n[g * e * s + w * s + m], F = K(
-          K(I, T, p),
-          K(S, A, p),
-          u % 1
-        );
-        l[c * r * s + f * s + m] = F;
+    const d = Math.min(Math.round(a * c), t - 1);
+    for (let h = 0; h < r; ++h) {
+      const g = Math.min(Math.round(o * h), e - 1);
+      for (let f = 0; f < s; ++f) {
+        const u = n[d * e * s + g * s + f];
+        l[c * r * s + h * s + f] = u;
       }
     }
   }
   return l;
 }
-function cr(n, e, t, r, i, s, o = "nearest") {
+function cr(n, e, t, r, i, s) {
+  const o = e / r, a = t / i, l = se(n, r, i, s);
+  for (let c = 0; c < i; ++c) {
+    const d = a * c, h = Math.floor(d), g = Math.min(Math.ceil(d), t - 1);
+    for (let f = 0; f < r; ++f) {
+      const u = o * f, p = u % 1, y = Math.floor(u), w = Math.min(Math.ceil(u), e - 1);
+      for (let m = 0; m < s; ++m) {
+        const T = n[h * e * s + y * s + m], A = n[h * e * s + w * s + m], S = n[g * e * s + y * s + m], I = n[g * e * s + w * s + m], D = V(
+          V(T, A, p),
+          V(S, I, p),
+          d % 1
+        );
+        l[c * r * s + f * s + m] = D;
+      }
+    }
+  }
+  return l;
+}
+function hr(n, e, t, r, i, s, o = "nearest") {
   switch (o.toLowerCase()) {
     case "nearest":
-      return ar(
+      return lr(
         n,
         e,
         t,
@@ -610,7 +612,7 @@ function cr(n, e, t, r, i, s, o = "nearest") {
       );
     case "bilinear":
     case "linear":
-      return lr(
+      return cr(
         n,
         e,
         t,
@@ -622,7 +624,7 @@ function cr(n, e, t, r, i, s, o = "nearest") {
       throw new Error(`Unsupported resampling method: '${o}'`);
   }
 }
-function hr(n, e, t) {
+function fr(n, e, t) {
   let r = 0;
   for (let i = e; i < t; ++i)
     r += n[i];
@@ -658,38 +660,38 @@ function ue(n, e, t) {
   }
   throw Error("Unsupported data format/bitsPerSample");
 }
-function fr(n, e) {
+function ur(n, e) {
   return (n === 1 || n === 2) && e <= 32 && e % 8 === 0 ? !1 : !(n === 3 && (e === 16 || e === 32 || e === 64));
 }
-function ur(n, e, t, r, i, s, o) {
-  const a = new DataView(n), l = t === 2 ? o * s : o * s * r, c = t === 2 ? 1 : r, u = ue(e, i, l), h = parseInt("1".repeat(i), 2);
+function dr(n, e, t, r, i, s, o) {
+  const a = new DataView(n), l = t === 2 ? o * s : o * s * r, c = t === 2 ? 1 : r, d = ue(e, i, l), h = parseInt("1".repeat(i), 2);
   if (e === 1) {
     let g;
     t === 1 ? g = r * i : g = i;
     let f = s * g;
     f & 7 && (f = f + 7 & -8);
-    for (let d = 0; d < o; ++d) {
-      const p = d * f;
+    for (let u = 0; u < o; ++u) {
+      const p = u * f;
       for (let y = 0; y < s; ++y) {
         const w = p + y * c * i;
         for (let m = 0; m < c; ++m) {
-          const I = w + m * i, T = (d * s + y) * c + m, S = Math.floor(I / 8), A = I % 8;
-          if (A + i <= 8)
-            u[T] = a.getUint8(S) >> 8 - i - A & h;
-          else if (A + i <= 16)
-            u[T] = a.getUint16(S) >> 16 - i - A & h;
-          else if (A + i <= 24) {
-            const F = a.getUint16(S) << 8 | a.getUint8(S + 2);
-            u[T] = F >> 24 - i - A & h;
+          const T = w + m * i, A = (u * s + y) * c + m, S = Math.floor(T / 8), I = T % 8;
+          if (I + i <= 8)
+            d[A] = a.getUint8(S) >> 8 - i - I & h;
+          else if (I + i <= 16)
+            d[A] = a.getUint16(S) >> 16 - i - I & h;
+          else if (I + i <= 24) {
+            const D = a.getUint16(S) << 8 | a.getUint8(S + 2);
+            d[A] = D >> 24 - i - I & h;
           } else
-            u[T] = a.getUint32(S) >> 32 - i - A & h;
+            d[A] = a.getUint32(S) >> 32 - i - I & h;
         }
       }
     }
   }
-  return u.buffer;
+  return d.buffer;
 }
-class dr {
+class gr {
   /**
    * @constructor
    * @param {Object} fileDirectory The parsed file directory
@@ -800,7 +802,7 @@ class dr {
         switch (r) {
           case 16:
             return function(i, s) {
-              return $e(this, i, s);
+              return We(this, i, s);
             };
           case 32:
             return DataView.prototype.getFloat32;
@@ -829,29 +831,29 @@ class dr {
    * @param {import("./geotiff").Pool|import("./geotiff").BaseDecoder} poolOrDecoder the decoder or decoder pool
    * @param {AbortSignal} [signal] An AbortSignal that may be signalled if the request is
    *                               to be aborted
-   * @returns {Promise.<ArrayBuffer>}
+   * @returns {Promise.<{x: number, y: number, sample: number, data: ArrayBuffer}>} the decoded strip or tile
    */
   async getTileOrStrip(e, t, r, i, s) {
     const o = Math.ceil(this.getWidth() / this.getTileWidth()), a = Math.ceil(this.getHeight() / this.getTileHeight());
     let l;
     const { tiles: c } = this;
     this.planarConfiguration === 1 ? l = t * o + e : this.planarConfiguration === 2 && (l = r * o * a + t * o + e);
-    let u, h;
-    this.isTiled ? (u = this.fileDirectory.TileOffsets[l], h = this.fileDirectory.TileByteCounts[l]) : (u = this.fileDirectory.StripOffsets[l], h = this.fileDirectory.StripByteCounts[l]);
-    const g = (await this.source.fetch([{ offset: u, length: h }], s))[0];
+    let d, h;
+    this.isTiled ? (d = this.fileDirectory.TileOffsets[l], h = this.fileDirectory.TileByteCounts[l]) : (d = this.fileDirectory.StripOffsets[l], h = this.fileDirectory.StripByteCounts[l]);
+    const g = (await this.source.fetch([{ offset: d, length: h }], s))[0];
     let f;
     return c === null || !c[l] ? (f = (async () => {
-      let d = await i.decode(this.fileDirectory, g);
+      let u = await i.decode(this.fileDirectory, g);
       const p = this.getSampleFormat(), y = this.getBitsPerSample();
-      return fr(p, y) && (d = ur(
-        d,
+      return ur(p, y) && (u = dr(
+        u,
         p,
         this.planarConfiguration,
         this.getSamplesPerPixel(),
         y,
         this.getTileWidth(),
         this.getBlockHeight(t)
-      )), d;
+      )), u;
     })(), c !== null && (c[l] = f)) : f = c[l], { x: e, y: t, sample: r, data: await f };
   }
   /**
@@ -870,44 +872,44 @@ class dr {
    * @returns {Promise<ReadRasterResult>}
    */
   async _readRaster(e, t, r, i, s, o, a, l, c) {
-    const u = this.getTileWidth(), h = this.getTileHeight(), g = this.getWidth(), f = this.getHeight(), d = Math.max(Math.floor(e[0] / u), 0), p = Math.min(
-      Math.ceil(e[2] / u),
-      Math.ceil(g / u)
+    const d = this.getTileWidth(), h = this.getTileHeight(), g = this.getWidth(), f = this.getHeight(), u = Math.max(Math.floor(e[0] / d), 0), p = Math.min(
+      Math.ceil(e[2] / d),
+      Math.ceil(g / d)
     ), y = Math.max(Math.floor(e[1] / h), 0), w = Math.min(
       Math.ceil(e[3] / h),
       Math.ceil(f / h)
     ), m = e[2] - e[0];
-    let I = this.getBytesPerPixel();
-    const T = [], S = [];
+    let T = this.getBytesPerPixel();
+    const A = [], S = [];
     for (let b = 0; b < t.length; ++b)
-      this.planarConfiguration === 1 ? T.push(hr(this.fileDirectory.BitsPerSample, 0, t[b]) / 8) : T.push(0), S.push(this.getReaderForSample(t[b]));
-    const A = [], { littleEndian: F } = this;
+      this.planarConfiguration === 1 ? A.push(fr(this.fileDirectory.BitsPerSample, 0, t[b]) / 8) : A.push(0), S.push(this.getReaderForSample(t[b]));
+    const I = [], { littleEndian: D } = this;
     for (let b = y; b < w; ++b)
-      for (let G = d; G < p; ++G) {
-        let R;
-        this.planarConfiguration === 1 && (R = this.getTileOrStrip(G, b, 0, s, c));
-        for (let C = 0; C < t.length; ++C) {
-          const M = C, U = t[C];
-          this.planarConfiguration === 2 && (I = this.getSampleByteSize(U), R = this.getTileOrStrip(G, b, U, s, c));
-          const L = R.then((B) => {
-            const Q = B.data, ne = new DataView(Q), oe = this.getBlockHeight(B.y), Y = B.y * h, ee = B.x * u, ot = Y + oe, at = (B.x + 1) * u, lt = S[M], ct = Math.min(oe, oe - (ot - e[3]), f - Y), ht = Math.min(u, u - (at - e[2]), g - ee);
-            for (let X = Math.max(0, e[1] - Y); X < ct; ++X)
-              for (let $ = Math.max(0, e[0] - ee); $ < ht; ++$) {
-                const ft = (X * u + $) * I, Re = lt.call(
+      for (let B = u; B < p; ++B) {
+        let k;
+        this.planarConfiguration === 1 && (k = this.getTileOrStrip(B, b, 0, s, c));
+        for (let F = 0; F < t.length; ++F) {
+          const M = F, L = t[F];
+          this.planarConfiguration === 2 && (T = this.getSampleByteSize(L), k = this.getTileOrStrip(B, b, L, s, c));
+          const U = k.then((G) => {
+            const Q = G.data, ne = new DataView(Q), oe = this.getBlockHeight(G.y), X = G.y * h, ee = G.x * d, at = X + oe, lt = (G.x + 1) * d, ct = S[M], ht = Math.min(oe, oe - (at - e[3]), f - X), ft = Math.min(d, d - (lt - e[2]), g - ee);
+            for (let $ = Math.max(0, e[1] - X); $ < ht; ++$)
+              for (let W = Math.max(0, e[0] - ee); W < ft; ++W) {
+                const ut = ($ * d + W) * T, ke = ct.call(
                   ne,
-                  ft + T[M],
-                  F
+                  ut + A[M],
+                  D
                 );
                 let te;
-                i ? (te = (X + Y - e[1]) * m * t.length + ($ + ee - e[0]) * t.length + M, r[te] = Re) : (te = (X + Y - e[1]) * m + $ + ee - e[0], r[M][te] = Re);
+                i ? (te = ($ + X - e[1]) * m * t.length + (W + ee - e[0]) * t.length + M, r[te] = ke) : (te = ($ + X - e[1]) * m + W + ee - e[0], r[M][te] = ke);
               }
           });
-          A.push(L);
+          I.push(U);
         }
       }
-    if (await Promise.all(A), o && e[2] - e[0] !== o || a && e[3] - e[1] !== a) {
+    if (await Promise.all(I), o && e[2] - e[0] !== o || a && e[3] - e[1] !== a) {
       let b;
-      return i ? b = cr(
+      return i ? b = hr(
         r,
         e[2] - e[0],
         e[3] - e[1],
@@ -915,7 +917,7 @@ class dr {
         a,
         t.length,
         l
-      ) : b = or(
+      ) : b = ar(
         r,
         e[2] - e[0],
         e[3] - e[1],
@@ -946,31 +948,31 @@ class dr {
     fillValue: l,
     signal: c
   } = {}) {
-    const u = e || [0, 0, this.getWidth(), this.getHeight()];
-    if (u[0] > u[2] || u[1] > u[3])
+    const d = e || [0, 0, this.getWidth(), this.getHeight()];
+    if (d[0] > d[2] || d[1] > d[3])
       throw new Error("Invalid subsets");
-    const h = u[2] - u[0], g = u[3] - u[1], f = h * g, d = this.getSamplesPerPixel();
+    const h = d[2] - d[0], g = d[3] - d[1], f = h * g, u = this.getSamplesPerPixel();
     if (!t || !t.length)
-      for (let m = 0; m < d; ++m)
+      for (let m = 0; m < u; ++m)
         t.push(m);
     else
       for (let m = 0; m < t.length; ++m)
-        if (t[m] >= d)
+        if (t[m] >= u)
           return Promise.reject(new RangeError(`Invalid sample index '${t[m]}'.`));
     let p;
     if (r) {
-      const m = this.fileDirectory.SampleFormat ? Math.max.apply(null, this.fileDirectory.SampleFormat) : 1, I = Math.max.apply(null, this.fileDirectory.BitsPerSample);
-      p = ue(m, I, f * t.length), l && p.fill(l);
+      const m = this.fileDirectory.SampleFormat ? Math.max.apply(null, this.fileDirectory.SampleFormat) : 1, T = Math.max.apply(null, this.fileDirectory.BitsPerSample);
+      p = ue(m, T, f * t.length), l && p.fill(l);
     } else {
       p = [];
       for (let m = 0; m < t.length; ++m) {
-        const I = this.getArrayForSample(t[m], f);
-        Array.isArray(l) && m < l.length ? I.fill(l[m]) : l && !Array.isArray(l) && I.fill(l), p.push(I);
+        const T = this.getArrayForSample(t[m], f);
+        Array.isArray(l) && m < l.length ? T.fill(l[m]) : l && !Array.isArray(l) && T.fill(l), p.push(T);
       }
     }
-    const y = i || await it(this.fileDirectory);
+    const y = i || await nt(this.fileDirectory);
     return await this._readRaster(
-      u,
+      d,
       t,
       p,
       r,
@@ -1018,10 +1020,10 @@ class dr {
     const c = e || [0, 0, this.getWidth(), this.getHeight()];
     if (c[0] > c[2] || c[1] > c[3])
       throw new Error("Invalid subsets");
-    const u = this.fileDirectory.PhotometricInterpretation;
-    if (u === D.RGB) {
+    const d = this.fileDirectory.PhotometricInterpretation;
+    if (d === C.RGB) {
       let w = [0, 1, 2];
-      if (this.fileDirectory.ExtraSamples !== Yt.Unspecified && a) {
+      if (this.fileDirectory.ExtraSamples !== Xt.Unspecified && a) {
         w = [];
         for (let m = 0; m < this.fileDirectory.BitsPerSample.length; m += 1)
           w.push(m);
@@ -1038,17 +1040,17 @@ class dr {
       });
     }
     let h;
-    switch (u) {
-      case D.WhiteIsZero:
-      case D.BlackIsZero:
-      case D.Palette:
+    switch (d) {
+      case C.WhiteIsZero:
+      case C.BlackIsZero:
+      case C.Palette:
         h = [0];
         break;
-      case D.CMYK:
+      case C.CMYK:
         h = [0, 1, 2, 3];
         break;
-      case D.YCbCr:
-      case D.CIELab:
+      case C.YCbCr:
+      case C.CIELab:
         h = [0, 1, 2];
         break;
       default:
@@ -1063,37 +1065,37 @@ class dr {
       height: s,
       resampleMethod: o,
       signal: l
-    }, { fileDirectory: f } = this, d = await this.readRasters(g), p = 2 ** this.fileDirectory.BitsPerSample[0];
+    }, { fileDirectory: f } = this, u = await this.readRasters(g), p = 2 ** this.fileDirectory.BitsPerSample[0];
     let y;
-    switch (u) {
-      case D.WhiteIsZero:
-        y = $t(d, p);
+    switch (d) {
+      case C.WhiteIsZero:
+        y = Wt(u, p);
         break;
-      case D.BlackIsZero:
-        y = Wt(d, p);
+      case C.BlackIsZero:
+        y = Zt(u, p);
         break;
-      case D.Palette:
-        y = Zt(d, f.ColorMap);
+      case C.Palette:
+        y = Jt(u, f.ColorMap);
         break;
-      case D.CMYK:
-        y = Jt(d);
+      case C.CMYK:
+        y = Qt(u);
         break;
-      case D.YCbCr:
-        y = Qt(d);
+      case C.YCbCr:
+        y = er(u);
         break;
-      case D.CIELab:
-        y = sr(d);
+      case C.CIELab:
+        y = ir(u);
         break;
       default:
         throw new Error("Unsupported photometric interpretation.");
     }
     if (!t) {
-      const w = new Uint8Array(y.length / 3), m = new Uint8Array(y.length / 3), I = new Uint8Array(y.length / 3);
-      for (let T = 0, S = 0; T < y.length; T += 3, ++S)
-        w[S] = y[T], m[S] = y[T + 1], I[S] = y[T + 2];
-      y = [w, m, I];
+      const w = new Uint8Array(y.length / 3), m = new Uint8Array(y.length / 3), T = new Uint8Array(y.length / 3);
+      for (let A = 0, S = 0; A < y.length; A += 3, ++S)
+        w[S] = y[A], m[S] = y[A + 1], T[S] = y[A + 2];
+      y = [w, m, T];
     }
-    return y.width = d.width, y.height = d.height, y;
+    return y.width = u.width, y.height = u.height, y;
   }
   /**
    * Returns an array of tiepoints.
@@ -1128,7 +1130,7 @@ class dr {
     if (!this.fileDirectory.GDAL_METADATA)
       return null;
     const r = this.fileDirectory.GDAL_METADATA;
-    let i = qt(r, "Item");
+    let i = Ht(r, "Item");
     e === null ? i = i.filter((s) => ae(s, "sample") === void 0) : i = i.filter((s) => Number(ae(s, "sample")) === e);
     for (let s = 0; s < i.length; ++s) {
       const o = i[s];
@@ -1221,7 +1223,7 @@ class dr {
   getBoundingBox(e = !1) {
     const t = this.getHeight(), r = this.getWidth();
     if (this.fileDirectory.ModelTransformation && !e) {
-      const [i, s, o, a, l, c, u, h] = this.fileDirectory.ModelTransformation, f = [
+      const [i, s, o, a, l, c, d, h] = this.fileDirectory.ModelTransformation, f = [
         [0, 0],
         [0, t],
         [r, 0],
@@ -1229,11 +1231,11 @@ class dr {
       ].map(([y, w]) => [
         a + i * y + s * w,
         h + l * y + c * w
-      ]), d = f.map((y) => y[0]), p = f.map((y) => y[1]);
+      ]), u = f.map((y) => y[0]), p = f.map((y) => y[1]);
       return [
-        Math.min(...d),
+        Math.min(...u),
         Math.min(...p),
-        Math.max(...d),
+        Math.max(...u),
         Math.max(...p)
       ];
     } else {
@@ -1247,7 +1249,7 @@ class dr {
     }
   }
 }
-class gr {
+class yr {
   constructor(e) {
     this._dataView = new DataView(e);
   }
@@ -1300,7 +1302,7 @@ class gr {
     return this._dataView.getInt32(e, t);
   }
   getFloat16(e, t) {
-    return $e(this._dataView, e, t);
+    return We(this._dataView, e, t);
   }
   getFloat32(e, t) {
     return this._dataView.getFloat32(e, t);
@@ -1309,7 +1311,7 @@ class gr {
     return this._dataView.getFloat64(e, t);
   }
 }
-class yr {
+class pr {
   constructor(e, t, r, i) {
     this._dataView = new DataView(e), this._sliceOffset = t, this._littleEndian = r, this._bigTiff = i;
   }
@@ -1412,8 +1414,8 @@ class yr {
     return this._bigTiff ? this.readUint64(e) : this.readUint32(e);
   }
 }
-const pr = typeof navigator < "u" && navigator.hardwareConcurrency || 2;
-class mr {
+const mr = typeof navigator < "u" && navigator.hardwareConcurrency || 2;
+class wr {
   /**
    * @constructor
    * @param {Number} [size] The size of the pool. Defaults to the number of CPUs
@@ -1443,9 +1445,9 @@ class mr {
    * }
    * ```
    */
-  constructor(e = pr, t) {
+  constructor(e = mr, t) {
     this.workers = null, this._awaitingDecoder = null, this.size = e, this.messageId = 0, e && (this._awaitingDecoder = t ? Promise.resolve(t) : new Promise((r) => {
-      import("./decoder-DJlmx386.js").then((i) => {
+      import("./decoder-Bf_IN0nS.js").then((i) => {
         r(i.create);
       });
     }), this._awaitingDecoder.then((r) => {
@@ -1460,7 +1462,7 @@ class mr {
    * @returns {Promise<ArrayBuffer>} the decoded result as a `Promise`
    */
   async decode(e, t) {
-    return this._awaitingDecoder && await this._awaitingDecoder, this.size === 0 ? it(e).then((r) => r.decode(e, t)) : new Promise((r) => {
+    return this._awaitingDecoder && await this._awaitingDecoder, this.size === 0 ? nt(e).then((r) => r.decode(e, t)) : new Promise((r) => {
       const i = this.workers.find((a) => a.idle) || this.workers[Math.floor(Math.random() * this.size)];
       i.idle = !1;
       const s = this.messageId++, o = (a) => {
@@ -1475,10 +1477,10 @@ class mr {
     }), this.workers = null);
   }
 }
-const Ge = `\r
+const Be = `\r
 \r
 `;
-function nt(n) {
+function ot(n) {
   if (typeof Object.fromEntries < "u")
     return Object.fromEntries(n);
   const e = {};
@@ -1486,23 +1488,23 @@ function nt(n) {
     e[t.toLowerCase()] = r;
   return e;
 }
-function wr(n) {
+function xr(n) {
   const e = n.split(`\r
 `).map((t) => {
     const r = t.split(":").map((i) => i.trim());
     return r[0] = r[0].toLowerCase(), r;
   });
-  return nt(e);
+  return ot(e);
 }
-function xr(n) {
+function br(n) {
   const [e, ...t] = n.split(";").map((i) => i.trim()), r = t.map((i) => i.split("="));
-  return { type: e, params: nt(r) };
+  return { type: e, params: ot(r) };
 }
 function de(n) {
   let e, t, r;
   return n && ([, e, t, r] = n.match(/bytes (\d+)-(\d+)\/(\d+)/), e = parseInt(e, 10), t = parseInt(t, 10), r = parseInt(r, 10)), { start: e, end: t, total: r };
 }
-function br(n, e) {
+function Ir(n, e) {
   let t = null;
   const r = new TextDecoder("ascii"), i = [], s = `--${e}`, o = `${s}--`;
   for (let a = 0; a < 10; ++a)
@@ -1526,18 +1528,18 @@ function br(n, e) {
     const l = a.substr(s.length + 2);
     if (l.length === 0)
       break;
-    const c = l.indexOf(Ge), u = wr(l.substr(0, c)), { start: h, end: g, total: f } = de(u["content-range"]), d = t + s.length + c + Ge.length, p = parseInt(g, 10) + 1 - parseInt(h, 10);
+    const c = l.indexOf(Be), d = xr(l.substr(0, c)), { start: h, end: g, total: f } = de(d["content-range"]), u = t + s.length + c + Be.length, p = parseInt(g, 10) + 1 - parseInt(h, 10);
     i.push({
-      headers: u,
-      data: n.slice(d, d + p),
+      headers: d,
+      data: n.slice(u, u + p),
       offset: h,
       length: p,
       fileSize: f
-    }), t = d + p + 4;
+    }), t = u + p + 4;
   }
   return i;
 }
-class Fe {
+class Ce {
   /**
    *
    * @param {Slice[]} slices
@@ -1565,7 +1567,7 @@ class Fe {
   async close() {
   }
 }
-class Ir extends Map {
+class Tr extends Map {
   constructor(e = {}) {
     if (super(), !(e.maxSize && e.maxSize > 0))
       throw new TypeError("`maxSize` must be a number greater than 0");
@@ -1702,24 +1704,24 @@ class Ir extends Map {
     return JSON.stringify([...this.entriesAscending()]);
   }
 }
-async function Tr(n) {
+async function Sr(n) {
   return new Promise((e) => setTimeout(e, n));
 }
-function Sr(n, e) {
+function Ar(n, e) {
   const t = Array.isArray(n) ? n : Array.from(n), r = Array.isArray(e) ? e : Array.from(e);
   return t.map((i, s) => [i, r[s]]);
 }
-class V extends Error {
+class q extends Error {
   constructor(e) {
-    super(e), Error.captureStackTrace && Error.captureStackTrace(this, V), this.name = "AbortError";
+    super(e), Error.captureStackTrace && Error.captureStackTrace(this, q), this.name = "AbortError";
   }
 }
-class Ar extends Error {
+class Dr extends Error {
   constructor(e, t) {
     super(t), this.errors = e, this.message = t, this.name = "AggregateError";
   }
 }
-const Dr = Ar;
+const Cr = Dr;
 class Fr {
   /**
    *
@@ -1748,7 +1750,7 @@ class Oe {
     this.offset = e, this.length = t, this.blockIds = r;
   }
 }
-class Cr extends Fe {
+class Er extends Ce {
   /**
    *
    * @param {BaseSource} source The underlying source that shall be blocked and cached
@@ -1757,7 +1759,7 @@ class Cr extends Fe {
    * @param {number} [options.cacheSize]
    */
   constructor(e, { blockSize: t = 65536, cacheSize: r = 100 } = {}) {
-    super(), this.source = e, this.blockSize = t, this.blockCache = new Ir({
+    super(), this.source = e, this.blockSize = t, this.blockCache = new Tr({
       maxSize: r,
       onEviction: (i, s) => {
         this.evictedBlocks.set(i, s);
@@ -1775,16 +1777,16 @@ class Cr extends Fe {
     const r = [], i = [], s = [];
     this.evictedBlocks.clear();
     for (const { offset: g, length: f } of e) {
-      let d = g + f;
+      let u = g + f;
       const { fileSize: p } = this;
-      p !== null && (d = Math.min(d, p));
+      p !== null && (u = Math.min(u, p));
       const y = Math.floor(g / this.blockSize) * this.blockSize;
-      for (let w = y; w < d; w += this.blockSize) {
+      for (let w = y; w < u; w += this.blockSize) {
         const m = Math.floor(w / this.blockSize);
         !this.blockCache.has(m) && !this.blockRequests.has(m) && (this.blockIdsToFetch.add(m), i.push(m)), this.blockRequests.has(m) && r.push(this.blockRequests.get(m)), s.push(m);
       }
     }
-    await Tr(), this.fetchBlocks(t);
+    await Sr(), this.fetchBlocks(t);
     const o = [];
     for (const g of i)
       this.blockRequests.has(g) && o.push(this.blockRequests.get(g));
@@ -1801,11 +1803,11 @@ class Cr extends Fe {
       await Promise.allSettled(a);
     }
     if (t && t.aborted)
-      throw new V("Request was aborted");
-    const c = s.map((g) => this.blockCache.get(g) || this.evictedBlocks.get(g)), u = c.filter((g) => !g);
-    if (u.length)
-      throw new Dr(u, "Request failed");
-    const h = new Map(Sr(s, c));
+      throw new q("Request was aborted");
+    const c = s.map((g) => this.blockCache.get(g) || this.evictedBlocks.get(g)), d = c.filter((g) => !g);
+    if (d.length)
+      throw new Cr(d, "Request failed");
+    const h = new Map(Ar(s, c));
     return this.readSliceData(e, h);
   }
   /**
@@ -1820,7 +1822,7 @@ class Cr extends Fe {
         for (const o of s.blockIds)
           this.blockRequests.set(o, (async () => {
             try {
-              const a = (await r)[i], l = o * this.blockSize, c = l - a.offset, u = Math.min(c + this.blockSize, a.data.byteLength), h = a.data.slice(c, u), g = new Fr(
+              const a = (await r)[i], l = o * this.blockSize, c = l - a.offset, d = Math.min(c + this.blockSize, a.data.byteLength), h = a.data.slice(c, d), g = new Fr(
                 l,
                 h.byteLength,
                 h,
@@ -1874,17 +1876,17 @@ class Cr extends Fe {
       this.fileSize !== null && (i = Math.min(this.fileSize, i));
       const s = Math.floor(r.offset / this.blockSize), o = Math.floor(i / this.blockSize), a = new ArrayBuffer(r.length), l = new Uint8Array(a);
       for (let c = s; c <= o; ++c) {
-        const u = t.get(c), h = u.offset - r.offset, g = u.top - i;
-        let f = 0, d = 0, p;
-        h < 0 ? f = -h : h > 0 && (d = h), g < 0 ? p = u.length - f : p = i - u.offset - f;
-        const y = new Uint8Array(u.data, f, p);
-        l.set(y, d);
+        const d = t.get(c), h = d.offset - r.offset, g = d.top - i;
+        let f = 0, u = 0, p;
+        h < 0 ? f = -h : h > 0 && (u = h), g < 0 ? p = d.length - f : p = i - d.offset - f;
+        const y = new Uint8Array(d.data, f, p);
+        l.set(y, u);
       }
       return a;
     });
   }
 }
-class Ce {
+class Fe {
   /**
    * Returns whether the response has an ok'ish status code
    */
@@ -1925,7 +1927,7 @@ class Ee {
     throw new Error("request is not implemented");
   }
 }
-class Er extends Ce {
+class Pr extends Fe {
   /**
    * BaseResponse facade for fetch API Response
    * @param {Response} response
@@ -1943,7 +1945,7 @@ class Er extends Ce {
     return this.response.arrayBuffer ? await this.response.arrayBuffer() : (await this.response.buffer()).buffer;
   }
 }
-class Pr extends Ee {
+class Rr extends Ee {
   constructor(e, t) {
     super(e), this.credentials = t;
   }
@@ -1957,10 +1959,10 @@ class Pr extends Ee {
       credentials: this.credentials,
       signal: t
     });
-    return new Er(r);
+    return new Pr(r);
   }
 }
-class kr extends Ce {
+class kr extends Fe {
   /**
    * BaseResponse facade for XMLHttpRequest
    * @param {XMLHttpRequest} xhr
@@ -1979,7 +1981,7 @@ class kr extends Ce {
     return this.data;
   }
 }
-class Rr extends Ee {
+class Mr extends Ee {
   constructRequest(e, t) {
     return new Promise((r, i) => {
       const s = new XMLHttpRequest();
@@ -1989,7 +1991,7 @@ class Rr extends Ee {
       s.onload = () => {
         const o = s.response;
         r(new kr(s, o));
-      }, s.onerror = i, s.onabort = () => i(new V("Request aborted")), s.send(), t && (t.aborted && s.abort(), t.addEventListener("abort", () => s.abort()));
+      }, s.onerror = i, s.onabort = () => i(new q("Request aborted")), s.send(), t && (t.aborted && s.abort(), t.addEventListener("abort", () => s.abort()));
     });
   }
   async request({ headers: e, signal: t } = {}) {
@@ -1997,7 +1999,7 @@ class Rr extends Ee {
   }
 }
 const he = {};
-class Mr extends Ce {
+class Gr extends Fe {
   /**
    * BaseResponse facade for node HTTP/HTTPS API Response
    * @param {http.ServerResponse} response
@@ -2029,24 +2031,24 @@ class Br extends Ee {
         (o) => {
           const a = new Promise((l) => {
             const c = [];
-            o.on("data", (u) => {
-              c.push(u);
+            o.on("data", (d) => {
+              c.push(d);
             }), o.on("end", () => {
-              const u = Buffer.concat(c).buffer;
-              l(u);
+              const d = Buffer.concat(c).buffer;
+              l(d);
             }), o.on("error", i);
           });
-          r(new Mr(o, a));
+          r(new Gr(o, a));
         }
       );
-      s.on("error", i), t && (t.aborted && s.destroy(new V("Request aborted")), t.addEventListener("abort", () => s.destroy(new V("Request aborted"))));
+      s.on("error", i), t && (t.aborted && s.destroy(new q("Request aborted")), t.addEventListener("abort", () => s.destroy(new q("Request aborted"))));
     });
   }
   async request({ headers: e, signal: t } = {}) {
     return await this.constructRequest(e, t);
   }
 }
-class Pe extends Fe {
+class Pe extends Ce {
   /**
    *
    * @param {BaseClient} client
@@ -2076,23 +2078,23 @@ class Pe extends Fe {
     });
     if (r.ok)
       if (r.status === 206) {
-        const { type: i, params: s } = xr(r.getHeader("content-type"));
+        const { type: i, params: s } = br(r.getHeader("content-type"));
         if (i === "multipart/byteranges") {
-          const h = br(await r.getData(), s.boundary);
+          const h = Ir(await r.getData(), s.boundary);
           return this._fileSize = h[0].fileSize || null, h;
         }
         const o = await r.getData(), { start: a, end: l, total: c } = de(r.getHeader("content-range"));
         this._fileSize = c || null;
-        const u = [{
+        const d = [{
           data: o,
           offset: a,
           length: l - a
         }];
         if (e.length > 1) {
           const h = await Promise.all(e.slice(1).map((g) => this.fetchSlice(g, t)));
-          return u.concat(h);
+          return d.concat(h);
         }
-        return u;
+        return d;
       } else {
         if (!this.allowFullFile)
           throw new Error("Server responded with full file");
@@ -2137,25 +2139,25 @@ class Pe extends Fe {
     return this._fileSize;
   }
 }
-function ke(n, { blockSize: e, cacheSize: t }) {
-  return e === null ? n : new Cr(n, { blockSize: e, cacheSize: t });
+function Re(n, { blockSize: e, cacheSize: t }) {
+  return e === null ? n : new Er(n, { blockSize: e, cacheSize: t });
 }
-function Gr(n, { headers: e = {}, credentials: t, maxRanges: r = 0, allowFullFile: i = !1, ...s } = {}) {
-  const o = new Pr(n, t), a = new Pe(o, e, r, i);
-  return ke(a, s);
-}
-function Or(n, { headers: e = {}, maxRanges: t = 0, allowFullFile: r = !1, ...i } = {}) {
-  const s = new Rr(n), o = new Pe(s, e, t, r);
-  return ke(o, i);
+function Or(n, { headers: e = {}, credentials: t, maxRanges: r = 0, allowFullFile: i = !1, ...s } = {}) {
+  const o = new Rr(n, t), a = new Pe(o, e, r, i);
+  return Re(a, s);
 }
 function vr(n, { headers: e = {}, maxRanges: t = 0, allowFullFile: r = !1, ...i } = {}) {
+  const s = new Mr(n), o = new Pe(s, e, t, r);
+  return Re(o, i);
+}
+function _r(n, { headers: e = {}, maxRanges: t = 0, allowFullFile: r = !1, ...i } = {}) {
   const s = new Br(n), o = new Pe(s, e, t, r);
-  return ke(o, i);
+  return Re(o, i);
 }
-function _r(n, { forceXHR: e = !1, ...t } = {}) {
-  return typeof fetch == "function" && !e ? Gr(n, t) : typeof XMLHttpRequest < "u" ? Or(n, t) : vr(n, t);
+function Lr(n, { forceXHR: e = !1, ...t } = {}) {
+  return typeof fetch == "function" && !e ? Or(n, t) : typeof XMLHttpRequest < "u" ? vr(n, t) : _r(n, t);
 }
-class Ur extends Fe {
+class Ur extends Ce {
   constructor(e) {
     super(), this.file = e;
   }
@@ -2166,9 +2168,111 @@ class Ur extends Fe {
     });
   }
 }
-function Lr(n) {
+function Nr(n) {
   return new Ur(n);
 }
+class jr {
+  log() {
+  }
+  debug() {
+  }
+  info() {
+  }
+  warn() {
+  }
+  error() {
+  }
+  time() {
+  }
+  timeEnd() {
+  }
+}
+let zr = new jr();
+function Kr(...n) {
+  return zr.debug(...n);
+}
+const ve = new Uint8Array([
+  0,
+  0,
+  2,
+  28,
+  97,
+  112,
+  112,
+  108,
+  2,
+  32,
+  0,
+  0,
+  109,
+  110,
+  116,
+  114,
+  82,
+  71,
+  66,
+  32,
+  88,
+  89,
+  90,
+  32,
+  7,
+  220,
+  0,
+  1,
+  0,
+  25,
+  0,
+  3,
+  0,
+  41,
+  0,
+  57,
+  97,
+  99,
+  115,
+  112,
+  65,
+  80,
+  80,
+  76,
+  0,
+  0,
+  0,
+  0,
+  97,
+  112,
+  112,
+  108,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  246,
+  214,
+  0,
+  1,
+  0,
+  0,
+  0,
+  0,
+  211,
+  45
+]);
 function ge(n) {
   switch (n) {
     case x.BYTE:
@@ -2195,13 +2299,13 @@ function ge(n) {
       throw new RangeError(`Invalid field type: ${n}`);
   }
 }
-function Nr(n) {
+function Vr(n) {
   const e = n.GeoKeyDirectory;
   if (!e)
     return null;
   const t = {};
   for (let r = 4; r <= e[3] * 4; r += 4) {
-    const i = Xt[e[r]], s = e[r + 1] ? W[e[r + 1]] : null, o = e[r + 2], a = e[r + 3];
+    const i = $t[e[r]], s = e[r + 1] ? K[e[r + 1]] : null, o = e[r + 2], a = e[r + 3];
     let l = null;
     if (!s)
       l = a;
@@ -2278,9 +2382,16 @@ function z(n, e, t, r) {
       );
   return e === x.ASCII ? new TextDecoder("utf-8").decode(i) : i;
 }
-class jr {
-  constructor(e, t, r) {
-    this.fileDirectory = e, this.geoKeyDirectory = t, this.nextIFDByteOffset = r;
+class qr {
+  /**
+   * Create an ImageFileDirectory.
+   * @param {object} fileDirectory the file directory, mapping tag names to values
+   * @param {Map} rawFileDirectory the raw file directory, mapping tag IDs to values
+   * @param {object} geoKeyDirectory the geo key directory, mapping geo key names to values
+   * @param {number} nextIFDByteOffset the byte offset to the next IFD
+   */
+  constructor(e, t, r, i) {
+    this.fileDirectory = e, this.rawFileDirectory = t, this.geoKeyDirectory = r, this.nextIFDByteOffset = i;
   }
 }
 class re extends Error {
@@ -2288,7 +2399,7 @@ class re extends Error {
     super(`No image at index ${e}`), this.index = e;
   }
 }
-class zr {
+class Hr {
   /**
    * (experimental) Reads raster data from the best fitting image. This function uses
    * the image with the lowest resolution that is still a higher resolution than the
@@ -2306,16 +2417,16 @@ class zr {
     let { resX: s, resY: o, bbox: a } = e;
     const l = await this.getImage();
     let c = l;
-    const u = await this.getImageCount(), h = l.getBoundingBox();
+    const d = await this.getImageCount(), h = l.getBoundingBox();
     if (t && a)
       throw new Error('Both "bbox" and "window" passed.');
     if (r || i) {
       if (t) {
-        const [d, p] = l.getOrigin(), [y, w] = l.getResolution();
+        const [u, p] = l.getOrigin(), [y, w] = l.getResolution();
         a = [
-          d + t[0] * y,
+          u + t[0] * y,
           p + t[1] * w,
-          d + t[2] * y,
+          u + t[2] * y,
           p + t[3] * w
         ];
       }
@@ -2333,25 +2444,25 @@ class zr {
     }
     if (s || o) {
       const f = [];
-      for (let d = 0; d < u; ++d) {
-        const p = await this.getImage(d), { SubfileType: y, NewSubfileType: w } = p.fileDirectory;
-        (d === 0 || y === 2 || w & 1) && f.push(p);
+      for (let u = 0; u < d; ++u) {
+        const p = await this.getImage(u), { SubfileType: y, NewSubfileType: w } = p.fileDirectory;
+        (u === 0 || y === 2 || w & 1) && f.push(p);
       }
-      f.sort((d, p) => d.getWidth() - p.getWidth());
-      for (let d = 0; d < f.length; ++d) {
-        const p = f[d], y = (h[2] - h[0]) / p.getWidth(), w = (h[3] - h[1]) / p.getHeight();
+      f.sort((u, p) => u.getWidth() - p.getWidth());
+      for (let u = 0; u < f.length; ++u) {
+        const p = f[u], y = (h[2] - h[0]) / p.getWidth(), w = (h[3] - h[1]) / p.getHeight();
         if (c = p, s && s > y || o && o > w)
           break;
       }
     }
     let g = t;
     if (a) {
-      const [f, d] = l.getOrigin(), [p, y] = c.getResolution(l);
+      const [f, u] = l.getOrigin(), [p, y] = c.getResolution(l);
       g = [
         Math.round((a[0] - f) / p),
-        Math.round((a[1] - d) / y),
+        Math.round((a[1] - u) / y),
         Math.round((a[2] - f) / p),
-        Math.round((a[3] - d) / y)
+        Math.round((a[3] - u) / y)
       ], g = [
         Math.min(g[0], g[2]),
         Math.min(g[1], g[3]),
@@ -2362,22 +2473,22 @@ class zr {
     return c.readRasters({ ...e, window: g });
   }
 }
-class ie extends zr {
+class ie extends Hr {
   /**
    * @constructor
-   * @param {*} source The datasource to read from.
-   * @param {boolean} littleEndian Whether the image uses little endian.
-   * @param {boolean} bigTiff Whether the image uses bigTIFF conventions.
-   * @param {number} firstIFDOffset The numeric byte-offset from the start of the image
-   *                                to the first IFD.
-   * @param {GeoTIFFOptions} [options] further options.
+   * @param {(source.ArrayBufferSource|source.Remote|source.Custom|source.DataView)} source The data source from where to read the TIFF file.
+   * @param {boolean} littleEndian Whether the TIFF file is in little endian format.
+   * @param {boolean} bigTiff Whether the TIFF file is a BigTIFF file.
+   * @param {number} firstIFDOffset The numeric byte-offset from the start of the file to the first IFD.
+   * @param {object} [options] Further options.
+   * @param {boolean} [options.cache=true] Enable caching for higher performance.
    */
   constructor(e, t, r, i, s = {}) {
-    super(), this.source = e, this.littleEndian = t, this.bigTiff = r, this.firstIFDOffset = i, this.cache = s.cache || !1, this.ifdRequests = [], this.ghostValues = null;
+    super(), this.source = e, this.littleEndian = t, this.bigTiff = r, this.firstIFDOffset = i, this.cache = s.cache !== !1, this.ifdRequests = [], this.ghostValues = null, this.iccProfileCache = /* @__PURE__ */ new Map(), this.iccProfileCache.set("generic", ve);
   }
   async getSlice(e, t) {
     const r = this.bigTiff ? 4048 : 1024;
-    return new yr(
+    return new pr(
       (await this.source.fetch([{
         offset: e,
         length: typeof t < "u" ? t : r
@@ -2400,32 +2511,41 @@ class ie extends zr {
     let i = await this.getSlice(e);
     const s = this.bigTiff ? i.readUint64(e) : i.readUint16(e), o = s * t + (this.bigTiff ? 16 : 6);
     i.covers(e, o) || (i = await this.getSlice(e, o));
-    const a = {};
-    let l = e + (this.bigTiff ? 8 : 2);
-    for (let h = 0; h < s; l += t, ++h) {
-      const g = i.readUint16(l), f = i.readUint16(l + 2), d = this.bigTiff ? i.readUint64(l + 4) : i.readUint32(l + 4);
-      let p, y;
-      const w = ge(f), m = l + (this.bigTiff ? 12 : 8);
-      if (w * d <= (this.bigTiff ? 8 : 4))
-        p = z(i, f, d, m);
+    const a = {}, l = /* @__PURE__ */ new Map();
+    let c = e + (this.bigTiff ? 8 : 2);
+    for (let g = 0; g < s; c += t, ++g) {
+      const f = i.readUint16(c), u = i.readUint16(c + 2), p = this.bigTiff ? i.readUint64(c + 4) : i.readUint32(c + 4);
+      let y, w;
+      const m = ge(u), T = c + (this.bigTiff ? 12 : 8);
+      if (f === 34675) {
+        Kr("Using generic ICC profile instead of embedded one"), w = ve;
+        const I = K[f];
+        I && (a[I] = w), l.set(f, w);
+        continue;
+      }
+      if (m * p <= (this.bigTiff ? 8 : 4))
+        y = z(i, u, p, T);
       else {
-        const I = i.readOffset(m), T = ge(f) * d;
-        if (i.covers(I, T))
-          p = z(i, f, d, I);
+        const I = i.readOffset(T), D = ge(u) * p;
+        if (i.covers(I, D))
+          y = z(i, u, p, I);
         else {
-          const S = await this.getSlice(I, T);
-          p = z(S, f, d, I);
+          const b = await this.getSlice(I, D);
+          y = z(b, u, p, I);
         }
       }
-      d === 1 && Ht.indexOf(g) === -1 && !(f === x.RATIONAL || f === x.SRATIONAL) ? y = p[0] : y = p, a[W[g]] = y;
+      p === 1 && Yt.indexOf(f) === -1 && !(u === x.RATIONAL || u === x.SRATIONAL) ? w = y[0] : w = y;
+      const S = K[f];
+      S && (a[S] = w), l.set(f, w);
     }
-    const c = Nr(a), u = i.readOffset(
+    const d = Vr(a), h = i.readOffset(
       e + r + t * s
     );
-    return new jr(
+    return new qr(
       a,
-      c,
-      u
+      l,
+      d,
+      h
     );
   }
   async requestIFD(e) {
@@ -2454,7 +2574,7 @@ class ie extends zr {
    */
   async getImage(e = 0) {
     const t = await this.requestIFD(e);
-    return new dr(
+    return new gr(
       t.fileDirectory,
       t.geoKeyDirectory,
       this.dataView,
@@ -2498,8 +2618,8 @@ class ie extends zr {
       a > r && (i = await this.getSlice(e, a));
       const l = z(i, x.ASCII, a, e);
       this.ghostValues = {}, l.split(`
-`).filter((c) => c.length > 0).map((c) => c.split("=")).forEach(([c, u]) => {
-        this.ghostValues[c] = u;
+`).filter((c) => c.length > 0).map((c) => c.split("=")).forEach(([c, d]) => {
+        this.ghostValues[c] = d;
       });
     }
     return this.ghostValues;
@@ -2513,7 +2633,7 @@ class ie extends zr {
    *                               to be aborted
    */
   static async fromSource(e, t, r) {
-    const i = (await e.fetch([{ offset: 0, length: 1024 }], r))[0], s = new gr(i), o = s.getUint16(0, 0);
+    const i = (await e.fetch([{ offset: 0, length: 1024 }], r))[0], s = new yr(i), o = s.getUint16(0, 0);
     let a;
     if (o === 18761)
       a = !0;
@@ -2530,8 +2650,8 @@ class ie extends zr {
         throw new Error("Unsupported offset byte-size.");
     } else
       throw new TypeError("Invalid magic number.");
-    const u = c ? s.getUint64(8, a) : s.getUint32(4, a);
-    return new ie(e, a, c, u, t);
+    const d = c ? s.getUint64(8, a) : s.getUint32(4, a);
+    return new ie(e, a, c, d, t);
   }
   /**
    * Closes the underlying file buffer
@@ -2542,11 +2662,11 @@ class ie extends zr {
     return typeof this.source.close == "function" ? this.source.close() : !1;
   }
 }
-async function ve(n, e = {}, t) {
-  return ie.fromSource(_r(n, e), t);
+async function _e(n, e = {}, t) {
+  return ie.fromSource(Lr(n, e), e, t);
 }
-async function _e(n, e) {
-  return ie.fromSource(Lr(n), e);
+async function Le(n, e = {}, t) {
+  return ie.fromSource(Nr(n), e, t);
 }
 class fe {
   constructor() {
@@ -2555,7 +2675,7 @@ class fe {
     });
   }
 }
-const Kr = (n) => {
+const Yr = (n) => {
   var t, r, i;
   const e = /* @__PURE__ */ new Map();
   for (const s of n) {
@@ -2565,7 +2685,7 @@ const Kr = (n) => {
     ), a = (r = o == null ? void 0 : o.querySelector("Name")) == null ? void 0 : r.textContent, l = (i = o == null ? void 0 : o.querySelector("Color")) == null ? void 0 : i.textContent;
     if (!a)
       continue;
-    const c = l ? l.split(",").map((u) => parseInt(u)) : [255, 255, 255];
+    const c = l ? l.split(",").map((d) => parseInt(d)) : [255, 255, 255];
     e.has(a) || e.set(a, {
       name: a,
       color: c,
@@ -2624,14 +2744,14 @@ class j {
   static RGBAfromCIELab(e) {
     const s = new Uint8ClampedArray(e.length * 4 / 3);
     for (let o = 0, a = 0; o < e.length; o += 3, a += 4) {
-      const l = e[o + 0], c = e[o + 1] << 24 >> 24, u = e[o + 2] << 24 >> 24;
-      let h = (l + 16) / 116, g = c / 500 + h, f = h - u / 200, d, p, y;
-      g = 0.95047 * (g * g * g > 8856e-6 ? g * g * g : (g - 16 / 116) / 7.787), h = 1 * (h * h * h > 8856e-6 ? h * h * h : (h - 16 / 116) / 7.787), f = 1.08883 * (f * f * f > 8856e-6 ? f * f * f : (f - 16 / 116) / 7.787), d = g * 3.2406 + h * -1.5372 + f * -0.4986, p = g * -0.9689 + h * 1.8758 + f * 0.0415, y = g * 0.0557 + h * -0.204 + f * 1.057, d = d > 31308e-7 ? 1.055 * d ** (1 / 2.4) - 0.055 : 12.92 * d, p = p > 31308e-7 ? 1.055 * p ** (1 / 2.4) - 0.055 : 12.92 * p, y = y > 31308e-7 ? 1.055 * y ** (1 / 2.4) - 0.055 : 12.92 * y, s[a] = Math.max(0, Math.min(1, d)) * 255, s[a + 1] = Math.max(0, Math.min(1, p)) * 255, s[a + 2] = Math.max(0, Math.min(1, y)) * 255, s[a + 3] = 255;
+      const l = e[o + 0], c = e[o + 1] << 24 >> 24, d = e[o + 2] << 24 >> 24;
+      let h = (l + 16) / 116, g = c / 500 + h, f = h - d / 200, u, p, y;
+      g = 0.95047 * (g * g * g > 8856e-6 ? g * g * g : (g - 16 / 116) / 7.787), h = 1 * (h * h * h > 8856e-6 ? h * h * h : (h - 16 / 116) / 7.787), f = 1.08883 * (f * f * f > 8856e-6 ? f * f * f : (f - 16 / 116) / 7.787), u = g * 3.2406 + h * -1.5372 + f * -0.4986, p = g * -0.9689 + h * 1.8758 + f * 0.0415, y = g * 0.0557 + h * -0.204 + f * 1.057, u = u > 31308e-7 ? 1.055 * u ** (1 / 2.4) - 0.055 : 12.92 * u, p = p > 31308e-7 ? 1.055 * p ** (1 / 2.4) - 0.055 : 12.92 * p, y = y > 31308e-7 ? 1.055 * y ** (1 / 2.4) - 0.055 : 12.92 * y, s[a] = Math.max(0, Math.min(1, u)) * 255, s[a + 1] = Math.max(0, Math.min(1, p)) * 255, s[a + 2] = Math.max(0, Math.min(1, y)) * 255, s[a + 3] = 255;
     }
     return s;
   }
 }
-function Vr(n) {
+function Xr(n) {
   if (!n.version || n.version.major < 2 || n.version.major == 2 && n.version.minor < 3) {
     console.error("This version of OpenSeadragon is too old to support this monkey patch");
     return;
@@ -2673,9 +2793,9 @@ function Vr(n) {
           var o;
           try {
             o = new window.Blob([s.response]);
-          } catch (u) {
+          } catch (d) {
             var a = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder || window.MSBlobBuilder;
-            if (u.name === "TypeError" && a) {
+            if (d.name === "TypeError" && a) {
               var l = new a();
               l.append(s.response), o = l.getBlob();
             }
@@ -2718,7 +2838,7 @@ function Vr(n) {
     return !1;
   };
 }
-const qr = (n) => {
+const $r = (n) => {
   const t = class t extends n.TileSource {
     constructor(s, o = { logLatency: !1 }) {
       super();
@@ -2764,7 +2884,7 @@ const qr = (n) => {
        */
       P(this, "getTileUrl", (s, o, a) => {
         let l = this.levels[s], c = new String(`${s}/${o}_${a}`);
-        return c.fetch = /* @__PURE__ */ ((u, h, g, f, d) => () => this.regionToDataUrl.call(u, h, g, f, d))(this, l, o, a, c), c;
+        return c.fetch = /* @__PURE__ */ ((d, h, g, f, u) => () => this.regionToDataUrl.call(d, h, g, f, u))(this, l, o, a, c), c;
       });
       P(this, "downloadTileStart", (s) => {
         s.src.fetch().then((o) => {
@@ -2808,101 +2928,101 @@ const qr = (n) => {
             Math.log2(Math.max(l / o, c / a))
           ), g = [...Array(h).keys()].filter((f) => f % 2 == 0);
           this.levels = g.map((f) => {
-            let d = Math.pow(2, f);
+            let u = Math.pow(2, f);
             const p = s.filter((w) => {
               const m = Math.pow(2, f - 1);
-              return m >= 0 ? w.getWidth() * m < l && w.getWidth() * d >= l : w.getWidth() * d >= l;
+              return m >= 0 ? w.getWidth() * m < l && w.getWidth() * u >= l : w.getWidth() * u >= l;
             });
             if (p.length === 0)
               return null;
             const y = p[0];
             return {
-              width: l / d,
-              height: c / d,
+              width: l / u,
+              height: c / u,
               tileWidth: this.options.tileWidth || y.getTileWidth() || o,
               tileHeight: this.options.tileHeight || y.getTileHeight() || a,
               image: y,
-              scaleFactor: d * y.getWidth() / l
+              scaleFactor: u * y.getWidth() / l
             };
           }).filter((f) => f !== null), this.maxLevel = this.levels.length - 1;
         }
         this.levels = this.levels.sort((h, g) => h.width - g.width), this._tileWidth = this.levels[0].tileWidth, this._tileHeight = this.levels[0].tileHeight, this.setupComplete();
       });
       P(this, "regionToDataUrl", (s, o, a, l) => {
-        var w, m, I, T, S;
+        var w, m, T, A, S;
         let c = this.options.logLatency && Date.now(), h = (l.abortController = new AbortController()).signal;
-        const g = s.tileWidth, f = s.tileHeight, d = [o * g, a * f, (o + 1) * g, (a + 1) * f].map(
-          (A) => A * s.scaleFactor
+        const g = s.tileWidth, f = s.tileHeight, u = [o * g, a * f, (o + 1) * g, (a + 1) * f].map(
+          (I) => I * s.scaleFactor
         ), p = s.image;
         if ((m = (w = p.fileDirectory) == null ? void 0 : w.Software) == null ? void 0 : m.startsWith("PerkinElmer-QPI")) {
-          const A = new DOMParser().parseFromString(
-            (I = p.fileDirectory) == null ? void 0 : I.ImageDescription,
+          const I = new DOMParser().parseFromString(
+            (T = p.fileDirectory) == null ? void 0 : T.ImageDescription,
             "text/xml"
           );
-          (T = A.querySelector("Name")) == null || T.textContent;
-          const F = (S = A.querySelector("Color")) == null ? void 0 : S.textContent, b = F ? F.split(",").map((G) => parseInt(G)) : [255, 255, 255];
+          (A = I.querySelector("Name")) == null || A.textContent;
+          const D = (S = I.querySelector("Color")) == null ? void 0 : S.textContent, b = D ? D.split(",").map((B) => parseInt(B)) : [255, 255, 255];
           return s.image.readRGB({
             interleave: !0,
-            window: d,
+            window: u,
             pool: this._pool,
             width: s.tileWidth,
             height: s.tileHeight,
             signal: h
-          }).then((G) => {
-            let R = document.createElement("canvas");
-            R.width = s.tileWidth, R.height = s.tileHeight;
-            let C = R.getContext("2d"), M = new Uint8ClampedArray(4 * R.width * R.height), U = new Uint8ClampedArray(G), L, B;
-            for (L = 0, B = 0; L < U.length; L += 3, B += 4)
-              M[B] = U[L] * b[0] / 255, M[B + 1] = U[L + 1] * b[1] / 255, M[B + 2] = U[L + 2] * b[2] / 255, M[B + 3] = 255;
-            const Q = C.createImageData(R.width, R.height);
-            Q.data.set(M), C.putImageData(Q, 0, 0);
-            let ne = R.toDataURL("image/jpeg", 0.8);
+          }).then((B) => {
+            let k = document.createElement("canvas");
+            k.width = s.tileWidth, k.height = s.tileHeight;
+            let F = k.getContext("2d"), M = new Uint8ClampedArray(4 * k.width * k.height), L = new Uint8ClampedArray(B), U, G;
+            for (U = 0, G = 0; U < L.length; U += 3, G += 4)
+              M[G] = L[U] * b[0] / 255, M[G + 1] = L[U + 1] * b[1] / 255, M[G + 2] = L[U + 2] * b[2] / 255, M[G + 3] = 255;
+            const Q = F.createImageData(k.width, k.height);
+            Q.data.set(M), F.putImageData(Q, 0, 0);
+            let ne = k.toDataURL("image/jpeg", 0.8);
             return this.options.logLatency && (typeof this.options.logLatency == "function" ? this.options.logLatency : console.log)("Tile latency (ms):", Date.now() - c), ne;
           });
         } else
-          return s.image.getTileOrStrip(o, a, null, this._pool, h).then((A) => {
-            let F = new Uint8ClampedArray(A.data), b = document.createElement("canvas");
+          return s.image.getTileOrStrip(o, a, null, this._pool, h).then((I) => {
+            let D = new Uint8ClampedArray(I.data), b = document.createElement("canvas");
             b.width = s.tileWidth, b.height = s.tileHeight;
-            let G = b.getContext("2d"), R = s.image.fileDirectory.PhotometricInterpretation, C;
-            if (F.length / (b.width * b.height) % 4 === 0)
-              C = F;
+            let B = b.getContext("2d"), k = s.image.fileDirectory.PhotometricInterpretation, F;
+            if (D.length / (b.width * b.height) % 4 === 0)
+              F = D;
             else
-              switch (R) {
-                case D.WhiteIsZero:
-                  C = j.RGBAfromWhiteIsZero(
-                    F,
+              switch (k) {
+                case C.WhiteIsZero:
+                  F = j.RGBAfromWhiteIsZero(
+                    D,
                     2 ** s.image.fileDirectory.BitsPerSample[0]
                   );
                   break;
-                case D.BlackIsZero:
-                  C = j.RGBAfromBlackIsZero(
-                    F,
+                case C.BlackIsZero:
+                  F = j.RGBAfromBlackIsZero(
+                    D,
                     2 ** s.image.fileDirectory.BitsPerSample[0]
                   );
                   break;
-                case D.RGB:
-                  C = j.RGBAfromRGB(F);
+                case C.RGB:
+                  F = j.RGBAfromRGB(D);
                   break;
-                case D.Palette:
-                  C = j.RGBAfromPalette(F, 2 ** s.image.fileDirectory.colorMap);
+                case C.Palette:
+                  F = j.RGBAfromPalette(D, 2 ** s.image.fileDirectory.colorMap);
                   break;
-                case D.CMYK:
-                  C = j.RGBAfromCMYK(F);
+                case C.CMYK:
+                  F = j.RGBAfromCMYK(D);
                   break;
-                case D.YCbCr:
-                  C = j.RGBAfromYCbCr(F);
+                case C.YCbCr:
+                  F = j.RGBAfromYCbCr(D);
                   break;
-                case D.CIELab:
-                  C = j.RGBAfromCIELab(F);
+                case C.CIELab:
+                  F = j.RGBAfromCIELab(D);
                   break;
               }
-            const M = G.createImageData(b.width, b.height);
-            M.data.set(C), G.putImageData(M, 0, 0);
-            let U = b.toDataURL("image/jpeg", 0.8);
+            const M = B.createImageData(b.width, b.height);
+            M.data.set(F), B.putImageData(M, 0, 0);
+            let L = b.toDataURL("image/jpeg", 0.8);
             return this.options.logLatency && (typeof this.options.logLatency == "function" ? this.options.logLatency : console.log)(
               "Tile latency (ms):",
               Date.now() - c
-            ), U;
+            ), L;
           });
       });
       t._osdReady || t.applyOSDPatch(n);
@@ -2912,12 +3032,12 @@ const qr = (n) => {
         GeoTIFFImages: Promise.resolve(s.GeoTIFFImages),
         ready: new fe()
       }, this.GeoTIFF = s.GeoTIFF, this.imageCount = s.GeoTIFFImages.length, this.GeoTIFFImages = s.GeoTIFFImages, this.setupLevels()) : (this.promises = {
-        GeoTIFF: s instanceof File ? _e(s) : ve(s),
+        GeoTIFF: s instanceof File ? Le(s) : _e(s),
         GeoTIFFImages: new fe(),
         ready: new fe()
       }, this.promises.GeoTIFF.then((l) => (a.GeoTIFF = l, l.getImageCount())).then((l) => {
         a.imageCount = l;
-        let c = [...Array(l).keys()].map((u) => a.GeoTIFF.getImage(u));
+        let c = [...Array(l).keys()].map((d) => a.GeoTIFF.getImage(d));
         return Promise.all(c);
       }).then((l) => {
         a.GeoTIFFImages = l, a.promises.GeoTIFFImages.resolve(l), this.setupLevels();
@@ -2935,39 +3055,39 @@ const qr = (n) => {
    * @static sharedPool
    * @type {Pool}
    */
-  P(t, "sharedPool", new mr()), P(t, "_osdReady", !1), // Apply ImageJob patch to OpenSeadragon. Can be extended for modular patches.
+  P(t, "sharedPool", new wr()), P(t, "_osdReady", !1), // Apply ImageJob patch to OpenSeadragon. Can be extended for modular patches.
   P(t, "applyOSDPatch", (s) => {
-    Vr(s), t._osdReady = !0;
+    Xr(s), t._osdReady = !0;
   }), P(t, "getAllTileSources", async (s, o) => {
     const a = s instanceof File ? s.name.split(".").pop() : s.split(".").pop();
-    let l = s instanceof File ? _e(s) : ve(s);
+    let l = s instanceof File ? Le(s) : _e(s);
     return l.then((c) => (l = c, c.getImageCount())).then(
-      (c) => Promise.all([...Array(c).keys()].map(async (u) => (await l).getImage(u)))
+      (c) => Promise.all([...Array(c).keys()].map(async (d) => (await l).getImage(d)))
     ).then((c) => {
       c = c.filter(
-        (f) => f.fileDirectory.photometricInterpretation !== D.TransparencyMask
-      ), c.sort((f, d) => d.getWidth() - f.getWidth());
-      const u = 0.015;
-      return c.reduce((f, d) => {
-        const p = d.getWidth() / d.getHeight();
+        (f) => f.fileDirectory.photometricInterpretation !== C.TransparencyMask
+      ), c.sort((f, u) => u.getWidth() - f.getWidth());
+      const d = 0.015;
+      return c.reduce((f, u) => {
+        const p = u.getWidth() / u.getHeight();
         let y = "";
-        d.fileDirectory.ImageDescription && (y = d.fileDirectory.ImageDescription.split(`
-`)[1]);
+        u.fileDirectory.ImageDescription && (y = u.fileDirectory.ImageDescription.split(`
+`)[1] ?? "");
         const w = f.filter(
-          (m) => Math.abs(1 - m.aspectRatio / p) < u && !(y.includes("macro") || y.includes("label"))
+          (m) => Math.abs(1 - m.aspectRatio / p) < d && !(y != null && y.includes("macro") || y != null && y.includes("label"))
           // Separate out macro thumbnails and labels
         );
         if (w.length === 0) {
           let m = {
             aspectRatio: p,
-            images: [d]
+            images: [u]
           };
           f.push(m);
         } else
-          w[0].images.push(d);
+          w[0].images.push(u);
         return f;
-      }, []).map((f) => f.images).map((f, d) => {
-        if (d !== 0)
+      }, []).map((f) => f.images).map((f, u) => {
+        if (u !== 0)
           return new n.GeoTIFFTileSource(
             {
               GeoTIFF: l,
@@ -2977,7 +3097,7 @@ const qr = (n) => {
           );
         switch (a) {
           case "qptiff":
-            const p = Kr(f);
+            const p = Yr(f);
             return Array.from(p.values()).map((y, w) => new n.GeoTIFFTileSource(
               {
                 GeoTIFF: l,
@@ -3006,11 +3126,11 @@ const qr = (n) => {
 };
 (function(n, e) {
   typeof exports > "u" || typeof n.OpenSeadragon < "u" && e(n.OpenSeadragon);
-})(typeof window < "u" ? window : void 0, qr);
+})(typeof window < "u" ? window : void 0, $r);
 export {
-  ss as L,
-  is as a,
-  qr as e,
-  We as g
+  as as L,
+  ls as a,
+  $r as e,
+  Ze as g
 };
-//# sourceMappingURL=main-BYx3b45W.js.map
+//# sourceMappingURL=main-Dfz37ZFs.js.map
