@@ -180,7 +180,8 @@ const wi = (e) => e < 256 ? ke[e] : ke[256 + (e >>> 7)], Ee = (e, i) => {
         do
           M(e, a, e.bl_tree);
         while (--o !== 0);
-      else a !== 0 ? (a !== r && (M(e, a, e.bl_tree), o--), M(e, fi, e.bl_tree), N(e, o - 3, 2)) : o <= 10 ? (M(e, _i, e.bl_tree), N(e, o - 3, 3)) : (M(e, hi, e.bl_tree), N(e, o - 11, 7));
+      else
+        a !== 0 ? (a !== r && (M(e, a, e.bl_tree), o--), M(e, fi, e.bl_tree), N(e, o - 3, 2)) : o <= 10 ? (M(e, _i, e.bl_tree), N(e, o - 3, 3)) : (M(e, hi, e.bl_tree), N(e, o - 11, 7));
       o = 0, r = a, f === 0 ? (c = 138, l = 3) : a === f ? (c = 6, l = 3) : (c = 7, l = 4);
     }
 }, Ji = (e) => {
@@ -818,7 +819,8 @@ xt.prototype.push = function(e, i) {
       this.onData(t.output.subarray(0, t.next_out)), t.avail_out = 0;
       continue;
     }
-    if (t.avail_in === 0) break;
+    if (t.avail_in === 0)
+      break;
   }
   return !0;
 };
@@ -1249,7 +1251,8 @@ const $a = (e) => {
               o--, l += n[a++] << _, _ += 8;
             }
             t.length = l, t.head && (t.head.extra_len = l), t.flags & 512 && t.wrap & 4 && (E[0] = l & 255, E[1] = l >>> 8 & 255, t.check = Z(t.check, E, 2, 0)), l = 0, _ = 0;
-          } else t.head && (t.head.extra = null);
+          } else
+            t.head && (t.head.extra = null);
           t.mode = Mt;
         case Mt:
           if (t.flags & 1024 && (h = t.length, h > o && (h = o), h && (t.head && (w = t.head.extra_len - t.length, t.head.extra || (t.head.extra = new Uint8Array(t.head.extra_len)), t.head.extra.set(
@@ -1274,7 +1277,8 @@ const $a = (e) => {
             while (w && h < o);
             if (t.flags & 512 && t.wrap & 4 && (t.check = Z(t.check, n, h, a)), o -= h, a += h, w)
               break e;
-          } else t.head && (t.head.name = null);
+          } else
+            t.head && (t.head.name = null);
           t.length = 0, t.mode = Bt;
         case Bt:
           if (t.flags & 4096) {
@@ -1286,7 +1290,8 @@ const $a = (e) => {
             while (w && h < o);
             if (t.flags & 512 && t.wrap & 4 && (t.check = Z(t.check, n, h, a)), o -= h, a += h, w)
               break e;
-          } else t.head && (t.head.comment = null);
+          } else
+            t.head && (t.head.comment = null);
           t.mode = Kt;
         case Kt:
           if (t.flags & 512) {
@@ -1657,7 +1662,8 @@ function De(e) {
 De.prototype.push = function(e, i) {
   const t = this.strm, n = this.options.chunkSize, r = this.options.dictionary;
   let a, f, o;
-  if (this.ended) return !1;
+  if (this.ended)
+    return !1;
   for (i === ~~i ? f = i : f = i === !0 ? ir : tr, Mi.call(e) === "[object ArrayBuffer]" ? t.input = new Uint8Array(e) : t.input = e, t.next_in = 0, t.avail_in = t.input.length; ; ) {
     for (t.avail_out === 0 && (t.output = new Uint8Array(n), t.next_out = 0, t.avail_out = n), a = X.inflate(t, f), a === at && r && (a = X.inflateSetDictionary(t, r), a === Ae ? a = X.inflate(t, f) : a === ri && (a = at)); t.avail_in > 0 && a === nt && t.state.wrap > 0 && e[t.next_in] !== 0; )
       X.inflateReset(t), a = X.inflate(t, f);
@@ -1677,7 +1683,8 @@ De.prototype.push = function(e, i) {
     if (!(a === Ae && o === 0)) {
       if (a === nt)
         return a = X.inflateEnd(this.strm), this.onEnd(a), this.ended = !0, !0;
-      if (t.avail_in === 0) break;
+      if (t.avail_in === 0)
+        break;
     }
   }
   return !0;
@@ -1690,7 +1697,8 @@ De.prototype.onEnd = function(e) {
 };
 function kt(e, i) {
   const t = new De(i);
-  if (t.push(e), t.err) throw t.msg || oe[t.err];
+  if (t.push(e), t.err)
+    throw t.msg || oe[t.err];
   return t.result;
 }
 function rr(e, i) {
@@ -1708,4 +1716,4 @@ var br = sr;
 export {
   br as i
 };
-//# sourceMappingURL=pako.esm-CB1uQYY0.js.map
+//# sourceMappingURL=pako.esm-BSHzuB9t.js.map

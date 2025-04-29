@@ -13,6 +13,8 @@ import { patchOSDImageJob } from "./utils/osdMonkeyPatch.js";
  * @param {OpenSeadragon} OpenSeadragon - The OpenSeadragon class.
  */
 export const enableGeoTIFFTileSource = (OpenSeadragon) => {
+
+  let tsCounter = 0;
   /**
    * @class GeoTIFFTileSource
    * @memberof OpenSeadragon
@@ -62,6 +64,11 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
       this._ready = false;
       this._pool = GeoTIFFTileSource.sharedPool;
       this._tileSize = 256;
+
+      // keep a reference to which instance we are; this will be unique for different sources.
+      this._tsCounter = tsCounter;
+      // increment the "global" variable
+      tsCounter += 1;
 
       if (input.GeoTIFF && input.GeoTIFFImages) {
         this.promises = {
@@ -248,7 +255,7 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
      * Handle maintaining unique caches per channel in multi-channel images
      */
     getTileHashKey = (level, x, y) => {
-      return `${this?.channel?.name ?? ""}_${level}_${x}_${y}`;
+      return `geotiffTileSource${this._tsCounter}_${this?.channel?.name ?? ""}_${level}_${x}_${y}`;
     };
 
     /**

@@ -58,11 +58,12 @@ function f(o, n, t, r, a, i) {
           throw new Error(`Predictor 2 not allowed with ${a[0]} bits per sample.`);
       }
       l(h, e);
-    } else n === 3 && (h = new Uint8Array(
-      o,
-      c * e * t * s,
-      e * t * s
-    ), d(h, e, s));
+    } else
+      n === 3 && (h = new Uint8Array(
+        o,
+        c * e * t * s,
+        e * t * s
+      ), d(h, e, s));
   }
   return o;
 }
@@ -86,4 +87,4 @@ class g {
 export {
   g as B
 };
-//# sourceMappingURL=basedecoder-DHcBySSe.js.map
+//# sourceMappingURL=basedecoder-PFIibI7U.js.map
