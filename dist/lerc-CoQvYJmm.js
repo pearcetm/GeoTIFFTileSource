@@ -1,6 +1,6 @@
-import { i as oA } from "./pako.esm-BSHzuB9t.js";
-import { g as sA, L as DA, a as gA } from "./main-bKzVoWhK.js";
-import { B as nA } from "./basedecoder-PFIibI7U.js";
+import { i as oA } from "./pako.esm-CB1uQYY0.js";
+import { g as sA, L as DA, a as gA } from "./main-8v7k2MJ1.js";
+import { B as nA } from "./basedecoder-DHcBySSe.js";
 var iA = { exports: {} };
 (function(j) {
   /* Copyright 2015-2021 Esri. Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 @preserve */
@@ -122,8 +122,7 @@ var iA = { exports: {} };
             if (o !== -32768 || s < C.length)
               throw "Unexpected end of mask RLE encoding";
             g.mask.bitset = C, a += g.mask.numBytes;
-          } else
-            g.mask.numBytes | g.mask.numBlocksY | g.mask.maxValue || (g.mask.bitset = new Uint8Array(Math.ceil(g.width * g.height / 8)));
+          } else g.mask.numBytes | g.mask.numBlocksY | g.mask.maxValue || (g.mask.bitset = new Uint8Array(Math.ceil(g.width * g.height / 8)));
         B = new DataView(I, a, 16), g.pixels = {}, g.pixels.numBlocksY = B.getUint32(0, !0), g.pixels.numBlocksX = B.getUint32(4, !0), g.pixels.numBytes = B.getUint32(8, !0), g.pixels.maxValue = B.getFloat32(12, !0), a += 16;
         var e = g.pixels.numBlocksX, i = g.pixels.numBlocksY, t = e + (g.width % e > 0 ? 1 : 0), F = i + (g.height % i > 0 ? 1 : 0);
         g.pixels.blocks = new Array(t * F);
@@ -994,8 +993,7 @@ class wA {
     x = J.instance, BA.env.emscripten_notify_memory_growth(0);
   }
   decode(J, T = 0) {
-    if (!x)
-      throw new Error("ZSTDDecoder: Await .init() before decoding.");
+    if (!x) throw new Error("ZSTDDecoder: Await .init() before decoding.");
     const Z = J.byteLength, X = x.exports.malloc(Z);
     QA.set(J, X), T = T || Number(x.exports.ZSTD_findDecompressedSize(X, Z));
     const u = x.exports.malloc(T), L = x.exports.ZSTD_decompress(u, T, X, Z), d = QA.slice(u, u + L);
@@ -1027,4 +1025,4 @@ export {
   lA as default,
   hA as zstd
 };
-//# sourceMappingURL=lerc-GOj53V1-.js.map
+//# sourceMappingURL=lerc-CoQvYJmm.js.map

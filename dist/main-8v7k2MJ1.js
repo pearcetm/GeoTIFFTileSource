@@ -1,6 +1,6 @@
 var ut = Object.defineProperty;
 var dt = (i, e, t) => e in i ? ut(i, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : i[e] = t;
-var k = (i, e, t) => (dt(i, typeof e != "symbol" ? e + "" : e, t), t);
+var k = (i, e, t) => dt(i, typeof e != "symbol" ? e + "" : e, t);
 function E(i) {
   return (e, ...t) => gt(i, e, t);
 }
@@ -114,7 +114,7 @@ for (const i of yt(Q))
 const Ye = new Ne(4), Gt = new At(Ye), Ot = new me(Ye), v = new ze(512), _ = new St(512);
 for (let i = 0; i < 256; ++i) {
   const e = i - 127;
-  e < -27 ? (v[i] = 0, v[i | 256] = 32768, _[i] = 24, _[i | 256] = 24) : e < -14 ? (v[i] = 1024 >> -e - 14, v[i | 256] = 1024 >> -e - 14 | 32768, _[i] = -e - 1, _[i | 256] = -e - 1) : e <= 15 ? (v[i] = e + 15 << 10, v[i | 256] = e + 15 << 10 | 32768, _[i] = 13, _[i | 256] = 13) : e < 128 ? (v[i] = 31744, v[i | 256] = 64512, _[i] = 24, _[i | 256] = 24) : (v[i] = 31744, v[i | 256] = 64512, _[i] = 13, _[i | 256] = 13);
+  e < -24 ? (v[i] = 0, v[i | 256] = 32768, _[i] = 24, _[i | 256] = 24) : e < -14 ? (v[i] = 1024 >> -e - 14, v[i | 256] = 1024 >> -e - 14 | 32768, _[i] = -e - 1, _[i | 256] = -e - 1) : e <= 15 ? (v[i] = e + 15 << 10, v[i | 256] = e + 15 << 10 | 32768, _[i] = 13, _[i | 256] = 13) : e < 128 ? (v[i] = 31744, v[i | 256] = 64512, _[i] = 24, _[i | 256] = 24) : (v[i] = 31744, v[i | 256] = 64512, _[i] = 13, _[i | 256] = 13);
 }
 const xe = new me(2048);
 for (let i = 1; i < 1024; ++i) {
@@ -157,8 +157,7 @@ function Ze(i, e, t) {
     const l = n[a], c = e + "\\=" + l + "([^" + l + "]*)" + l;
     r && console.log("[xml-utils] pattern:", c);
     const d = new RegExp(c).exec(o);
-    if (r && console.log("[xml-utils] match:", d), d)
-      return d[1];
+    if (r && console.log("[xml-utils] match:", d), d) return d[1];
   }
 }
 be.exports = Ze;
@@ -193,8 +192,7 @@ function tt(i, e, t) {
   r && console.log("[xml-utils] starting findTagByName with", e, " and ", t);
   const n = jt(i, `<${e}[ 
 >/]`, o);
-  if (r && console.log("[xml-utils] start:", n), n === -1)
-    return;
+  if (r && console.log("[xml-utils] start:", n), n === -1) return;
   const a = i.slice(n + e.length);
   let l = le(a, "^[^<]*[ /]>", 0);
   const c = l !== -1 && a[l - 1] === "/";
@@ -204,15 +202,13 @@ function tt(i, e, t) {
       for (; (l = le(a, "[ /]" + e + ">", g)) !== -1; ) {
         const p = a.substring(g, l + 1);
         if (f += Be(p, "<" + e + `[ 
-	>]`), y += Be(p, "</" + e + ">"), y >= f)
-          break;
+	>]`), y += Be(p, "</" + e + ">"), y >= f) break;
         g = l;
       }
     } else
       l = le(a, "[ /]" + e + ">", 0);
   const h = n + e.length + l + 1;
-  if (r && console.log("[xml-utils] end:", h), h === -1)
-    return;
+  if (r && console.log("[xml-utils] end:", h), h === -1) return;
   const d = i.slice(n, h);
   let u;
   return c ? u = null : u = d.slice(d.indexOf(">") + 1, d.lastIndexOf("<")), { inner: u, outer: d, start: n, end: h };
@@ -507,19 +503,19 @@ async function it(i) {
   const t = await e();
   return new t(i);
 }
-j([void 0, 1], () => import("./raw-_eObXrMO.js").then((i) => i.default));
-j(5, () => import("./lzw-5BnjP5Zu.js").then((i) => i.default));
+j([void 0, 1], () => import("./raw-CMGvRjfu.js").then((i) => i.default));
+j(5, () => import("./lzw-LAGDNbSC.js").then((i) => i.default));
 j(6, () => {
   throw new Error("old style JPEG compression is not supported.");
 });
-j(7, () => import("./jpeg-cL5qbLGO.js").then((i) => i.default));
-j([8, 32946], () => import("./deflate-vcCR2g03.js").then((i) => i.default));
-j(32773, () => import("./packbits-QLsyzNt2.js").then((i) => i.default));
+j(7, () => import("./jpeg-BAgeD1d3.js").then((i) => i.default));
+j([8, 32946], () => import("./deflate-BXt-9JA_.js").then((i) => i.default));
+j(32773, () => import("./packbits-BlDR4Kj5.js").then((i) => i.default));
 j(
   34887,
-  () => import("./lerc-GOj53V1-.js").then(async (i) => (await i.zstd.init(), i)).then((i) => i.default)
+  () => import("./lerc-CoQvYJmm.js").then(async (i) => (await i.zstd.init(), i)).then((i) => i.default)
 );
-j(50001, () => import("./webimage-Hf-HYtMO.js").then((i) => i.default));
+j(50001, () => import("./webimage-BM_pbLN3.js").then((i) => i.default));
 function ne(i, e, t, r = 1) {
   return new (Object.getPrototypeOf(i)).constructor(e * t * r);
 }
@@ -1188,9 +1184,13 @@ class dr {
         t[2]
       ];
     if (r)
-      return [
+      return r[1] === 0 && r[4] === 0 ? [
         r[0],
         -r[5],
+        r[10]
+      ] : [
+        Math.sqrt(r[0] * r[0] + r[4] * r[4]),
+        -Math.sqrt(r[1] * r[1] + r[5] * r[5]),
         r[10]
       ];
     if (e) {
@@ -1214,7 +1214,7 @@ class dr {
    * Returns the image bounding box as an array of 4 values: min-x, min-y,
    * max-x and max-y. When the image has no affine transformation, then an
    * exception is thrown.
-   * @param {boolean} [tilegrid=false] If true return extent for a tilegrid 
+   * @param {boolean} [tilegrid=false] If true return extent for a tilegrid
    *                                   without adjustment for ModelTransformation.
    * @returns {Array<number>} The bounding box
    */
@@ -1445,7 +1445,7 @@ class mr {
    */
   constructor(e = pr, t) {
     this.workers = null, this._awaitingDecoder = null, this.size = e, this.messageId = 0, e && (this._awaitingDecoder = t ? Promise.resolve(t) : new Promise((r) => {
-      import("./decoder-b0JuKe3x.js").then((s) => {
+      import("./decoder-DJlmx386.js").then((s) => {
         r(s.create);
       });
     }), this._awaitingDecoder.then((r) => {
@@ -2103,8 +2103,7 @@ class Pe extends Ce {
           length: s.byteLength
         }];
       }
-    else
-      throw new Error("Error fetching data.");
+    else throw new Error("Error fetching data.");
   }
   async fetchSlice(e, t) {
     const { offset: r, length: s } = e, o = await this.client.request({
@@ -2132,8 +2131,7 @@ class Pe extends Ce {
           length: n.byteLength
         };
       }
-    else
-      throw new Error("Error fetching data.");
+    else throw new Error("Error fetching data.");
   }
   get fileSize() {
     return this._fileSize;
@@ -3016,4 +3014,4 @@ export {
   qr as e,
   We as g
 };
-//# sourceMappingURL=main-bKzVoWhK.js.map
+//# sourceMappingURL=main-8v7k2MJ1.js.map
