@@ -16,6 +16,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "prepublishOnly": "npm run build",
     "preview": "vite preview",
     "test": "vitest"
   },
@@ -29,13 +30,13 @@
     "vitest": "^1.6.0"
   },
   "dependencies": {
-    "geotiff": "https://github.com/Recontaminated/geotiff.js"
+    "geotiff": "git+https://github.com/Recontaminated/geotiff.js"
   },
   "peerDependencies": {
     "openseadragon": "^3.0.0 || ^4.0.0 || ^5.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/pearcetm/GeoTIFFTileSource"
+    "url": "https://github.com/Recontaminated/GeoTIFFTileSource"
   }
 }

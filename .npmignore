@@ -1,0 +1,16 @@
+# Source files
+src/
+test/
+demo/
+
+# Development files
+.gitignore
+vite.config.js
+CLAUDE.md
+
+# Dependencies
+node_modules/
+
+# Development artifacts
+*.log
+.DS_Store

@@ -18,6 +18,11 @@ export default defineConfig({
         }
       },
     },
+    rollupOptions: {
+      output: {
+        inlineDynamicImports: true,
+      },
+    },
   },
   plugins: [
     // Base example config from https://github.com/mjeanroy/rollup-plugin-license
