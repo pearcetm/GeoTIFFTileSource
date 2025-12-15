@@ -2,7 +2,6 @@ import { fromBlob, fromUrl, globals, Pool } from "geotiff";
 import { DeferredPromise } from "./utils/DeferredPromise.js";
 import { parsePerkinElmerChannels } from "./formats/perkinElmer.js";
 import { Converters } from "./utils/Converters.js";
-import { patchOSDImageJob } from "./utils/osdMonkeyPatch.js";
 
 /**
  * Enable GeoTIFF Tile Source for OpenSeadragon.
@@ -13,6 +12,12 @@ import { patchOSDImageJob } from "./utils/osdMonkeyPatch.js";
  * @param {OpenSeadragon} OpenSeadragon - The OpenSeadragon class.
  */
 export const enableGeoTIFFTileSource = (OpenSeadragon) => {
+
+  if (OpenSeadragon.version.major < 4 || (OpenSeadragon.version.major === 4 && OpenSeadragon.version.minor < 1)) {
+    // This class uses downloadTileStart API added in OSD v 4.1
+    // The old monkey patch does not add this functionality, nor it is up to date with latest OSD style -> removed
+    throw new Error("Your current OpenSeadragon version is too low to support GeoTIFFTileSource");
+  }
 
   let tsCounter = 0;
   /**
@@ -46,14 +51,9 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
      * @type {Pool}
      */
     static sharedPool = new Pool();
-    static _osdReady = false;
 
     constructor(input, opts = { logLatency: false }) {
       super();
-
-      if (!GeoTIFFTileSource._osdReady) {
-        GeoTIFFTileSource.applyOSDPatch(OpenSeadragon);
-      }
 
       let self = this;
 
@@ -108,15 +108,7 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
       }
     }
 
-    // Apply ImageJob patch to OpenSeadragon. Can be extended for modular patches.
-    static applyOSDPatch = (OpenSeadragon) => {
-      patchOSDImageJob(OpenSeadragon);
-
-      // Set flag to prevent re-applying the patch
-      GeoTIFFTileSource._osdReady = true;
-    };
-
-    static getAllTileSources = async (input, opts) => {
+    static async getAllTileSources (input, opts) {
       const fileExtension =
         input instanceof File ? input.name.split(".").pop() : input.split(".").pop();
 
@@ -215,48 +207,48 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
             }
           });
         });
-    };
+    }
 
     /**
      * Return the tileWidth for a given level.
      * @function
      * @param {Number} level
      */
-    getTileWidth = (level) => {
+    getTileWidth(level) {
       if (this.levels.length > level) {
         return this.levels[level].tileWidth;
       }
-    };
+    }
 
     /**
      * Return the tileHeight for a given level.
      * @function
      * @param {Number} level
      */
-    getTileHeight = (level) => {
+    getTileHeight(level) {
       if (this.levels.length > level) {
         return this.levels[level].tileHeight;
       }
-    };
+    }
 
     /**
      * @function
      * @param {Number} level
      */
-    getLevelScale = (level) => {
+    getLevelScale(level) {
       let levelScale = NaN;
       if (this.levels.length > 0 && level >= this.minLevel && level <= this.maxLevel) {
         levelScale = this.levels[level].width / this.levels[this.maxLevel].width;
       }
       return levelScale;
-    };
+    }
 
     /**
      * Handle maintaining unique caches per channel in multi-channel images
      */
-    getTileHashKey = (level, x, y) => {
+    getTileHashKey(level, x, y) {
       return `geotiffTileSource${this._tsCounter}_${this?.channel?.name ?? ""}_${level}_${x}_${y}`;
-    };
+    }
 
     /**
      * Implement function here instead of as custom tile source in client code
@@ -265,21 +257,12 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
      * @param {Number} x
      * @param {Number} y
      */
-    getTileUrl = (levelnum, x, y) => {
-      // return dataURL from reading tile data from the GeoTIFF object as String object (for cache key) with attached promise
-      let level = this.levels[levelnum];
-      let url = new String(`${levelnum}/${x}_${y}`); // use new String() so that custom fields can be set (see url.fetch below)
+    getTileUrl(levelnum, x, y) {
+      return `${levelnum}/${x}_${y}`;
+    }
 
-      url.fetch = (
-        (ts, level, x, y, src) => () =>
-          this.regionToDataUrl.call(ts, level, x, y, src)
-      )(this, level, x, y, url);
-
-      return url;
-    };
-
-    downloadTileStart = (context) => {
-      context.src.fetch().then((dataURL) => {
+    downloadTileStart(context) {
+      this.regionToDataUrl(this.levels[context.tile.level], context.tile.x, context.tile.y, context.url).then((dataURL) => {
         let image = new Image();
         let request = "" + context.src;
         image.onload = function () {
@@ -290,20 +273,20 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
         };
         image.src = dataURL;
       });
-    };
+    }
 
-    downloadTileAbort = (context) => {
+    downloadTileAbort(context) {
       context.src.abortController && context.src.abortController.abort();
-    };
+    }
 
-    setupComplete = () => {
+    setupComplete() {
       this._ready = true;
       this.promises.ready.resolve();
 
       this.raiseEvent("ready", { tileSource: this });
-    };
+    }
 
-    setupLevels = () => {
+    setupLevels() {
       if (this._ready) {
         return;
       }
@@ -396,9 +379,9 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
       this._tileHeight = this.levels[0].tileHeight;
 
       this.setupComplete();
-    };
+    }
 
-    regionToDataUrl = (level, x, y, src) => {
+    regionToDataUrl(level, x, y, src) {
       let startTime = this.options.logLatency && Date.now();
       let abortController = (src.abortController = new AbortController()); // add abortController to the src object so OpenSeadragon can abort the request
       let abortSignal = abortController.signal;
@@ -527,7 +510,7 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
           return dataURL;
         });
       }
-    };
+    }
   }
 
   // Attach the class to the OpenSeadragon namespace
