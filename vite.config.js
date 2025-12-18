@@ -12,7 +12,7 @@ export default defineConfig({
   build: {
     sourcemap: true,
     lib: {
-      entry: path.resolve(__dirname, "src/main.old.js"),
+      entry: path.resolve(__dirname, "src/main.js"),
       name: "GeoTIFFTileSource",
       formats: ["es", "umd"],
       fileName: (format) => {
