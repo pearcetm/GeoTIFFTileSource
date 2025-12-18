@@ -3,10 +3,16 @@ import { defineConfig } from "vite";
 import license from "rollup-plugin-license";
 
 export default defineConfig({
+  server: {
+    open: "/demo/demo.html",
+    watch: {
+      usePolling: true,
+    },
+  },
   build: {
     sourcemap: true,
     lib: {
-      entry: path.resolve(__dirname, "src/main.js"),
+      entry: path.resolve(__dirname, "src/main.old.js"),
       name: "GeoTIFFTileSource",
       formats: ["es", "umd"],
       fileName: (format) => {
@@ -18,6 +24,9 @@ export default defineConfig({
         }
       },
     },
+  },
+  worker: {
+    format: "es",
   },
   plugins: [
     // Base example config from https://github.com/mjeanroy/rollup-plugin-license
