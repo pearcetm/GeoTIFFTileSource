@@ -1,8 +1,7 @@
 import { fromBlob, fromUrl, globals, Pool } from "geotiff";
 import { DeferredPromise } from "./utils/DeferredPromise.js";
 import { parsePerkinElmerChannels } from "./formats/perkinElmer.js";
-import { Converters } from "./utils/Converters.js";
-import { patchOSDImageJob } from "./utils/osdMonkeyPatch.js";
+import { installRawTiffPlugin } from "./formats/tiff.js";
 
 /**
  * Enable GeoTIFF Tile Source for OpenSeadragon.
@@ -13,6 +12,21 @@ import { patchOSDImageJob } from "./utils/osdMonkeyPatch.js";
  * @param {OpenSeadragon} OpenSeadragon - The OpenSeadragon class.
  */
 export const enableGeoTIFFTileSource = (OpenSeadragon) => {
+
+  if (OpenSeadragon.version.major < 4 || (OpenSeadragon.version.major === 4 && OpenSeadragon.version.minor < 1)) {
+    // This class uses downloadTileStart API added in OSD v 4.1
+    // The old monkey patch does not add this functionality, nor it is up to date with latest OSD style -> removed
+    throw new Error("Your current OpenSeadragon version is too low to support GeoTIFFTileSource");
+  }
+
+  // Ensure RawTIFF converter plugin is installed (works on both OSD v6+ and legacy versions).
+  // For OSD v6+ it registers DataTypeConverter edges; for older versions we call the API manually.
+  const RawTiffAPI = OpenSeadragon.RawTiffPlugin || installRawTiffPlugin(OpenSeadragon, {
+    workerPool: {
+      // If your bundler cannot resolve this URL, pass a custom createWorker here.
+      createWorker: () => new Worker(new URL("./formats/tiff.worker.js", import.meta.url), { type: "module" }),
+    },
+  });
 
   let tsCounter = 0;
   /**
@@ -46,14 +60,9 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
      * @type {Pool}
      */
     static sharedPool = new Pool();
-    static _osdReady = false;
 
     constructor(input, opts = { logLatency: false }) {
       super();
-
-      if (!GeoTIFFTileSource._osdReady) {
-        GeoTIFFTileSource.applyOSDPatch(OpenSeadragon);
-      }
 
       let self = this;
 
@@ -108,15 +117,7 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
       }
     }
 
-    // Apply ImageJob patch to OpenSeadragon. Can be extended for modular patches.
-    static applyOSDPatch = (OpenSeadragon) => {
-      patchOSDImageJob(OpenSeadragon);
-
-      // Set flag to prevent re-applying the patch
-      GeoTIFFTileSource._osdReady = true;
-    };
-
-    static getAllTileSources = async (input, opts) => {
+    static async getAllTileSources (input, opts) {
       const fileExtension =
         input instanceof File ? input.name.split(".").pop() : input.split(".").pop();
 
@@ -156,7 +157,7 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
               // Split out part of the description that signifies its type for identification
               s = image.fileDirectory.ImageDescription.split("\n")[1] ?? "";
             }
-            
+
             const exists = accumulator.filter(
               (set) => ((Math.abs(1 - set.aspectRatio / r) < tolerance)
                 && !(s?.includes("macro") || s?.includes("label"))) // Separate out macro thumbnails and labels
@@ -215,48 +216,48 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
             }
           });
         });
-    };
+    }
 
     /**
      * Return the tileWidth for a given level.
      * @function
      * @param {Number} level
      */
-    getTileWidth = (level) => {
+    getTileWidth(level) {
       if (this.levels.length > level) {
         return this.levels[level].tileWidth;
       }
-    };
+    }
 
     /**
      * Return the tileHeight for a given level.
      * @function
      * @param {Number} level
      */
-    getTileHeight = (level) => {
+    getTileHeight(level) {
       if (this.levels.length > level) {
         return this.levels[level].tileHeight;
       }
-    };
+    }
 
     /**
      * @function
      * @param {Number} level
      */
-    getLevelScale = (level) => {
+    getLevelScale(level) {
       let levelScale = NaN;
       if (this.levels.length > 0 && level >= this.minLevel && level <= this.maxLevel) {
         levelScale = this.levels[level].width / this.levels[this.maxLevel].width;
       }
       return levelScale;
-    };
+    }
 
     /**
      * Handle maintaining unique caches per channel in multi-channel images
      */
-    getTileHashKey = (level, x, y) => {
+    getTileHashKey(level, x, y) {
       return `geotiffTileSource${this._tsCounter}_${this?.channel?.name ?? ""}_${level}_${x}_${y}`;
-    };
+    }
 
     /**
      * Implement function here instead of as custom tile source in client code
@@ -265,45 +266,52 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
      * @param {Number} x
      * @param {Number} y
      */
-    getTileUrl = (levelnum, x, y) => {
-      // return dataURL from reading tile data from the GeoTIFF object as String object (for cache key) with attached promise
-      let level = this.levels[levelnum];
-      let url = new String(`${levelnum}/${x}_${y}`); // use new String() so that custom fields can be set (see url.fetch below)
+    getTileUrl(levelnum, x, y) {
+      return `${levelnum}/${x}_${y}`;
+    }
 
-      url.fetch = (
-        (ts, level, x, y, src) => () =>
-          this.regionToDataUrl.call(ts, level, x, y, src)
-      )(this, level, x, y, url);
+    downloadTileStart(context) {
+      const isV6 = !!OpenSeadragon.converter && typeof context.fail === "function";
+      const request = "" + context.src;
 
-      return url;
-    };
+      // Abort wiring (OSD < v6 used context.src; v6+ prefers context.userData)
+      const abortController = new AbortController();
+      if (context.userData) context.userData.abortController = abortController;
 
-    downloadTileStart = (context) => {
-      context.src.fetch().then((dataURL) => {
-        let image = new Image();
-        let request = "" + context.src;
-        image.onload = function () {
-          context.finish(image);
-        };
-        image.onerror = image.onabort = function () {
-          context.finish(null, request, "Request aborted");
-        };
-        image.src = dataURL;
-      });
-    };
+      const level = this.levels[context.tile.level];
+      this.regionToTiffRaster(level, context.tile.x, context.tile.y, abortController.signal)
+        .then(async (tiffRaster) => {
+          if (isV6) {
+            // OSD v6+: hand off typed data; renderer/converter graph will take it from here.
+            context.finish(tiffRaster, request, tiffRaster.getType());
+            return;
+          }
 
-    downloadTileAbort = (context) => {
-      context.src.abortController && context.src.abortController.abort();
-    };
+          // OSD < v6: manually convert via tiff.js API to something legacy OSD can render (canvas is safest).
+          const ctx = await Promise.resolve(RawTiffAPI.rasterToContext2d(context.tile, tiffRaster));
+          context.finish(ctx.canvas);
+        })
+        .catch((err) => {
+          const msg = err && err.message ? err.message : String(err);
+          if (isV6) context.fail(msg);
+          else context.finish(null, request, msg);
+        });
+    }
 
-    setupComplete = () => {
+    downloadTileAbort(context) {
+      const ctrl = (context.userData && context.userData.abortController);
+      if (ctrl) ctrl.abort();
+      else $.console.error("Could not abort download: controller not available.");
+    }
+
+    setupComplete() {
       this._ready = true;
       this.promises.ready.resolve();
 
       this.raiseEvent("ready", { tileSource: this });
-    };
+    }
 
-    setupLevels = () => {
+    setupLevels() {
       if (this._ready) {
         return;
       }
@@ -396,138 +404,73 @@ export const enableGeoTIFFTileSource = (OpenSeadragon) => {
       this._tileHeight = this.levels[0].tileHeight;
 
       this.setupComplete();
-    };
+    }
 
-    regionToDataUrl = (level, x, y, src) => {
-      let startTime = this.options.logLatency && Date.now();
-      let abortController = (src.abortController = new AbortController()); // add abortController to the src object so OpenSeadragon can abort the request
-      let abortSignal = abortController.signal;
 
-      const width = level.tileWidth;
-      const height = level.tileHeight;
+    regionToTiffRaster(level, x, y, abortSignal) {
+      const startTime = this.options.logLatency && Date.now();
 
-      const window = [x * width, y * height, (x + 1) * width, (y + 1) * height].map(
+      const tileWidth = level.tileWidth;
+      const tileHeight = level.tileHeight;
+
+      const window = [x * tileWidth, y * tileHeight, (x + 1) * tileWidth, (y + 1) * tileHeight].map(
         (v) => v * level.scaleFactor
       );
 
       const image = level.image;
       const isQPTIFF = image.fileDirectory?.["Software"]?.startsWith("PerkinElmer-QPI");
 
-      if (isQPTIFF) {
-        // Parse XML image description
-        const qptiffXML = new DOMParser().parseFromString(
-          image.fileDirectory?.["ImageDescription"],
-          "text/xml"
+      // For QPTIFF we keep channel color as a *hint* (conversion/renderer decides what to do with it).
+      let tintRGB = null;
+      if (isQPTIFF && image.fileDirectory?.["ImageDescription"]) {
+        try {
+          const qptiffXML = new DOMParser().parseFromString(image.fileDirectory["ImageDescription"], "text/xml");
+          const channelColor = qptiffXML.querySelector("Color")?.textContent;
+          tintRGB = channelColor ? channelColor.split(",").map((v) => parseInt(v, 10)) : null;
+        } catch {
+          tintRGB = null;
+        }
+      }
+
+      // Key point: do NOT do raster -> RGBA conversion here.
+      // Read planar rasters (interleave:false) and wrap as a tiffRaster type.
+      return image.readRasters({
+        interleave: false,
+        window,
+        pool: this._pool,
+        width: tileWidth,
+        height: tileHeight,
+        signal: abortSignal,
+      }).then((rasters) => {
+        const bands = Array.isArray(rasters) ? rasters : [rasters];
+
+        const fd = image.fileDirectory || {};
+        const tiffRaster = new RawTiffAPI.TiffRaster({
+          width: tileWidth,
+          height: tileHeight,
+          bands,
+          samplesPerPixel: Math.max(fd.SamplesPerPixel || 0, bands.length),
+          bitsPerSample: fd.BitsPerSample || [8],
+          sampleFormat: fd.SampleFormat || null,
+          photometricInterpretation: fd.PhotometricInterpretation,
+          colorMap: fd.ColorMap || null,
+          fileDirectory: fd,
+          hints: {
+            ...(this.channel ? { channel: this.channel } : {}),
+            ...(tintRGB ? { tintRGB } : {}),
+          },
+        });
+
+        this.options.logLatency &&
+        (typeof this.options.logLatency == "function" ? this.options.logLatency : console.log)(
+          "Tile decode latency (ms):",
+          Date.now() - startTime
         );
 
-        // Get Name and Color tags
-        const channelName = qptiffXML.querySelector("Name")?.textContent;
-        const channelColor = qptiffXML.querySelector("Color")?.textContent;
+        return tiffRaster;
+      });
+    }
 
-        const channelRGB = channelColor
-          ? channelColor.split(",").map((v) => parseInt(v))
-          : [255, 255, 255];
-
-        return level.image
-          .readRGB({
-            interleave: true,
-            window: window,
-            pool: this._pool,
-            width: level.tileWidth,
-            height: level.tileHeight,
-            signal: abortSignal,
-          })
-          .then((data) => {
-            // let dataURL = tileToDataUrl(data, level.tileWidth, level.tileHeight, startTime);
-            let canvas = document.createElement("canvas");
-            canvas.width = level.tileWidth;
-            canvas.height = level.tileHeight;
-            let ctx = canvas.getContext("2d");
-
-            let arr = new Uint8ClampedArray(4 * canvas.width * canvas.height);
-            let rgb = new Uint8ClampedArray(data);
-
-            let i, a;
-            for (i = 0, a = 0; i < rgb.length; i += 3, a += 4) {
-              arr[a] = (rgb[i] * channelRGB[0]) / 255;
-              arr[a + 1] = (rgb[i + 1] * channelRGB[1]) / 255;
-              arr[a + 2] = (rgb[i + 2] * channelRGB[2]) / 255;
-              arr[a + 3] = 255;
-            }
-
-            const imageData = ctx.createImageData(canvas.width, canvas.height);
-            imageData.data.set(arr);
-            ctx.putImageData(imageData, 0, 0);
-
-            let dataURL = canvas.toDataURL("image/jpeg", 0.8);
-            this.options.logLatency &&
-              (typeof this.options.logLatency == "function"
-                ? this.options.logLatency
-                : console.log)("Tile latency (ms):", Date.now() - startTime);
-            return dataURL;
-          });
-      } else {
-        // Use getTileOrStrip followed by converters because it is noticeably more efficient than readRGB
-        return level.image.getTileOrStrip(x, y, null, this._pool, abortSignal).then((raster) => {
-          let data = new Uint8ClampedArray(raster.data);
-
-          let canvas = document.createElement("canvas");
-          canvas.width = level.tileWidth;
-          canvas.height = level.tileHeight;
-          let ctx = canvas.getContext("2d");
-
-          let photometricInterpretation = level.image.fileDirectory.PhotometricInterpretation;
-          let arr;
-
-          // If already in RGBA format, use it
-          if ((data.length / (canvas.width * canvas.height)) % 4 === 0) {
-            arr = data;
-          } else {
-            switch (photometricInterpretation) {
-              case globals.photometricInterpretations.WhiteIsZero: // grayscale, white is zero
-                arr = Converters.RGBAfromWhiteIsZero(
-                  data,
-                  2 ** level.image.fileDirectory.BitsPerSample[0]
-                );
-                break;
-              case globals.photometricInterpretations.BlackIsZero: // grayscale, white is zero
-                arr = Converters.RGBAfromBlackIsZero(
-                  data,
-                  2 ** level.image.fileDirectory.BitsPerSample[0]
-                );
-                break;
-              case globals.photometricInterpretations.RGB: // RGB
-                arr = Converters.RGBAfromRGB(data);
-                break;
-              case globals.photometricInterpretations.Palette: // colormap
-                arr = Converters.RGBAfromPalette(data, 2 ** level.image.fileDirectory.colorMap);
-                break;
-              case globals.photometricInterpretations.CMYK: // CMYK
-                arr = Converters.RGBAfromCMYK(data);
-                break;
-              case globals.photometricInterpretations.YCbCr: // YCbCr
-                arr = Converters.RGBAfromYCbCr(data);
-                break;
-              case globals.photometricInterpretations.CIELab: // CIELab
-                arr = Converters.RGBAfromCIELab(data);
-                break;
-            }
-          }
-
-          const imageData = ctx.createImageData(canvas.width, canvas.height);
-          imageData.data.set(arr);
-          ctx.putImageData(imageData, 0, 0);
-
-          let dataURL = canvas.toDataURL("image/jpeg", 0.8);
-          this.options.logLatency &&
-            (typeof this.options.logLatency == "function" ? this.options.logLatency : console.log)(
-              "Tile latency (ms):",
-              Date.now() - startTime
-            );
-          return dataURL;
-        });
-      }
-    };
   }
 
   // Attach the class to the OpenSeadragon namespace

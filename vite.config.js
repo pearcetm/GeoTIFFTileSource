@@ -3,6 +3,12 @@ import { defineConfig } from "vite";
 import license from "rollup-plugin-license";
 
 export default defineConfig({
+  server: {
+    open: "/demo/demo.html",
+    watch: {
+      usePolling: true,
+    },
+  },
   build: {
     sourcemap: true,
     lib: {
@@ -18,6 +24,9 @@ export default defineConfig({
         }
       },
     },
+  },
+  worker: {
+    format: "es",
   },
   plugins: [
     // Base example config from https://github.com/mjeanroy/rollup-plugin-license
