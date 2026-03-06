@@ -1,8 +1,6 @@
 // test/conversion.test.js
 import { describe, it, expect, beforeAll, vi } from "vitest";
-
-import { loadOpenSeadragon } from "./helpers/osd.js";
-const OpenSeadragon = await loadOpenSeadragon("../../demo/openseadragon.js");
+import OpenSeadragon from "openseadragon";
 
 import { enableGeoTIFFTileSource } from "../src/main.js";
 

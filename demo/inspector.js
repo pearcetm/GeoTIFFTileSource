@@ -1,11 +1,5 @@
 import { enableGeoTIFFTileSource } from "../src/main.js";
 
-// Load your newer OpenSeadragon build (not npm, not CDN)
-async function loadOSD() {
-  const mod = await import(new URL("./openseadragon.js", import.meta.url).href);
-  return mod.default ?? globalThis.OpenSeadragon ?? mod;
-}
-
 function $(id) {
   return document.getElementById(id);
 }
@@ -87,7 +81,6 @@ function installScientificConverter(OSD) {
 }
 
 (async function main() {
-  const OpenSeadragon = await loadOSD();
   enableGeoTIFFTileSource(OpenSeadragon);
 
   // Install “data-like remap” converter
@@ -116,13 +109,14 @@ function installScientificConverter(OSD) {
         interpretation: viz.interpretation,
         renderChannels: viz.renderChannels,
       },
+      GeoTIFFOptions: undefined
     });
 
     tileSourcesPromise
       .then((ts) => viewer.open(ts))
       .catch((e) => {
-        $("debug").textContent = String(e?.stack || e);
-        console.error(e);
+        $("debug").textContent = `Error loading TIFF: ${e?.stack || e}`;
+        console.error('Error loading GeoTIFF:', e);
       });
   }
 

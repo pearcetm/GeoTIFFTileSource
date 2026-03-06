@@ -2,12 +2,12 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>GeoTIFFTileSource – Scientific Demo</title>
-  <script type="text/javascript" src="openseadragon.js"></script>
+  <title>GeoTIFFTileSource – Scientific Demo (OpenSeadragon v6)</title>
+  <script type="text/javascript" src="../node_modules/openseadragon/build/openseadragon/openseadragon.js"></script>
 
   <link rel="stylesheet" href="./demo.css">
   <script type="module" src="./main.js"></script>
-  <script type="module" src="./ome.js"></script>
+  <script type="module" src="inspector.js"></script>
 </head>
 <body>
 <div class="content">
@@ -20,16 +20,18 @@
     </p>
 
     <h3>Scientific sample links</h3>
+    You need to be running a local proxy server to view these files. <code>npm run dev-proxy</code>,
+    (NOTE: OME test: 3-channel fails to parse the image metadata! we might need to do something extra to read this OME it seems).
     <div class="row">
-      <button class="demo-link" data-href="https://downloads.openmicroscopy.org/images/OME-TIFF/2016-06/bioformats-artificial/single-channel.ome.tif">
+      <button class="demo-link" data-href="http://localhost:6843/proxy/https://downloads.openmicroscopy.org/images/OME-TIFF/2016-06/bioformats-artificial/single-channel.ome.tif">
         LuCa 7-color (fluorescence, multi-channel)
       </button>
 
-      <button class="demo-link" data-href="https://downloads.openmicroscopy.org/images/OME-TIFF/2016-06/bioformats-artificial/multi-channel.ome.tif">
+      <button class="demo-link" data-href="http://localhost:6843/proxy/https://downloads.openmicroscopy.org/images/OME-TIFF/2016-06/bioformats-artificial/multi-channel.ome.tif">
         OME test: single-channel
       </button>
 
-      <button class="demo-link" data-href="https://downloads.openmicroscopy.org/images/OME-TIFF/2016-06/sub-resolutions/Fluorescence/LuCa-7color_Scan1.ome.tiff">
+      <button class="demo-link" data-href="http://localhost:6843/proxy/https://downloads.openmicroscopy.org/images/OME-TIFF/2016-06/sub-resolutions/Fluorescence/LuCa-7color_Scan1.ome.tiff">
         OME test: 3-channel
       </button>
     </div>
@@ -59,7 +61,7 @@
       <label>gamma <input id="gamma" type="number" value="1" step="0.1" /></label>
     </div>
 
-    <div id="viewer" class="viewer"></div>
+    <div id="viewer" class="viewer" style="height: 600px;"></div>
 
     <div id="file-info">
       <h3 id="filename">Pick a sample or a local file</h3>

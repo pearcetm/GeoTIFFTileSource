@@ -87,11 +87,12 @@ The plugin can be used in two ways:
 #### Prepare TileSources
 
 GeoTIFFTileSource accepts both local and remote GeoTIFF files. For local files, the `url` parameter should be a `File` object. For remote files, the `url` parameter should be a string. The `getAllTileSources` reads a local or remote GeoTIFF file and returns an array of `OpenSeadragon.GeoTIFFTileSource` objects, one for each image (page) in the GeoTIFF file.
-
+You can optionally pass an `options` object to `getAllTileSources` to control the behavior of the library. 
+``options.GeoTiffOptions`` are passed to geotiff.js, and ``options.hints`` are passed to the library.
 ```javascript
- const tiffTileSources = await OpenSeadragon.GeoTIFFTileSource.getAllTileSources(remoteUrl, {
-    logLatency: false,
-  });
+const tiffTileSources = await OpenSeadragon.GeoTIFFTileSource.getAllTileSources(remoteUrl, {
+  logLatency: false,
+});
 ```
 
 #### Create OpenSeadragon Viewer

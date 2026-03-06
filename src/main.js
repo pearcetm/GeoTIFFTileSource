@@ -4,6 +4,8 @@ import { logOnce } from "./utils/consoleOnce.js"
 import { parsePerkinElmerChannels } from "./formats/perkinElmer.js";
 import { installRawTiffPlugin } from "./formats/tiff.js";
 
+import * as gtiff from "geotiff";
+window.GeoTIFF = gtiff;
 /**
  * Enable GeoTIFF Tile Source for OpenSeadragon.
  *
@@ -546,7 +548,7 @@ export const enableGeoTIFFTileSource = (OpenSeadragon, options={}) => {
       if (strategy === "subifd") {
         logOnce(`${chosenPlane.__key}-subifd-warn`, `[GeoTIFFTileSource] File was detected to contain SubIFD pyramids, 
 however, geotiff.js does not support reading SubIFD files and is unable to display the pyramid. Only the
-high-resolution lowest level will be shown`, 'warn');
+high-resolution lowest level will be shown. Note that loading such data can crash your browser due to memory consumption.`, 'warn');
         strategy = "ifd";
       }
 
