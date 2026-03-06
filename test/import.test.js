@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import OpenSeadragon from "openseadragon";
-import { enableGeoTIFFTileSource } from "../dist/geotiff-tilesource.mjs";
+import { enableGeoTIFFTileSource } from "../src/main.js";
 
 // Enable GeoTIFF Tile Source for OpenSeadragon
 enableGeoTIFFTileSource(OpenSeadragon);

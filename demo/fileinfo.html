@@ -1,11 +1,11 @@
 <head>
-    <title>GeoTIFFTileSource File Info Viewer</title>
+    <title>GeoTIFFTileSource File Info Viewer (OpenSeadragon v4)</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/openseadragon/4.1.1/openseadragon.min.js"></script>
 
     <link rel="stylesheet" href="./demo.css">
 
-    <script type="text/javascript" src="../dist/geotiff-tilesource.min.js"></script>
-    <script type="module" src="./fileinfo.js"></script>
+  <script type="module" src="./main.js"></script>
+  <script type="module" src="./fileinfo.js"></script>
  </head>
  <body>
      <div class="content">
@@ -18,11 +18,12 @@
 
              <div>
                 <div id="file-info">
-                    <h2 id="filename">Please select an image file or link</h4>
+                    <h4 id="filename">Please select an image file or link</h4>
                     <div id="associated-images" style="display:flex;flex-direction:row;"></div>
                     <h4>Image Description</h4>
                     <div id="image-description" class="image-details"></div>
                 </div>
+               <div id="viewer"></div>
              </div>
          </div>
      </div>

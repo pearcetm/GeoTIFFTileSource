@@ -1,3 +1,8 @@
+const viewer = OpenSeadragon({
+  id: "viewer",
+  prefixUrl: "https://openseadragon.github.io/openseadragon/images/",
+});
+
 document.getElementById("file-picker").onchange = function (ev) {
   clearImageInfo();
 
