@@ -1,4 +1,4 @@
-import { B as re } from "./basedecoder-DHcBySSe.js";
+import { B as re } from "./main-CvinGM6s.js";
 const O = new Int32Array([
   0,
   1,
@@ -512,4 +512,4 @@ class fe extends re {
 export {
   fe as default
 };
-//# sourceMappingURL=jpeg-BAgeD1d3.js.map
+//# sourceMappingURL=jpeg-CykFp3Z7.js.map

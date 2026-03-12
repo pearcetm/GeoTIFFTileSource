@@ -1,4 +1,4 @@
-import { B as r } from "./basedecoder-DHcBySSe.js";
+import { B as r } from "./main-CvinGM6s.js";
 class s extends r {
   constructor() {
     if (super(), typeof createImageBitmap > "u")
@@ -17,4 +17,4 @@ class s extends r {
 export {
   s as default
 };
-//# sourceMappingURL=webimage-BM_pbLN3.js.map
+//# sourceMappingURL=webimage-C2HnjqC8.js.map
