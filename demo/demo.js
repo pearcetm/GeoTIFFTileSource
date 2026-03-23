@@ -69,7 +69,7 @@ function showTileSourcesInfo(tileSources) {
   clearImageInfo();
   let desc = document.getElementById("image-description");
   tileSources.map((ts, index) => {
-    let images = ts.GeoTIFFImages;
+    let images = ts.GeoTIFFAllImages || ts.GeoTIFFImages;
     let h = document.createElement("h3");
     h.textContent = "TileSource #" + index;
     desc.appendChild(h);
