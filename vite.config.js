@@ -58,16 +58,28 @@ export default defineConfig(({ mode }) => {
     ],
 
     test: {
-      environment: "jsdom",
-      browser: {
-        enabled: true,
-        provider: playwright(),
-        instances: [
-          {
-            browser: "chromium",
+      projects: [
+        {
+          test: {
+            name: "layout-jsdom",
+            environment: "jsdom",
+            browser: { enabled: false },
+            include: ["test/pyramid-layout.test.js"],
           },
-        ],
-      },
+        },
+        {
+          test: {
+            name: "browser",
+            environment: "jsdom",
+            browser: {
+              enabled: true,
+              provider: playwright(),
+              instances: [{ browser: "chromium" }],
+            },
+            include: ["test/conversion.browser.test.js", "test/import.test.js"],
+          },
+        },
+      ],
     },
   };
 });

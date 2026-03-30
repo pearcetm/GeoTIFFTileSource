@@ -1,4 +1,4 @@
-import { B as c } from "./main-CvinGM6s.js";
+import { B as c } from "./main-DxWiebmb.js";
 class l extends c {
   decodeBlock(s) {
     const n = new DataView(s), r = [];
@@ -22,4 +22,4 @@ class l extends c {
 export {
   l as default
 };
-//# sourceMappingURL=packbits-l3N1ftN-.js.map
+//# sourceMappingURL=packbits-BiMafHaH.js.map

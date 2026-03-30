@@ -69,7 +69,8 @@ export const enableGeoTIFFTileSource = (OpenSeadragon, options={}) => {
    *                 opts.GeoTIFFOptions Options object to pass to [geotiff.js]{@link https://github.com/geotiffjs/geotiff.js}
    *
    * @property {Object} GeoTIFF The GeoTIFF.js representation of the underlying file. Undefined until the file is opened successfully
-   * @property {Array}  GeoTIFFImages Array of GeoTIFFImage objects, each representing one layer. Undefined until the file is opened successfully
+   * @property {Array}  GeoTIFFImages Array of GeoTIFFImage objects used as pyramid/render levels. Undefined until the file is opened successfully
+   * @property {Array}  GeoTIFFAllImages All pages in this tile source's group (same aspect set), for metadata. Defaults to GeoTIFFImages when omitted.
    * @property {Bool}   ready set to true once all promises have resolved
    * @property {Object} promises
    * @property {Number} dimensions
@@ -117,6 +118,7 @@ export const enableGeoTIFFTileSource = (OpenSeadragon, options={}) => {
         this.GeoTIFF = input.GeoTIFF;
         this.imageCount = input.GeoTIFFImages.length;
         this.GeoTIFFImages = input.GeoTIFFImages;
+        this.GeoTIFFAllImages = input.GeoTIFFAllImages ?? input.GeoTIFFImages;
 
         this.setupLevels();
       } else {
@@ -138,6 +140,7 @@ export const enableGeoTIFFTileSource = (OpenSeadragon, options={}) => {
             images = self.constructor.userDefinedImagesFilter(images, opts);
 
             self.GeoTIFFImages = images;
+            self.GeoTIFFAllImages = images;
             self.promises.GeoTIFFImages.resolve(images);
             this.setupLevels();
           })
@@ -157,102 +160,102 @@ export const enableGeoTIFFTileSource = (OpenSeadragon, options={}) => {
       );
       let imageCount = await tiff.getImageCount();
 
-      return Promise.all(
+      const images = await Promise.all(
         Array.from({ length: imageCount }, (_, i) => tiff.getImage(i))
-      ).then((images) => {
-        let tiff = input instanceof File ? fromBlob(input) : fromUrl(input);
+      );
 
-        images = this.userDefinedImagesFilter(images, opts);
-        // Filter out images with photometricInterpretation.TransparencyMask
-        images = images.filter(
-          (image) =>
-            image.fileDirectory.photometricInterpretation !==
-            globals.photometricInterpretations.TransparencyMask
+      let tiffPromise = input instanceof File ? fromBlob(input) : fromUrl(input);
+
+      let filtered = this.userDefinedImagesFilter(images, opts);
+      filtered = filtered.filter(
+        (image) =>
+          image.fileDirectory.photometricInterpretation !==
+          globals.photometricInterpretations.TransparencyMask
+      );
+
+      // Sort by width (largest first), then group by aspect ratio / SVS macro+label (same as pre-layout overhaul)
+      filtered.sort((a, b) => b.getWidth() - a.getWidth());
+
+      const tolerance = 0.015;
+      const aspectRatioSets = filtered.reduce((accumulator, image) => {
+        const r = image.getWidth() / image.getHeight();
+        let s = "";
+
+        if (image.fileDirectory.ImageDescription) {
+          s = image.fileDirectory.ImageDescription.split("\n")[1] ?? "";
+        }
+
+        const exists = accumulator.filter(
+          (set) => ((Math.abs(1 - set.aspectRatio / r) < tolerance)
+            && !(s?.toLowerCase().includes("macro") || s?.toLowerCase().includes("label")))
         );
+        if (exists.length === 0) {
+          accumulator.push({
+            aspectRatio: r,
+            images: [image],
+          });
+        } else {
+          exists[0].images.push(image);
+        }
+        return accumulator;
+      }, []);
 
-        // Layout of images can vary -> images form pyramids, or all images are bases of pyramids
-        // while they have ref to sub-levels, or they are not pyramids at all
-        return this.resolveLayout(tiff, images, opts.hints);
-      }).then((layout) => {
-        return this.buildLevelImages(tiff, layout, tiff);
-      }).then((images) => {
-        // Sort by width (largest first), then detect pyramids
-        images.sort((a, b) => b.getWidth() - a.getWidth());
+      const imageSets = aspectRatioSets.map((set) => set.images);
+      const out = [];
 
-        // find unique aspect ratios (with tolerance to account for rounding)
-        const tolerance = 0.015;
+      for (let index = 0; index < imageSets.length; index++) {
+        const set = imageSets[index];
 
-        // Organize images into sets based on aspect ratio as well as
-        // macro thumbnails and labels according to the Aperio SVS format:
-        //   https://web.archive.org/web/20120420105738/http://www.aperio.com/documents/api/Aperio_Digital_Slides_and_Third-party_data_interchange.pdf (pg 14)
-        const aspectRatioSets = images.reduce((accumulator, image) => {
-          const r = image.getWidth() / image.getHeight();
-          let s = ""; // Initialize with no description
-
-          // Check whether the ImageDescription exists as a field just in case
-          if (image.fileDirectory.ImageDescription){
-            // Split out part of the description that signifies its type for identification
-            s = image.fileDirectory.ImageDescription.split("\n")[1] ?? "";
-          }
-
-          const exists = accumulator.filter(
-            (set) => ((Math.abs(1 - set.aspectRatio / r) < tolerance)
-              && !(s?.includes("macro") || s?.includes("label"))) // Separate out macro thumbnails and labels
-          );
-          if (exists.length === 0) {
-            let set = {
-              aspectRatio: r,
-              images: [image],
-            };
-            accumulator.push(set);
-          } else {
-            exists[0].images.push(image);
-          }
-          return accumulator;
-        }, []);
-
-        const imageSets = aspectRatioSets.map((set) => set.images);
-
-        return imageSets.map((images, index) => {
-          // Check if QPTIFF
-          if (index !== 0) {
-            return new OpenSeadragon.GeoTIFFTileSource(
+        if (index !== 0) {
+          out.push(
+            new OpenSeadragon.GeoTIFFTileSource(
               {
-                GeoTIFF: tiff,
-                GeoTIFFImages: images,
+                GeoTIFF: tiffPromise,
+                GeoTIFFImages: set,
+                GeoTIFFAllImages: set,
               },
               opts
-            );
-          }
+            )
+          );
+          continue;
+        }
 
-          switch (fileExtension) {
-            case "qptiff":
-              const channels = parsePerkinElmerChannels(images);
-              return Array.from(channels.values()).map((channel, index) => {
-                return new OpenSeadragon.GeoTIFFTileSource(
-                  {
-                    GeoTIFF: tiff,
-                    GeoTIFFImages: channel.images,
-                    channel: {
-                      name: channel.name,
-                      color: channel.color,
-                    },
-                  },
-                  opts
-                );
-              });
-
-            default:
-              return new OpenSeadragon.GeoTIFFTileSource(
+        if (fileExtension === "qptiff") {
+          const channels = parsePerkinElmerChannels(set);
+          for (const channel of channels.values()) {
+            out.push(
+              new OpenSeadragon.GeoTIFFTileSource(
                 {
-                  GeoTIFF: tiff,
-                  GeoTIFFImages: images,
+                  GeoTIFF: tiffPromise,
+                  GeoTIFFImages: channel.images,
+                  GeoTIFFAllImages: channel.images,
+                  channel: {
+                    name: channel.name,
+                    color: channel.color,
+                  },
                 },
                 opts
-              );
+              )
+            );
           }
-        });
-      });
+          continue;
+        }
+
+        const layout = await this.resolveLayout(tiffPromise, set, opts.hints);
+        const levelImages = await this.buildLevelImages(tiffPromise, layout, tiffPromise);
+        out.push(
+          new OpenSeadragon.GeoTIFFTileSource(
+            {
+              GeoTIFF: tiffPromise,
+              GeoTIFFImages: levelImages,
+              GeoTIFFAllImages: set,
+            },
+            opts
+          )
+        );
+      }
+
+      return out;
     }
     
     static userDefinedImagesFilter = (images, opts) => {
@@ -469,81 +472,113 @@ export const enableGeoTIFFTileSource = (OpenSeadragon, options={}) => {
       ].join("|");
     }
 
+    /**
+     * Aperio-style companion pages (macro / label) use line 1 of ImageDescription; they must not
+     * participate in IFD pyramid detection when mixed with the main slide.
+     */
+    static isSvsStyleCompanionPage(image) {
+      const desc = image.fileDirectory?.ImageDescription;
+      if (typeof desc !== "string" || !desc) return false;
+      const line1 = desc.split("\n")[1] ?? "";
+      const s = line1.toLowerCase();
+      return s.includes("macro") || s.includes("label");
+    }
+
+    static _uniqueByDecreasingSize(images) {
+      const topSizes = images
+        .map((im) => ({ im, w: im.getWidth(), h: im.getHeight() }))
+        .sort((a, b) => b.w - a.w);
+      const uniqueBySize = [];
+      const seen = new Set();
+      for (const { im, w, h } of topSizes) {
+        const k = `${w}x${h}`;
+        if (!seen.has(k)) {
+          seen.add(k);
+          uniqueBySize.push(im);
+        }
+      }
+      return uniqueBySize;
+    }
+
     static async resolveLayout(tiff, allTopImages, hints = {}) {
       const cfg = hints.layout || {};
       const pyramidPref = cfg.pyramid || "auto"; // "auto"|"ifd"|"subifd"
       const planeIndex = Number.isFinite(cfg.planeIndex) ? cfg.planeIndex : 0;
+      const prefer = cfg.prefer === "stack" ? "stack" : "pyramid";
 
       // 1) Partition by size/tile shape
       const groups = new Map(); // key -> GeoTIFFImage[]
       for (const img of allTopImages) {
         const key = this.getGeoTiffFileKey(img);
         img.__key = key;
-        const f = this.getGeoTiffFileDirectory(img);
         const arr = groups.get(key) || [];
         arr.push(img);
         groups.set(key, arr);
       }
 
-      const topSizes = allTopImages
-        .map(im => ({ im, w: im.getWidth(), h: im.getHeight() }))
-        .sort((a,b)=> b.w - a.w);
+      const uniqueBySizeFull = this._uniqueByDecreasingSize(allTopImages);
 
-      // 2) Detect sequential IFD pyramid candidate:
-      // sort unique sizes descending; if there are >=2 and roughly halving and same aspect
-      const uniqueBySize = [];
-      const seen = new Set();
-      for (const {im,w,h} of topSizes) {
-        const k = `${w}x${h}`;
-        if (!seen.has(k)) { seen.add(k); uniqueBySize.push(im); }
-      }
+      const pyramidCandidates = allTopImages.filter((im) => !this.isSvsStyleCompanionPage(im));
+      const uniqueBySizePyramid = this._uniqueByDecreasingSize(pyramidCandidates);
+
       const looksIFDPyramid = (imgs) => {
         if (imgs.length < 2) return false;
-        // check monotonic decreasing
-        for (let i=1;i<imgs.length;i++){
-          if (imgs[i].getWidth() >= imgs[i-1].getWidth()) return false;
-          if (imgs[i].getHeight() >= imgs[i-1].getHeight()) return false;
+        for (let i = 1; i < imgs.length; i++) {
+          if (imgs[i].getWidth() >= imgs[i - 1].getWidth()) return false;
+          if (imgs[i].getHeight() >= imgs[i - 1].getHeight()) return false;
         }
-        // check aspect ratio consistency (loose)
-        const r0 = imgs[0].getWidth()/imgs[0].getHeight();
+        const r0 = imgs[0].getWidth() / imgs[0].getHeight();
         for (const im of imgs) {
-          const r = im.getWidth()/im.getHeight();
-          if (Math.abs(r-r0) > 0.01) return false;
+          const r = im.getWidth() / im.getHeight();
+          if (Math.abs(r - r0) > 0.01) return false;
         }
         return true;
       };
 
-      // Candidate “levels” from top-level IFDs:
-      const ifdLevelsLargestToSmallest = uniqueBySize; // already desc
-      const ifdPyramidOk = looksIFDPyramid(ifdLevelsLargestToSmallest);
+      const ifdPyramidOkFull = looksIFDPyramid(uniqueBySizeFull);
+      const ifdPyramidOkSubset = looksIFDPyramid(uniqueBySizePyramid);
+      const hasCompanionPages = allTopImages.some((im) =>
+        this.isSvsStyleCompanionPage(im)
+      );
 
-      // 3) Detect SubIFD pyramid presence
-      const anyHasSubIFD = allTopImages.some(im => {
+      // When macro/label pages share aspect ratio with the main slide, the "full" unique-size
+      // list can still look like a valid pyramid; prefer non-companion levels in that case.
+      let useFullPyramid = ifdPyramidOkFull;
+      let useSubsetPyramid = !useFullPyramid && ifdPyramidOkSubset;
+      if (hasCompanionPages && ifdPyramidOkSubset) {
+        useSubsetPyramid = true;
+        useFullPyramid = false;
+      }
+
+      const effectiveIfdPyramid = useFullPyramid || useSubsetPyramid;
+      const ifdLevelsLargestToSmallest = useFullPyramid
+        ? uniqueBySizeFull
+        : (useSubsetPyramid ? uniqueBySizePyramid : uniqueBySizeFull);
+
+      const anyHasSubIFD = allTopImages.some((im) => {
         const sub = this.getGeoTiffFileDirectory(im).SubIFDs;
         return sub && sub.length;
       });
 
-      // 4) Choose pyramid strategy
-      let strategy = "single"; // "ifd"|"subifd"|"single"
-      if (pyramidPref === "ifd") strategy = ifdPyramidOk ? "ifd" : "single";
-      else if (pyramidPref === "subifd") strategy = anyHasSubIFD ? "subifd" : "single";
-      else {
-        // auto
-        if (ifdPyramidOk) strategy = "ifd";
+      let strategy = "single";
+      if (pyramidPref === "ifd") {
+        strategy = effectiveIfdPyramid ? "ifd" : "single";
+      } else if (pyramidPref === "subifd") {
+        strategy = anyHasSubIFD ? "subifd" : "single";
+      } else {
+        if (effectiveIfdPyramid) strategy = "ifd";
         else if (anyHasSubIFD) strategy = "subifd";
         else strategy = "single";
       }
 
-      // 5) Planes/stack detection: multiple same-sized top-level IFDs
-      // Choose the “largest size group” as the base stack
-      const largest = ifdLevelsLargestToSmallest[0];
+      const largest = uniqueBySizeFull[0];
       const largestKey = largest.__key;
       const planes = groups.get(largestKey) || [largest];
-
-      // todo: the selection should warn if planeIndex is out, support getter for index selection (since the index
-      //   might not be known apriori so it is hard to send it as argument, and warn if we cannot use the index for
-      //   some reason
       const chosenPlane = planes[Math.max(0, Math.min(planes.length - 1, planeIndex))];
+
+      if (prefer === "stack" && planes.length > 1 && strategy === "ifd") {
+        strategy = "single";
+      }
 
       if (strategy === "subifd") {
         logOnce(`${chosenPlane.__key}-subifd-warn`, `[GeoTIFFTileSource] File was detected to contain SubIFD pyramids, 
