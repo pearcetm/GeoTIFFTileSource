@@ -4,6 +4,26 @@ Implementation of a [TileSource](https://openseadragon.github.io/docs/OpenSeadra
 
 See it in action at [https://pearcetm.github.io/GeoTIFFTileSource/demo/demo.html](https://pearcetm.github.io/GeoTIFFTileSource/demo/demo.html)
 
+## Local demo development (before pushing to GitHub Pages)
+
+The demo pages live under [`demo/`](demo/) and are served locally via Vite.
+
+```bash
+npm ci
+npm run dev
+```
+
+Vite will open [`/demo/demo.html`](demo/demo.html). The GitHub Pages version of that page loads the library from `dist/`, so before pushing changes that affect the library bundle, run:
+
+```bash
+npm run build
+```
+
+### Optional screenshot overlay (osd-paperjs-annotation)
+
+The main demo supports an opt-in screenshot overlay. Enable it by adding a query param:
+- `demo/demo.html?screenshot` (or `?screenshot=1`)
+
 ## How to create GeoTIFF files
 
 In order to generate a GeoTIFF file compatible with this library, you can for instance use [sharp](https://sharp.pixelplumbing.com/), a *High performance Node.js image processing* library.

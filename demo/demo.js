@@ -10,6 +10,24 @@ let viewer = (window.viewer = OpenSeadragon({
 }));
 //https://modis-vi-nasa.s3-us-west-2.amazonaws.com//MOD13A1.006/2018.01.01.tif
 
+// Optional osd-paperjs-annotation overlay(s), gated behind URL param.
+// Usage: add `?screenshot` (or `?screenshot=1`) to enable.
+if (new URLSearchParams(window.location.search).has("screenshot")) {
+  (async () => {
+    try {
+      const { ScreenshotOverlay } = await import(
+        "https://cdn.jsdelivr.net/gh/pearcetm/osd-paperjs-annotation@v0.5.0/src/js/overlays/screenshot/screenshot.mjs"
+      );
+      new ScreenshotOverlay(viewer, {
+        downloadMessage:
+          'Tip: open the result in a new tab, or use "Download" to save locally.',
+      });
+    } catch (e) {
+      console.error("[demo] Failed to load screenshot overlay", e);
+    }
+  })();
+}
+
 document.getElementById("file-picker").onchange = function (ev) {
   viewer.close();
   clearImageInfo();
