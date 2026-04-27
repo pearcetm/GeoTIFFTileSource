@@ -521,16 +521,39 @@ export const enableGeoTIFFTileSource = (OpenSeadragon, options={}) => {
       const pyramidCandidates = allTopImages.filter((im) => !this.isSvsStyleCompanionPage(im));
       const uniqueBySizePyramid = this._uniqueByDecreasingSize(pyramidCandidates);
 
+      const scaleInterval = (base, value, tPx) => {
+        // value is an integer pixel dimension; accept that the underlying “ideal” dimension could
+        // be within ±tPx due to unknown rounding/cropping by external pyramid generators.
+        //
+        // This yields a plausible interval for scale s where base/s ≈ value.
+        const min = base / (value + tPx);
+        const denom = value - tPx;
+        const max = denom > 0 ? (base / denom) : Infinity;
+        return { min, max };
+      };
+
+      const intervalsOverlap = (a, b) => Math.max(a.min, b.min) <= Math.min(a.max, b.max);
+
+      const commonScaleExists = (w0, h0, w, h, tPx) => {
+        const sw = scaleInterval(w0, w, tPx);
+        const sh = scaleInterval(h0, h, tPx);
+        return intervalsOverlap(sw, sh);
+      };
+
       const looksIFDPyramid = (imgs) => {
         if (imgs.length < 2) return false;
         for (let i = 1; i < imgs.length; i++) {
           if (imgs[i].getWidth() >= imgs[i - 1].getWidth()) return false;
           if (imgs[i].getHeight() >= imgs[i - 1].getHeight()) return false;
         }
-        const r0 = imgs[0].getWidth() / imgs[0].getHeight();
+        const w0 = imgs[0].getWidth();
+        const h0 = imgs[0].getHeight();
+        const tolPx = 1;
         for (const im of imgs) {
-          const r = im.getWidth() / im.getHeight();
-          if (Math.abs(r - r0) > 0.01) return false;
+          const w = im.getWidth();
+          const h = im.getHeight();
+          // Ensure a single scale factor s exists that can explain both dimensions within tolPx.
+          if (!commonScaleExists(w0, h0, w, h, tolPx)) return false;
         }
         return true;
       };

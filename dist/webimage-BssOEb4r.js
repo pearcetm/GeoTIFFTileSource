@@ -1,4 +1,4 @@
-import { B as r } from "./main-DxWiebmb.js";
+import { B as r } from "./main-CLVWNNXZ.js";
 class s extends r {
   constructor() {
     if (super(), typeof createImageBitmap > "u")
@@ -17,4 +17,4 @@ class s extends r {
 export {
   s as default
 };
-//# sourceMappingURL=webimage-Cd6wpsGn.js.map
+//# sourceMappingURL=webimage-BssOEb4r.js.map

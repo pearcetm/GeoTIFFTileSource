@@ -63,6 +63,7 @@ export default defineConfig(({ mode }) => {
           test: {
             name: "layout-jsdom",
             environment: "jsdom",
+            setupFiles: ["test/polyfills/worker.js"],
             browser: { enabled: false },
             include: ["test/pyramid-layout.test.js"],
           },
@@ -71,6 +72,7 @@ export default defineConfig(({ mode }) => {
           test: {
             name: "browser",
             environment: "jsdom",
+            setupFiles: ["test/polyfills/worker.js"],
             browser: {
               enabled: true,
               provider: playwright(),
